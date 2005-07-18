@@ -1,0 +1,52 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup	2005-07-17 20:02:16.708894368 -0600
++++ mezzanine_patched_e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup	2005-07-17 20:00:53.959993440 -0600
+@@ -47,7 +47,7 @@
+ $fm->parse_xml();
+ 
+ my $conf = esmith::ConfigDB->open()
+-	|| die $fm->localise('CANNOT_OPEN').'/home/e-smith/configuration';
++	|| die $fm->localise('CANNOT_OPEN').'configuration db';
+ 
+ # We need this hash for some esmith::cgi calls, so...
+ tie my %conf, 'esmith::config', $conf->file;
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm mezzanine_patched_e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm
+--- e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm	2005-07-17 20:02:17.021846792 -0600
++++ mezzanine_patched_e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm	2005-07-17 19:59:00.176850152 -0600
+@@ -35,8 +35,7 @@
+ =head2 open()
+ 
+ Like esmith::DB->open, but if given no $file it will try to open the
+-file in the ESMITH_BACKUPHISTORY_DB environment variable or
+-/home/e-smith/backups.
++file in the ESMITH_BACKUPHISTORY_DB environment variable or backups.
+ 
+ =begin testing
+ 
+@@ -57,15 +56,14 @@
+ 
+ sub open {
+     my($class, $file) = @_;
+-    $file = $file || $ENV{ESMITH_BACKUPHISTORY_DB} || "/home/e-smith/backups";
++    $file = $file || $ENV{ESMITH_BACKUPHISTORY_DB} || "backups";
+     return $class->SUPER::open($file) || $class->SUPER::create($file);
+ }
+ 
+ =head2 open_ro()
+ 
+ Like esmith::DB->open_ro, but if given no $file it will try to open the
+-file in the ESMITH_BACKUPHISTORY_DB environment variable or
+-/home/e-smith/backups.
++file in the ESMITH_BACKUPHISTORY_DB environment variable or backups.
+ 
+ =begin testing
+ 
+@@ -75,7 +73,7 @@
+ 
+ sub open_ro {
+     my($class, $file) = @_;
+-    $file = $file || $ENV{ESMITH_BACKUPHISTORY_DB} || "/home/e-smith/backups";
++    $file = $file || $ENV{ESMITH_BACKUPHISTORY_DB} || "backups";
+     return $class->SUPER::open_ro($file);
+ }
+ 

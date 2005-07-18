@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.2
-%define release 07
+%define release 07sme01
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -13,6 +13,7 @@ Patch1: e-smith-backup-1.13.2-03.mitel_patch
 Patch2: e-smith-backup-1.13.2-05.mitel_patch
 Patch3: e-smith-backup-1.13.2-06.mitel_patch
 Patch4: e-smith-backup-1.13.2-07.mitel_patch
+Patch5: e-smith-backup-1.13.2-dbmoved.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -29,6 +30,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sun Jul 17 2005 Shad L. Lords <slords@mail.com>
+- [1.13.2-07sme01]
+- Updates preparing for db move
+
 * Fri Apr 29 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.13.2-07]
 - Remove another anacronistic version requires in perl library.
@@ -587,7 +592,7 @@ Requires: perl(esmith::I18N)
 
 * Tue Nov 13 2001 Tony Clayton <tonyc@e-smith.com>
 - [1.5.0-02]
-- adding last patch to %prep section.  feels like monday.
+- adding last patch to prep section.  feels like monday.
 
 * Tue Nov 13 2001 Tony Clayton <tonyc@e-smith.com>
 - [1.5.0-01]
@@ -826,6 +831,7 @@ e-smith server central backup administration panel
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
