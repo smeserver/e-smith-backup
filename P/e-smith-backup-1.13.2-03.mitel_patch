@@ -1,0 +1,12 @@
+Index: e-smith-backup/e-smith-backup.spec
+diff -u e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm:1.21 e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm:1.22
+--- e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm:1.21	Fri May 21 16:13:25 2004
++++ e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm	Tue Sep 28 15:11:01 2004
+@@ -6,7 +6,6 @@
+ 
+ package esmith::Backup;
+ 
+-require v5.6.0;
+ use strict;
+ use warnings;
+ 
