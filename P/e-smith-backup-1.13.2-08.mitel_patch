@@ -1,6 +1,7 @@
-diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup
---- e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup	2005-07-17 20:02:16.708894368 -0600
-+++ mezzanine_patched_e-smith-backup-1.13.2/root/etc/e-smith/web/functions/backup	2005-07-17 20:00:53.959993440 -0600
+Index: e-smith-backup/e-smith-backup.spec
+diff -u e-smith-backup/root/etc/e-smith/web/functions/backup:1.45 e-smith-backup/root/etc/e-smith/web/functions/backup:1.46
+--- e-smith-backup/root/etc/e-smith/web/functions/backup:1.45	Thu Sep 16 16:44:09 2004
++++ e-smith-backup/root/etc/e-smith/web/functions/backup	Mon Jul 18 17:53:42 2005
 @@ -47,7 +47,7 @@
  $fm->parse_xml();
  
@@ -10,20 +11,22 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.2/root/etc/e-smith/web/func
  
  # We need this hash for some esmith::cgi calls, so...
  tie my %conf, 'esmith::config', $conf->file;
-diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm mezzanine_patched_e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm
---- e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm	2005-07-17 20:02:17.021846792 -0600
-+++ mezzanine_patched_e-smith-backup-1.13.2/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm	2005-07-17 19:59:00.176850152 -0600
-@@ -35,8 +35,7 @@
+Index: e-smith-backup/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm
+diff -u e-smith-backup/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm:1.4 e-smith-backup/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm:1.5
+--- e-smith-backup/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm:1.4	Thu Apr 28 18:11:02 2005
++++ e-smith-backup/root/usr/lib/perl5/site_perl/esmith/BackupHistoryDB.pm	Mon Jul 18 17:53:43 2005
+@@ -35,8 +35,8 @@
  =head2 open()
  
  Like esmith::DB->open, but if given no $file it will try to open the
 -file in the ESMITH_BACKUPHISTORY_DB environment variable or
 -/home/e-smith/backups.
-+file in the ESMITH_BACKUPHISTORY_DB environment variable or backups.
++file in the ESMITH_BACKUPHISTORY_DB environment variable or "backups" in
++the default database directory.
  
  =begin testing
  
-@@ -57,15 +56,14 @@
+@@ -57,15 +57,15 @@
  
  sub open {
      my($class, $file) = @_;
@@ -37,11 +40,12 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.2/root/usr/lib/perl5/site_p
  Like esmith::DB->open_ro, but if given no $file it will try to open the
 -file in the ESMITH_BACKUPHISTORY_DB environment variable or
 -/home/e-smith/backups.
-+file in the ESMITH_BACKUPHISTORY_DB environment variable or backups.
++file in the ESMITH_BACKUPHISTORY_DB environment variable or "backups" in
++the default database directory.
  
  =begin testing
  
-@@ -75,7 +73,7 @@
+@@ -75,7 +75,7 @@
  
  sub open_ro {
      my($class, $file) = @_;
