@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.2
-%define release 08
+%define release 09
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -14,6 +14,7 @@ Patch2: e-smith-backup-1.13.2-05.mitel_patch
 Patch3: e-smith-backup-1.13.2-06.mitel_patch
 Patch4: e-smith-backup-1.13.2-07.mitel_patch
 Patch5: e-smith-backup-1.13.2-08.mitel_patch
+Patch6: e-smith-backup-1.13.2-09.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -30,6 +31,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Tue Jul 19 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.2-09]
+- Remove last deprecated esmith::config API calls. [SF: 1216546]
+
 * Mon Jul 18 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.13.2-08]
 - Remove explicit paths to db files. [SF: 1216546]
@@ -832,6 +837,7 @@ e-smith server central backup administration panel
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
