@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.2
-%define release 09
+%define release 10
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -15,6 +15,7 @@ Patch3: e-smith-backup-1.13.2-06.mitel_patch
 Patch4: e-smith-backup-1.13.2-07.mitel_patch
 Patch5: e-smith-backup-1.13.2-08.mitel_patch
 Patch6: e-smith-backup-1.13.2-09.mitel_patch
+Patch7: e-smith-backup-1.13.2-10.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -31,6 +32,11 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Fri Jul 22 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.2-10]
+- Enforce Posix behaviour of df command, in restore functions of panel.
+  [SF: 1242986]
+
 * Tue Jul 19 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.13.2-09]
 - Remove last deprecated esmith::config API calls. [SF: 1216546]
@@ -838,6 +844,7 @@ e-smith server central backup administration panel
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
