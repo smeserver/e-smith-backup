@@ -1,0 +1,23 @@
+Index: e-smith-backup/e-smith-backup.spec
+diff -u e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm:1.23 e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm:1.24
+--- e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm:1.23	Tue Mar  8 18:06:46 2005
++++ e-smith-backup/root/usr/lib/perl5/site_perl/esmith/Backup.pm	Tue Aug  9 12:37:45 2005
+@@ -101,7 +101,8 @@
+ 
+ =item * 
+ Add back any users in the restored passwd file with home 
+-directories under /home/e-smith
++directories under /home/e-smith, or /noexistingpath (Samba
++machine accounts)
+ 
+ =item * 
+ Log any other missing users or UID/GID mismatches
+@@ -161,7 +162,7 @@
+     {
+ 	my @details = $merge_into->user($user);
+ 
+-	if ( $merge_from->home($user) =~ m:^/home/e-smith: )
++	if ( $merge_from->home($user) =~ m:^/(home/e-smith|noexistingpath): )
+ 	{
+ 	    unless ( defined $details[0] )
+ 	    {
