@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.2
-%define release 11sme01
+%define release 12
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -17,7 +17,7 @@ Patch5: e-smith-backup-1.13.2-08.mitel_patch
 Patch6: e-smith-backup-1.13.2-09.mitel_patch
 Patch7: e-smith-backup-1.13.2-10.mitel_patch
 Patch8: e-smith-backup-1.13.2-11.mitel_patch
-Patch9: e-smith-backup-1.13-deletedbs.patch3
+Patch9: e-smith-backup-1.13.2-12.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -34,8 +34,8 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
-* Thu Aug 18 2005 Gordon Rowell <gordonr@gormand.com.au>
-- [1.13.2-11sme01]
+* Fri Aug 19 2005 Gordon Rowell <gordonr@gormand.com.au>
+- [1.13.2-12]
 - Delete configuration dbs from /home/e-smith/db/ prior to
   a restore to ensure that the ones coming from tape are the
   only ones on the system after the restore [SF: 1246347]
