@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.2
-%define release 12
+%define release 13
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -18,6 +18,7 @@ Patch6: e-smith-backup-1.13.2-09.mitel_patch
 Patch7: e-smith-backup-1.13.2-10.mitel_patch
 Patch8: e-smith-backup-1.13.2-11.mitel_patch
 Patch9: e-smith-backup-1.13.2-12.mitel_patch
+Patch10: e-smith-backup-1.13.2-13.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -34,6 +35,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Tue Aug 30 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.2-13]
+- Really add delete-configuration-dbs action. [SF: 1246347,1275962]
+
 * Fri Aug 19 2005 Gordon Rowell <gordonr@gormand.com.au>
 - [1.13.2-12]
 - Delete configuration dbs from /home/e-smith/db/ prior to
@@ -859,6 +864,7 @@ e-smith server central backup administration panel
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
