@@ -1,24 +1,14 @@
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
-%define version 1.13.2
-%define release 13
+%define version 1.13.4
+%define release 04
 Version: %{version}
 Release: %{release}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-backup-1.13.2-02.mitel_patch
-Patch1: e-smith-backup-1.13.2-03.mitel_patch
-Patch2: e-smith-backup-1.13.2-05.mitel_patch
-Patch3: e-smith-backup-1.13.2-06.mitel_patch
-Patch4: e-smith-backup-1.13.2-07.mitel_patch
-Patch5: e-smith-backup-1.13.2-08.mitel_patch
-Patch6: e-smith-backup-1.13.2-09.mitel_patch
-Patch7: e-smith-backup-1.13.2-10.mitel_patch
-Patch8: e-smith-backup-1.13.2-11.mitel_patch
-Patch9: e-smith-backup-1.13.2-12.mitel_patch
-Patch10: e-smith-backup-1.13.2-13.mitel_patch
+Patch0: e-smith-backup-1.13.4-03.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -35,6 +25,44 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Nov 30 2005 Gordon Rowell <gordonr@gormand.com.au> 1.13.4-04
+- Bump release number only
+
+* Tue Nov  1 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.4-03]
+- Improve user feedback if pre-backup or pre-restore events fail. [SF: 1334923]
+
+* Mon Oct 24 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.4-02]
+- Create empty /etc/e-smith/db/backups directory to trigger migration
+  to new location. [SF: 1335862]
+
+* Fri Oct 14 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.13.4-01]
+- Remove L10Ns from base packages [SF: 1309520]
+
+* Fri Oct 14 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.13.3-01]
+- New dev stream before relocating L10Ns
+
+* Fri Sep 30 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.13.2-17]
+- Added Italian L10N - Thanks Filippo Carletti [SF: 1309266]
+
+* Sun Sep 25 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.13.2-16]
+- Added German L10N - Thanks Dietmar Berteld [SF: 1293325]
+
+* Sun Sep 18 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.2-15]
+- Remove explict use of CGI (which caused double construction of
+  the CGI object, and loss of uploaded data file). [SF: 1264699]
+
+* Fri Sep 16 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.13.2-14]
+- Don't delete configuration dbs in pre-restore event until
+  we have finished using them. [SF: 1292448]
+
 * Tue Aug 30 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.13.2-13]
 - Really add delete-configuration-dbs action. [SF: 1246347,1275962]
@@ -855,16 +883,6 @@ e-smith server central backup administration panel
 %prep
 %setup
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
@@ -882,6 +900,7 @@ xgettext -o root/usr/share/locale/en_US/LC_MESSAGES/backup.po  \
 mkdir -p root/var/cache/e-smith/restore
 mkdir -p root/var/cache/e-smith/restore/etc
 mkdir -p root/var/cache/e-smith/restore/etc/samba
+mkdir -p root/etc/e-smith/db/backups
 
 %install
 rm -rf $RPM_BUILD_ROOT
