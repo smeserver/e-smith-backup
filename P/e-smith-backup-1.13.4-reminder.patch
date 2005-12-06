@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.4/root/etc/e-smith/templates/etc/cron.d/backup mezzanine_patched_e-smith-backup-1.13.4/root/etc/e-smith/templates/etc/cron.d/backup
+--- e-smith-backup-1.13.4/root/etc/e-smith/templates/etc/cron.d/backup	2003-03-28 08:25:39.000000000 +1100
++++ mezzanine_patched_e-smith-backup-1.13.4/root/etc/e-smith/templates/etc/cron.d/backup	2005-12-06 22:50:44.342154109 +1100
+@@ -29,7 +29,7 @@
+ 
+     $OUT .=
+ 	"$reminderMin $reminderHour * * * root"
+-	. " /bin/mt -f $device tell > /dev/null 2>&1 ||"
++	. " /bin/mt -f $device status | grep ONLINE > /dev/null 2>&1 ||"
+ 	. ' echo "' . gettext("Remember to load the backup tape!") . '"'
+ 	. "\n";
+ 
