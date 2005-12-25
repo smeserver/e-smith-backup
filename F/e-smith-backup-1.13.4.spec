@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.4
-%define release 05
+%define release 06
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -10,6 +10,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-backup-1.13.4-03.mitel_patch
 Patch1: e-smith-backup-1.13.4-reminder.patch
+Patch2: e-smith-backup-1.13.4-DontDeleteDBs.patch2 
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -26,6 +27,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sat Dec 25 2005 Gordon Rowell <gordonr@gormand.com.au> 1.13.4-06
+- Don't delete config dbs in pre-restore [SME: 229]
+
 * Tue Dec 06 2005 Filippo Carletti <carletti@mobilia.it> 1.13.4-05
 - Tape reminder uses mt status to check if tape loaded [SME: 251]
 
@@ -888,6 +892,7 @@ e-smith server central backup administration panel
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
