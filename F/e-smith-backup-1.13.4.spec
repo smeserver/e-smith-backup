@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.4
-%define release 07
+%define release 08
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -12,6 +12,7 @@ Patch0: e-smith-backup-1.13.4-03.mitel_patch
 Patch1: e-smith-backup-1.13.4-reminder.patch
 Patch2: e-smith-backup-1.13.4-DontDeleteDBs.patch2 
 Patch3: e-smith-backup-1.13.4-restore-from-disk.patch
+Patch4: e-smith-backup-1.13.4-AMPM.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -28,6 +29,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Mon Feb  6 2006 Charlie Brady <charlie_brady@mitel.com> 1.13.4-08
+- Fix 24->12 hour time display problem (courtesy of Federico Simoncelli).
+  [SME: 667]
+
 * Wed Feb 01 2006 Charlie Brady <charlie_brady@mitel.com> 1.13.4-07
 - Add restore-from-disk script. [SME: 615]
 
@@ -898,6 +903,7 @@ e-smith server central backup administration panel
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
