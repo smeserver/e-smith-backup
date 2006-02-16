@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk mezzanine_patched_e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk
+--- e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk	2006-02-16 17:08:33.000000000 -0500
++++ mezzanine_patched_e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk	2006-02-16 17:08:22.000000000 -0500
+@@ -47,7 +47,7 @@
+ {
+     # parent
+     chdir "/";
+-    exec("cpio", "-duvmp", "/tmp/test.restore");
++    exec("cpio", "-dump", "/");
+ }
+ else
+ {
