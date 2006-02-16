@@ -1,0 +1,19 @@
+diff -uNr e-smith-backup-1.13.4.orig/root/etc/e-smith/web/functions/backup e-sm
+ith-backup-1.13.4/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.13.4.orig/root/etc/e-smith/web/functions/backup    2006-02
+-06 12:53:02.000000000 +0100
++++ e-smith-backup-1.13.4/root/etc/e-smith/web/functions/backup 2006-02-06 12:5
+4:00.000000000 +0100
+@@ -809,9 +809,9 @@
+ 
+     ($backupHour, $backupMin) = split (":", $backupTime, -1);
+ 
+-    if ($backupHour > 12)
++    if ($backupHour >= 12)
+     {
+-       $backupHour -= 12;
++       if ($backupHour > 12) { $backupHour -= 12; }
+        $backupAMPM = 'PM';
+     }
+ 
+
