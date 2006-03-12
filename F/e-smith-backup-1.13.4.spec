@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.13.4
-%define release 09
+%define release 10
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -30,6 +30,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sun Mar 12 2006 Charlie Brady <charlie_brady@mitel.com> 1.13.4-10
+- Another fix to restore-from-disk script. [SME: 821]
+
 * Thu Feb 16 2006 Charlie Brady <charlie_brady@mitel.com> 1.13.4-09
 - Fix restore-from-disk script. [SME: 821]
 
@@ -909,6 +912,7 @@ e-smith server central backup administration panel
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

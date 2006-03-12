@@ -1,0 +1,18 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk mezzanine_patched_e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk
+--- e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk	2006-03-12 18:52:19.000000000 -0500
++++ mezzanine_patched_e-smith-backup-1.13.4/root/etc/e-smith/events/actions/restore-from-disk	2006-03-12 14:00:46.000000000 -0500
+@@ -45,12 +45,12 @@
+ die "Can't fork: $!" unless defined(my $pid = open(STDIN, "-|"));
+ if ($pid)
+ {
+-    # parent
+-    chdir "/";
++    # parent - copy files from $path to /
+     exec("cpio", "-dump", "/");
+ }
+ else
+ {
++    # generate a set of pathnames under $path which are to be restored
+     exec("find", @restore);
+ }
+ 
