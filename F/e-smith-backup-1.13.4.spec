@@ -1,20 +1,13 @@
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
-%define version 1.13.4
-%define release 10
+%define version 1.14.0
+%define release 01
 Version: %{version}
 Release: %{release}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-backup-1.13.4-03.mitel_patch
-Patch1: e-smith-backup-1.13.4-reminder.patch
-Patch2: e-smith-backup-1.13.4-DontDeleteDBs.patch2 
-Patch3: e-smith-backup-1.13.4-restore-from-disk.patch
-Patch4: e-smith-backup-1.13.4-AMPM.patch
-Patch5: e-smith-backup-1.13.4-restore-from-disk.patch2
-Patch6: e-smith-backup-1.13.4-restore-from-disk.patch3
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -31,6 +24,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Tue Mar 14 2006 Charlie Brady <charlie_brady@mitel.com> 1.14.0-01
+- Roll stable stream version. [SME: 1016]
+
 * Sun Mar 12 2006 Charlie Brady <charlie_brady@mitel.com> 1.13.4-10
 - Another fix to restore-from-disk script. [SME: 821]
 
@@ -907,13 +903,6 @@ e-smith server central backup administration panel
 
 %prep
 %setup
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
