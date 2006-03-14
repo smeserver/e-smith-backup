@@ -14,6 +14,7 @@ Patch2: e-smith-backup-1.13.4-DontDeleteDBs.patch2
 Patch3: e-smith-backup-1.13.4-restore-from-disk.patch
 Patch4: e-smith-backup-1.13.4-AMPM.patch
 Patch5: e-smith-backup-1.13.4-restore-from-disk.patch2
+Patch6: e-smith-backup-1.13.4-restore-from-disk.patch3
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
