@@ -2,13 +2,14 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 02
+%define release 03
 Version: %{version}
 Release: %{release}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-backup-1.14.0-DesktopBackupWarning.patch
+Patch1: e-smith-backup-1.14.0-DesktopBackupWarning.patch2
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -25,6 +26,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Mar 15 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-03
+- Add semi-colon to last code change. Saves head-scratching if
+  someone removes the braces at some later stage. [SME: 1045]
+
 * Wed Mar 15 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-02
 - Add warning about desktop backup if the server has more than
   2GB of data. [SME: 1045]
@@ -909,6 +914,7 @@ e-smith server central backup administration panel
 %prep
 %setup
 %patch0 -p1
+%patch1 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
