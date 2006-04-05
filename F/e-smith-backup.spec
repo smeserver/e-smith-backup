@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 03
+%define release 04
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -10,6 +10,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-backup-1.14.0-DesktopBackupWarning.patch
 Patch1: e-smith-backup-1.14.0-DesktopBackupWarning.patch2
+Patch2: e-smith-backup-1.14.0-Crontab.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -26,6 +27,12 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Apr 5 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-04
+- Move /etc/cron.d/backup into /etc/crontab fragment [SME: 1172]
+- Expand /etc/crontab in conf-backup. e-smith-base already does
+  it for us in bootstrap-console-save [SME: 1172]
+- Remove /etc/cron.d/backup in post [SME: 1172]
+
 * Wed Mar 15 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-03
 - Add semi-colon to last code change. Saves head-scratching if
   someone removes the braces at some later stage. [SME: 1045]
@@ -915,6 +922,7 @@ e-smith server central backup administration panel
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
@@ -924,7 +932,7 @@ perl createlinks
 
 # Extract a new copy of the English .po, though we won't use it for this build
 xgettext -o root/usr/share/locale/en_US/LC_MESSAGES/backup.po  \
-	root/etc/e-smith/templates/etc/cron.d/backup \
+	root/etc/e-smith/templates/etc/crontab/backup \
 	root/sbin/e-smith/do_backup
 
 /sbin/e-smith/generate-lexicons
@@ -951,6 +959,7 @@ rm -rf $RPM_BUILD_ROOT
 %preun
 %post
 /bin/rm -f /sbin/e-smith/backup
+/bin/rm -f /etc/cron.d/backup
 
 %postun
 

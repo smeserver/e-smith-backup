@@ -1,0 +1,118 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/createlinks mezzanine_patched_e-smith-backup-1.14.0/createlinks
+--- e-smith-backup-1.14.0/createlinks	2006-03-15 04:08:45.000000000 +1100
++++ mezzanine_patched_e-smith-backup-1.14.0/createlinks	2006-04-05 17:51:14.957976031 +1000
+@@ -23,7 +23,6 @@
+ 
+ $event = "bootstrap-console-save";
+ 
+-templates2events("/etc/cron.d/backup", $event);
+ event_link("reset-restore-idle-flag", $event, "95");
+ 
+ #--------------------------------------------------
+@@ -32,7 +31,7 @@
+ 
+ $event = "conf-backup";
+ 
+-templates2events("/etc/cron.d/backup", $event);
++templates2events("/etc/crontab", $event);
+ 
+ #--------------------------------------------------
+ # events for rewind-tape action
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/cron.d/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/cron.d/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/cron.d/backup	2006-03-15 04:08:45.000000000 +1100
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/cron.d/backup	1970-01-01 10:00:00.000000000 +1000
+@@ -1,45 +0,0 @@
+-{
+-    use POSIX;
+-    use Locale::gettext;
+-    use esmith::I18N;
+-
+-    my $i18n = new esmith::I18N;
+-
+-    $i18n->setLocale('backup');
+-
+-    $OUT = '';
+-
+-    my $status = $backup{status} || 'disabled';
+-
+-    unless ($status eq 'enabled')
+-    {
+-	$OUT .= "# ",gettext("Backup task is disabled");
+-	return;
+-    }
+-
+-    # FIXME - "mt tell" won't work with all backup devices
+-    my $device = $backup{Device} || "/dev/nst0";
+-
+-    my $reminderTime = $backup{reminderTime} || "14:00";
+-    my ($reminderHour, $reminderMin) = split (":", $reminderTime, -1);
+-
+-
+-    # remove leading zeros from minutes
+-    $reminderMin =~ s/00/0/;
+-
+-    $OUT .=
+-	"$reminderMin $reminderHour * * * root"
+-	. " /bin/mt -f $device status | grep ONLINE > /dev/null 2>&1 ||"
+-	. ' echo "' . gettext("Remember to load the backup tape!") . '"'
+-	. "\n";
+-
+-    my $backupTime = $backup{backupTime} || "2:00";
+-    my ($backupHour, $backupMin) = split (":", $backupTime, -1);
+-
+-    # remove leading zeros from minutes
+-    $backupMin =~ s/00/0/;
+-
+-    $OUT .=
+-	"$backupMin $backupHour * * * root"
+-	. " /sbin/e-smith/do_backup"
+-}
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup	1970-01-01 10:00:00.000000000 +1000
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup	2006-03-15 04:08:45.000000000 +1100
+@@ -0,0 +1,45 @@
++{
++    use POSIX;
++    use Locale::gettext;
++    use esmith::I18N;
++
++    my $i18n = new esmith::I18N;
++
++    $i18n->setLocale('backup');
++
++    $OUT = '';
++
++    my $status = $backup{status} || 'disabled';
++
++    unless ($status eq 'enabled')
++    {
++	$OUT .= "# ",gettext("Backup task is disabled");
++	return;
++    }
++
++    # FIXME - "mt tell" won't work with all backup devices
++    my $device = $backup{Device} || "/dev/nst0";
++
++    my $reminderTime = $backup{reminderTime} || "14:00";
++    my ($reminderHour, $reminderMin) = split (":", $reminderTime, -1);
++
++
++    # remove leading zeros from minutes
++    $reminderMin =~ s/00/0/;
++
++    $OUT .=
++	"$reminderMin $reminderHour * * * root"
++	. " /bin/mt -f $device status | grep ONLINE > /dev/null 2>&1 ||"
++	. ' echo "' . gettext("Remember to load the backup tape!") . '"'
++	. "\n";
++
++    my $backupTime = $backup{backupTime} || "2:00";
++    my ($backupHour, $backupMin) = split (":", $backupTime, -1);
++
++    # remove leading zeros from minutes
++    $backupMin =~ s/00/0/;
++
++    $OUT .=
++	"$backupMin $backupHour * * * root"
++	. " /sbin/e-smith/do_backup"
++}
