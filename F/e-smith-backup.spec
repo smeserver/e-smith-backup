@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 04
+%define release 05
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -11,6 +11,7 @@ Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-backup-1.14.0-DesktopBackupWarning.patch
 Patch1: e-smith-backup-1.14.0-DesktopBackupWarning.patch2
 Patch2: e-smith-backup-1.14.0-Crontab.patch
+Patch3: e-smith-backup-1.14.0-Crontab.patch2
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -27,6 +28,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Apr 5 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-05
+- Fix typo in crontab template for 'disabled' case [SME: 1092]
+
 * Wed Apr 5 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-04
 - Move /etc/cron.d/backup into /etc/crontab fragment [SME: 1172]
 - Expand /etc/crontab in conf-backup. e-smith-base already does
@@ -923,6 +927,7 @@ e-smith server central backup administration panel
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
