@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 05
+%define release 06
 Version: %{version}
 Release: %{release}
 License: Artistic
@@ -12,6 +12,7 @@ Patch0: e-smith-backup-1.14.0-DesktopBackupWarning.patch
 Patch1: e-smith-backup-1.14.0-DesktopBackupWarning.patch2
 Patch2: e-smith-backup-1.14.0-Crontab.patch
 Patch3: e-smith-backup-1.14.0-Crontab.patch2
+Patch4: e-smith-backup-1.14.0-DesktopBackupWarning.patch3
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -28,6 +29,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Nov 08 2006 Charlie Brady <charlie_brady@mitel.com> 1.14.0-06
+- Use tarsize not dumpsize to determine when backup is too large.
+  [SME: 20420411]
+
 * Wed Apr 5 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-05
 - Fix typo in crontab template for 'disabled' case [SME: 1092]
 
@@ -928,6 +933,7 @@ e-smith server central backup administration panel
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
