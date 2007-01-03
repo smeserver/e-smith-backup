@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 7
+%define release 8
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -14,6 +14,7 @@ Patch1: e-smith-backup-1.14.0-DesktopBackupWarning.patch2
 Patch2: e-smith-backup-1.14.0-Crontab.patch
 Patch3: e-smith-backup-1.14.0-Crontab.patch2
 Patch4: e-smith-backup-1.14.0-DesktopBackupWarning.patch3
+Patch5: e-smith-backup-1.14.0-eject.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildArchitectures: noarch
@@ -29,6 +30,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Jan 03 2007 Shad L. Lords <slords@mail.com> 1.14.0-8
+- Add eject action and default to no. [SME: 795]
+
 * Thu Dec 07 2006 Shad L. Lords <slords@mail.com>
 - Update to new release naming.  No functional changes.
 - Make Packager generic
@@ -938,6 +942,7 @@ e-smith server central backup administration panel
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

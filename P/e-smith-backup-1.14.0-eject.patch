@@ -1,0 +1,26 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/events/actions/eject-tape mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/events/actions/eject-tape
+--- e-smith-backup-1.14.0/root/etc/e-smith/events/actions/eject-tape	1969-12-31 17:00:00.000000000 -0700
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/events/actions/eject-tape	2007-01-03 15:19:54.000000000 -0700
+@@ -0,0 +1,22 @@
++#!/usr/bin/perl -w
++
++package esmith;
++
++use strict;
++use esmith::ConfigDB;
++
++my $event = shift;
++my $cause = shift;
++exit 0 if not defined $cause or $cause eq "desktop";
++
++my $confdb = esmith::ConfigDB->open_ro;
++my $backup = $confdb->get('backup') or die "No backup db entry found\n";
++my $device = $backup->prop('Device') || '/dev/st0';
++my $eject = $backup->prop('Eject') || 'no';
++
++exit 0 unless $device =~ /[sh]t/;
++
++if (lc($eject) eq 'yes') {
++    exec("/bin/mt", "-f", $device, "eject");
++    die("A problem occurred execing mt");
++}
