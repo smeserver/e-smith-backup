@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 9
+%define release 10
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -17,6 +17,7 @@ Patch4: e-smith-backup-1.14.0-DesktopBackupWarning.patch3
 Patch5: e-smith-backup-1.14.0-eject.patch
 Patch6: e-smith-backup-1.14.0-tapeactions.patch
 Patch7: e-smith-backup-1.14.0-backuptype.patch
+Patch8: e-smith-backup-1.14.0-eject.patch2
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildArchitectures: noarch
@@ -32,6 +33,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sat Jan 06 2007 Shad L. Lords <slords@mail.com> 1.14.0-10
+- Link in eject action. [SME: 795]
+
 * Fri Jan 05 2007 Shad L. Lords <slords@mail.com> 1.14.0-9
 - Make tape actions depend on tape backup. [SME: 1055]
 - Make backup type configurable via db. [SME: 1055]
@@ -951,6 +955,7 @@ e-smith server central backup administration panel
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
