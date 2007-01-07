@@ -18,6 +18,7 @@ Patch5: e-smith-backup-1.14.0-eject.patch
 Patch6: e-smith-backup-1.14.0-tapeactions.patch
 Patch7: e-smith-backup-1.14.0-backuptype.patch
 Patch8: e-smith-backup-1.14.0-eject.patch2
+Patch9: e-smith-backup-1.14.0-backuptype.patch2
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildArchitectures: noarch
@@ -35,6 +36,7 @@ Requires: perl(esmith::I18N)
 %changelog
 * Sat Jan 06 2007 Shad L. Lords <slords@mail.com> 1.14.0-10
 - Link in eject action. [SME: 795]
+- Fix do_backup to actually pass backup type. [SME: 1055]
 
 * Fri Jan 05 2007 Shad L. Lords <slords@mail.com> 1.14.0-9
 - Make tape actions depend on tape backup. [SME: 1055]
@@ -956,6 +958,7 @@ e-smith server central backup administration panel
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
