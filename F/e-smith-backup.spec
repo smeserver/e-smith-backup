@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 10
+%define release 11
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -19,6 +19,7 @@ Patch6: e-smith-backup-1.14.0-tapeactions.patch
 Patch7: e-smith-backup-1.14.0-backuptype.patch
 Patch8: e-smith-backup-1.14.0-eject.patch2
 Patch9: e-smith-backup-1.14.0-backuptype.patch2
+Patch10: e-smith-backup-1.14.0-restorefromdisk.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildArchitectures: noarch
@@ -34,6 +35,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sat Jan 06 2007 Shad L. Lords <slords@mail.com> 1.14.0-11
+- Change restore-from-disk to chroot tar from cpio [SME: 2318]
+
 * Sat Jan 06 2007 Shad L. Lords <slords@mail.com> 1.14.0-10
 - Link in eject action. [SME: 795]
 - Fix do_backup to actually pass backup type. [SME: 1055]
@@ -959,6 +963,7 @@ e-smith server central backup administration panel
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
