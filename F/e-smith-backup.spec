@@ -55,7 +55,7 @@ Requires: perl(esmith::I18N)
 
 * Wed Nov 08 2006 Charlie Brady <charlie_brady@mitel.com> 1.14.0-06
 - Use tarsize not dumpsize to determine when backup is too large.
-  [SME: 20420411]
+  [SME: 2041]
 
 * Wed Apr 5 2006 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-05
 - Fix typo in crontab template for 'disabled' case [SME: 1092]
