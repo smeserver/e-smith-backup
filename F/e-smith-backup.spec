@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 11
+%define release 12
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -20,6 +20,7 @@ Patch7: e-smith-backup-1.14.0-backuptype.patch
 Patch8: e-smith-backup-1.14.0-eject.patch2
 Patch9: e-smith-backup-1.14.0-backuptype.patch2
 Patch10: e-smith-backup-1.14.0-restorefromdisk.patch
+Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildArchitectures: noarch
@@ -35,6 +36,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Fri Jan 26 2007 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-12
+- Restore group entry for machine accounts and update tests [SME: 1792]
+
 * Sat Jan 06 2007 Shad L. Lords <slords@mail.com> 1.14.0-11
 - Change restore-from-disk to chroot tar from cpio [SME: 2318]
 
@@ -964,6 +968,7 @@ e-smith server central backup administration panel
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
