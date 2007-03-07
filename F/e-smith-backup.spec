@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 12
+%define release 13
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -21,6 +21,7 @@ Patch8: e-smith-backup-1.14.0-eject.patch2
 Patch9: e-smith-backup-1.14.0-backuptype.patch2
 Patch10: e-smith-backup-1.14.0-restorefromdisk.patch
 Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
+Patch12: e-smith-backup-1.14.0-reminderemail.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildArchitectures: noarch
@@ -36,6 +37,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Wed Mar 07 2007 Shad L. Lords <slords@mail.com> 1.14.0-13
+- Add db entry to override who gets backup reminder email [SME: 23]
+
 * Fri Jan 26 2007 Gordon Rowell <gordonr@gormand.com.au> 1.14.0-12
 - Restore group entry for machine accounts and update tests [SME: 1792]
 
@@ -969,6 +973,7 @@ e-smith server central backup administration panel
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

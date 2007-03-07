@@ -1,0 +1,22 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup	2007-03-07 14:54:24.000000000 -0700
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup	2007-03-07 14:53:48.000000000 -0700
+@@ -22,7 +22,7 @@
+ 
+     my $reminderTime = $backup{reminderTime} || "14:00";
+     my ($reminderHour, $reminderMin) = split (":", $reminderTime, -1);
+-
++    my $reminderEmail = $backup{reminderEmail} || 'admin';
+ 
+     # remove leading zeros from minutes
+     $reminderMin =~ s/00/0/;
+@@ -31,7 +31,8 @@
+ 	"$reminderMin $reminderHour * * * root"
+ 	. " /bin/mt -f $device status | grep ONLINE > /dev/null 2>&1 ||"
+ 	. ' echo "' . gettext("Remember to load the backup tape!") . '"'
+-	. "\n";
++	. ' | mail -s "' . gettext("Remember to load the backup tape!") . '"'
++        . " $reminderEmail\n";
+ 
+     my $backupTime = $backup{backupTime} || "2:00";
+     my ($backupHour, $backupMin) = split (":", $backupTime, -1);
