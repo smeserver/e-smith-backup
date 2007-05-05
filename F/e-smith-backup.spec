@@ -4,8 +4,7 @@ Name: %{name}
 %define version 1.14.0
 %define release 13
 Version: %{version}
-Release: %smerelease %{release}
-Packager: %{_packager}
+Release: %{release}%{?dist}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
@@ -24,6 +23,7 @@ Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
 Patch12: e-smith-backup-1.14.0-reminderemail.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
+BuildRequires: gettext
 BuildArchitectures: noarch
 Requires: e-smith-base
 Requires: e-smith-lib >= 1.15.1-19
@@ -37,6 +37,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sun Apr 29 2007 Shad L. Lords <slords@mail.com>
+- Clean up spec so package can be built by koji/plague
+
 * Wed Mar 07 2007 Shad L. Lords <slords@mail.com> 1.14.0-13
 - Add db entry to override who gets backup reminder email [SME: 23]
 
