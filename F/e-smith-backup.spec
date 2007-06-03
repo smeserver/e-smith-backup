@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 13
+%define release 14
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -21,6 +21,7 @@ Patch9: e-smith-backup-1.14.0-backuptype.patch2
 Patch10: e-smith-backup-1.14.0-restorefromdisk.patch
 Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
 Patch12: e-smith-backup-1.14.0-reminderemail.patch
+Patch13: e-smith-backup-1.14.0-backuptype.patch3
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -37,6 +38,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sun Jun 03 2007 Gavin Weight <gweight@gmail.com> 1.14.0-14
+- Backup to desktop changes BackupType fix. [SME 3026]
+
 * Sun Apr 29 2007 Shad L. Lords <slords@mail.com>
 - Clean up spec so package can be built by koji/plague
 
@@ -977,6 +981,7 @@ e-smith server central backup administration panel
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
