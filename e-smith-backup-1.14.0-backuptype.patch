@@ -1,0 +1,37 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/db/configuration/defaults/backup/BackupType mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/db/configuration/defaults/backup/BackupType
+--- e-smith-backup-1.14.0/root/etc/e-smith/db/configuration/defaults/backup/BackupType	1969-12-31 17:00:00.000000000 -0700
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/db/configuration/defaults/backup/BackupType	2007-01-05 09:19:31.000000000 -0700
+@@ -0,0 +1 @@
++tape
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/sbin/e-smith/do_backup mezzanine_patched_e-smith-backup-1.14.0/root/sbin/e-smith/do_backup
+--- e-smith-backup-1.14.0/root/sbin/e-smith/do_backup	2004-03-01 13:23:34.000000000 -0700
++++ mezzanine_patched_e-smith-backup-1.14.0/root/sbin/e-smith/do_backup	2007-01-05 09:22:01.000000000 -0700
+@@ -30,6 +30,7 @@
+ my $backup = $conf->get('backup');
+ my $status = $backup->prop('status') || 'disabled';
+ my $program = $backup->prop('Program') || 'flexbackup';
++my $backupType = $backup->prop('BackupType') || 'tape';
+ 
+ unless ($status eq 'enabled')
+ {
+@@ -42,9 +43,9 @@
+ my $now = time();
+ my $backup_rec = $backups->new_record($now, { type => 'backup_record' });
+ $backup_rec->set_prop('StartEpochTime', "$now");
+-$backup_rec->set_prop('BackupType', "tape");
++$backup_rec->set_prop('BackupType', $backupType);
+ 
+-if ($status = system(qw(signal-event pre-backup tape)))
++if ($status = system(qw(signal-event pre-backup $backupType)))
+ {
+     exit bad_exit($backup_rec, "pre-backup", $status);
+ }
+@@ -54,7 +55,7 @@
+     exit bad_exit($backup_rec, "backup", $status);
+ }
+ 
+-if ($status = system(qw(signal-event post-backup tape)))
++if ($status = system(qw(signal-event post-backup $backupType)))
+ {
+     exit bad_exit($backup_rec, "post-backup", $status);
+ }
