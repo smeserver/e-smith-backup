@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup	2006-04-05 17:57:43.114075833 +1000
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/crontab/backup	2006-04-05 17:57:30.263291085 +1000
+@@ -13,7 +13,7 @@
+ 
+     unless ($status eq 'enabled')
+     {
+-	$OUT .= "# ",gettext("Backup task is disabled");
++	$OUT .= "# " . gettext("Backup task is disabled");
+ 	return;
+     }
+ 

@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup	2006-03-15 11:05:30.124381659 +1100
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup	2006-03-15 11:05:18.742369945 +1100
+@@ -157,7 +157,7 @@
+ 
+     if ($dumpsize =~ /Tb/ or $dumpsize =~ /(\d+)Gb/ and $1 >= 2)
+     {
+-        print $fm->localise("BACKUP_DESKTOP_TOO_BIG"), "\n"
++        print $fm->localise("BACKUP_DESKTOP_TOO_BIG"), "\n";
+     }
+ 
+     print $q->h2($fm->localise("BACKUP_CONFIG_STATUS")),"\n";

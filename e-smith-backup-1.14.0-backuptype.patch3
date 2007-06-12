@@ -1,0 +1,13 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup	2007-06-03 12:32:02.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup	2007-06-03 12:30:34.000000000 -0600
+@@ -409,9 +409,6 @@
+     # Generate a header that will trigger a download and send data as
+     # an octet stream.
+ 
+-    my $backup = $conf->get('backup');
+-    $backup->set_prop('BackupType', 'desktop');
+-
+     my $backups = esmith::BackupHistoryDB->open;
+     my $now = time();
+     my $backup_rec = $backups->new_record($now, {
