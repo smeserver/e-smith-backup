@@ -39,7 +39,7 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
-* Sat Jun 30 2007 Gavin Weight <gweight@gmail.com> 1.14.0-15
+* Sun Jun 30 2007 Shad L. Lords <slords@mail.com> 1.14.0-15
 - force proxy request to 1.0 to improve backup2desktop speed [SME: 178]
 
 * Sun Jun 03 2007 Gavin Weight <gweight@gmail.com> 1.14.0-14
