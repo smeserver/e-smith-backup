@@ -1,0 +1,8 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/97backupProxyEnv mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/97backupProxyEnv
+--- e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/97backupProxyEnv	1969-12-31 17:00:00.000000000 -0700
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/97backupProxyEnv	2007-06-30 09:47:43.000000000 -0600
+@@ -0,0 +1,4 @@
++<Location /server-manager/cgi-bin/backup>
++    SetEnv force-proxy-request-1.0 1
++</Location>
++
