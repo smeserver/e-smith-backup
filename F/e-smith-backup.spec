@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 14
+%define release 15
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -22,6 +22,7 @@ Patch10: e-smith-backup-1.14.0-restorefromdisk.patch
 Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
 Patch12: e-smith-backup-1.14.0-reminderemail.patch
 Patch13: e-smith-backup-1.14.0-backuptype.patch3
+Patch14: e-smith-backup-1.14.0-proxyenv.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -38,6 +39,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Sat Jun 30 2007 Gavin Weight <gweight@gmail.com> 1.14.0-15
+- force proxy request to 1.0 to improve backup2desktop speed [SME: 178]
+
 * Sun Jun 03 2007 Gavin Weight <gweight@gmail.com> 1.14.0-14
 - Backup to desktop changes BackupType fix. [SME 3026]
 
@@ -982,6 +986,7 @@ e-smith server central backup administration panel
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
