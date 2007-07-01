@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 15
+%define release 16
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -23,6 +23,7 @@ Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
 Patch12: e-smith-backup-1.14.0-reminderemail.patch
 Patch13: e-smith-backup-1.14.0-backuptype.patch3
 Patch14: e-smith-backup-1.14.0-proxyenv.patch
+Patch15: e-smith-backup-1.14.0-bklistexist.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -39,7 +40,10 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
-* Sun Jun 30 2007 Shad L. Lords <slords@mail.com> 1.14.0-15
+* Sun Jul 01 2007 Shad L. Lords <slords@mail.com> 1.14.0-16
+- Remove files/dirs that don't exist from the backup list [SME: 3115]
+
+* Sat Jun 30 2007 Shad L. Lords <slords@mail.com> 1.14.0-15
 - force proxy request to 1.0 to improve backup2desktop speed [SME: 178]
 
 * Sun Jun 03 2007 Gavin Weight <gweight@gmail.com> 1.14.0-14
@@ -987,6 +991,7 @@ e-smith server central backup administration panel
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
