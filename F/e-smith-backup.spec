@@ -2,12 +2,13 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 01
+%define release 02
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
+Patch0: e-smith-backup-1.15.0-DarWorkstation.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -22,9 +23,13 @@ Requires: perl(Locale::gettext)
 Requires: perl(Digest::MD5)
 Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
+Requires: dar
 
 %changelog
-* Wed Sep 05 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-17
+* Wed Sep 05 2007 Jean-Paul Leclere <jean-paul@leclere.org> 1.15.0-02
+- Dar workstation backup patch
+
+* Wed Sep 05 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-01
 - Roll new development version.
 
 * Sun Jul 01 2007 Shad L. Lords <slords@mail.com> 1.14.0-16
@@ -963,6 +968,7 @@ e-smith server central backup administration panel
 
 %prep
 %setup
+%patch0 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
@@ -981,6 +987,8 @@ mkdir -p root/var/cache/e-smith/restore
 mkdir -p root/var/cache/e-smith/restore/etc
 mkdir -p root/var/cache/e-smith/restore/etc/samba
 mkdir -p root/etc/e-smith/db/backups
+mkdir -p root/etc/dar
+mkdir -p root/mnt/smb
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -998,9 +1006,6 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 %preun
 %post
-/bin/rm -f /sbin/e-smith/backup
-/bin/rm -f /etc/cron.d/backup
-
 %postun
 
 %files -f %{name}-%{version}-%{release}-filelist
