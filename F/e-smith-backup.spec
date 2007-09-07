@@ -2,13 +2,14 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 02
+%define release 03
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-backup-1.15.0-DarWorkstation.patch
+Patch1: e-smith-backup-1.15.0-reformat.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -26,6 +27,9 @@ Requires: perl(esmith::I18N)
 Requires: dar
 
 %changelog
+* Fri Sep 07 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-03
+- Reformat new DAR code to match existing coding style.
+
 * Wed Sep 05 2007 Jean-Paul Leclere <jean-paul@leclere.org> 1.15.0-02
 - Dar workstation backup patch
 
@@ -969,6 +973,7 @@ e-smith server central backup administration panel
 %prep
 %setup
 %patch0 -p1
+%patch1 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
