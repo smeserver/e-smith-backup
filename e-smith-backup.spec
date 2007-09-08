@@ -1,29 +1,15 @@
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
-%define version 1.14.0
-%define release 16
+%define version 1.15.0
+%define release 03
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-backup-1.14.0-DesktopBackupWarning.patch
-Patch1: e-smith-backup-1.14.0-DesktopBackupWarning.patch2
-Patch2: e-smith-backup-1.14.0-Crontab.patch
-Patch3: e-smith-backup-1.14.0-Crontab.patch2
-Patch4: e-smith-backup-1.14.0-DesktopBackupWarning.patch3
-Patch5: e-smith-backup-1.14.0-eject.patch
-Patch6: e-smith-backup-1.14.0-tapeactions.patch
-Patch7: e-smith-backup-1.14.0-backuptype.patch
-Patch8: e-smith-backup-1.14.0-eject.patch2
-Patch9: e-smith-backup-1.14.0-backuptype.patch2
-Patch10: e-smith-backup-1.14.0-restorefromdisk.patch
-Patch11: e-smith-backup-1.14.0-RestoreMachineAccountGroups.patch
-Patch12: e-smith-backup-1.14.0-reminderemail.patch
-Patch13: e-smith-backup-1.14.0-backuptype.patch3
-Patch14: e-smith-backup-1.14.0-proxyenv.patch
-Patch15: e-smith-backup-1.14.0-bklistexist.patch
+Patch0: e-smith-backup-1.15.0-DarWorkstation.patch
+Patch1: e-smith-backup-1.15.0-reformat.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -38,8 +24,18 @@ Requires: perl(Locale::gettext)
 Requires: perl(Digest::MD5)
 Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
+Requires: dar
 
 %changelog
+* Fri Sep 07 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-03
+- Reformat new DAR code to match existing coding style.
+
+* Wed Sep 05 2007 Jean-Paul Leclere <jean-paul@leclere.org> 1.15.0-02
+- Dar workstation backup patch
+
+* Wed Sep 05 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-01
+- Roll new development version.
+
 * Sun Jul 01 2007 Shad L. Lords <slords@mail.com> 1.14.0-16
 - Remove files/dirs that don't exist from the backup list [SME: 3115]
 
@@ -978,20 +974,6 @@ e-smith server central backup administration panel
 %setup
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
@@ -1010,6 +992,8 @@ mkdir -p root/var/cache/e-smith/restore
 mkdir -p root/var/cache/e-smith/restore/etc
 mkdir -p root/var/cache/e-smith/restore/etc/samba
 mkdir -p root/etc/e-smith/db/backups
+mkdir -p root/etc/dar
+mkdir -p root/mnt/smb
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -1027,9 +1011,6 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 %preun
 %post
-/bin/rm -f /sbin/e-smith/backup
-/bin/rm -f /etc/cron.d/backup
-
 %postun
 
 %files -f %{name}-%{version}-%{release}-filelist
