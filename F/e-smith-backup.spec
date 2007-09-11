@@ -29,7 +29,8 @@ Requires: dar
 
 %changelog
 * Tue Sep 11 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-04
-- Remove desktop verify and desktop restore features. [SME: 3372]
+- Remove desktop verify and desktop restore features. Note that
+  lexicon entries have not been removed. [SME: 3372]
 
 * Fri Sep 07 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-03
 - Reformat new DAR code to match existing coding style.
