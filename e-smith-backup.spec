@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 03
+%define release 04
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -10,6 +10,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-backup-1.15.0-DarWorkstation.patch
 Patch1: e-smith-backup-1.15.0-reformat.patch
+Patch2: e-smith-backup-1.15.0-no_desktop_verify_restore.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -27,6 +28,10 @@ Requires: perl(esmith::I18N)
 Requires: dar
 
 %changelog
+* Tue Sep 11 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-04
+- Remove desktop verify and desktop restore features. Note that
+  lexicon entries have not been removed. [SME: 3372]
+
 * Fri Sep 07 2007 Charlie Brady <charlie_brady@mitel.com> 1.15.0-03
 - Reformat new DAR code to match existing coding style.
 
@@ -974,6 +979,7 @@ e-smith server central backup administration panel
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
