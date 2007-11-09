@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 05
+%define release 06
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -12,6 +12,7 @@ Patch0: e-smith-backup-1.15.0-DarWorkstation.patch
 Patch1: e-smith-backup-1.15.0-reformat.patch
 Patch2: e-smith-backup-1.15.0-no_desktop_verify_restore.patch
 Patch3: e-smith-backup-1.15.0-DarWorkstation.patch2
+Patch4: e-smith-backup-1.15.0-DarWorkstation.patch3
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -29,6 +30,9 @@ Requires: perl(esmith::I18N)
 Requires: dar
 
 %changelog
+* Fri Nov 09 2007 Gavin Weight <gweight@gmail.com> 1.15.0-06
+- Enhancement to DAR code (Thanks JPL) . [SME: 3538]
+
 * Fri Oct 26 2007 Gavin Weight <gweight@gmail.com> 1.15.0-05
 - Fix up DAR code to enable backup to complete. [SME: 3373]
 
@@ -985,6 +989,7 @@ e-smith server central backup administration panel
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
