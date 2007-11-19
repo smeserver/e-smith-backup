@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 06
+%define release 7
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -13,6 +13,7 @@ Patch1: e-smith-backup-1.15.0-reformat.patch
 Patch2: e-smith-backup-1.15.0-no_desktop_verify_restore.patch
 Patch3: e-smith-backup-1.15.0-DarWorkstation.patch2
 Patch4: e-smith-backup-1.15.0-DarWorkstation.patch3
+Patch5: e-smith-backup-1.15.0-FixCompressionSetting.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -30,6 +31,9 @@ Requires: perl(esmith::I18N)
 Requires: dar
 
 %changelog
+* Mon Nov 19 2007 Gavin Weight <gweight@gmail.com> 1.15.0-7
+- Fix compression setting range (Thanks JPL) . [SME: 3560]
+
 * Fri Nov 09 2007 Gavin Weight <gweight@gmail.com> 1.15.0-06
 - Enhancement to DAR code (Thanks JPL) . [SME: 3538]
 
@@ -990,6 +994,7 @@ e-smith server central backup administration panel
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
