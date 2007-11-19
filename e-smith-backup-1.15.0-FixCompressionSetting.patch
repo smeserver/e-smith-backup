@@ -1,0 +1,24 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2007-11-16 03:45:34.000000000 +0100
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2007-11-16 03:44:14.000000000 +0100
+@@ -773,7 +773,7 @@
+   </entry>
+   <entry>
+    <base>ERR_INVALID_COMPRESSION</base>
+-   <trans>Compression level must be set between 0 (no compression) and 7 (maximum compression)</trans>
++   <trans>Compression level must be set between 0 (no compression) and 9 (maximum compression)</trans>
+   </entry>
+   <entry>
+    <base>DOW</base>
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2007-11-16 03:45:34.000000000 +0100
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2007-11-16 03:43:51.000000000 +0100
+@@ -1578,7 +1578,7 @@
+     }
+ 
+     my $compression = $q->param ('compression');
+-    if  (( $compression < 0 ) || ( $compression > 7 ))
++    if  (( $compression < 0 ) || ( $compression > 9 ))
+     {
+         esmith::cgi::genResult(
+     	    $q, $fm->localise('ERR_INVALID_COMPRESSION')
