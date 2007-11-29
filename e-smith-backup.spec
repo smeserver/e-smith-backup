@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 7
+%define release 8
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -14,6 +14,7 @@ Patch2: e-smith-backup-1.15.0-no_desktop_verify_restore.patch
 Patch3: e-smith-backup-1.15.0-DarWorkstation.patch2
 Patch4: e-smith-backup-1.15.0-DarWorkstation.patch3
 Patch5: e-smith-backup-1.15.0-FixCompressionSetting.patch
+Patch6: e-smith-backup-1.15.0-WrongRestoreLocationFix.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -31,6 +32,9 @@ Requires: perl(esmith::I18N)
 Requires: dar
 
 %changelog
+* Thu Nov 29 2007 Gavin Weight <gweight@gmail.com> 1.15.0-8
+- Fix restore files location path. [SME: 3593]
+
 * Mon Nov 19 2007 Gavin Weight <gweight@gmail.com> 1.15.0-7
 - Fix compression setting range (Thanks JPL) . [SME: 3560]
 
@@ -995,6 +999,7 @@ e-smith server central backup administration panel
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
