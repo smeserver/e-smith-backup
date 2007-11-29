@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2007-11-29 23:47:11.000000000 +0000
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2007-11-29 23:46:24.000000000 +0000
+@@ -2324,7 +2324,7 @@
+ 		}
+ 		die('Unsecure data : ' . $file);
+ 	    }
+-	    system ("/usr/bin/dar -x $file --verbose --noconf --no-warn=all");
++	    system ("/usr/bin/dar -x $file -v -N -R / -wa");
+ 	}
+ 
+ 	if ($mounted)
