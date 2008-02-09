@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 8
+%define release 9
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -15,6 +15,7 @@ Patch3: e-smith-backup-1.15.0-DarWorkstation.patch2
 Patch4: e-smith-backup-1.15.0-DarWorkstation.patch3
 Patch5: e-smith-backup-1.15.0-FixCompressionSetting.patch
 Patch6: e-smith-backup-1.15.0-WrongRestoreLocationFix.patch
+Patch7: e-smith-backup-1.15.0-rmLexDuplicates.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -32,6 +33,9 @@ Requires: perl(esmith::I18N)
 Requires: dar
 
 %changelog
+* Sun Feb 10 2008 Stephen Noble <support@dungog.net> 1.15.0-9
+- Remove duplicate <base> entries [SME: 3887]
+
 * Thu Nov 29 2007 Gavin Weight <gweight@gmail.com> 1.15.0-8
 - Fix restore files location path. [SME: 3593]
 
@@ -1000,6 +1004,7 @@ e-smith server central backup administration panel
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
