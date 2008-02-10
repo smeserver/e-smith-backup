@@ -1,0 +1,36 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-02-10 09:52:55.000000000 +1100
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-02-10 09:51:36.000000000 +1100
+@@ -103,10 +103,6 @@
+    <trans>Refresh this display</trans>
+   </entry>
+   <entry>
+-   <base>CONFIGURE_TAPE_BACKUP</base>
+-   <trans>Configure tape backup</trans>
+-  </entry>
+-  <entry>
+    <base>RESTORE_COMPLETED</base>
+    <trans>A system restore has completed</trans>
+   </entry>
+@@ -188,10 +184,6 @@
+    <trans>Restore</trans>
+   </entry>
+   <entry>
+-   <base>VERIFY_DESKTOP_BACKUP_FILE</base>
+-   <trans>Verify desktop backup file</trans>
+-  </entry>
+-  <entry>
+    <base>VERIFY_BACKUP_DESC</base>
+    <trans>
+     <![CDATA[
+@@ -269,10 +261,6 @@
+    <trans>Could not decode backup file: </trans>
+   </entry>
+   <entry>
+-   <base>VERIFY_DESKTOP_BACKUP_FILE</base>
+-   <trans>Verify desktop backup file</trans>
+-  </entry>
+-  <entry>
+    <base>FILES_IN_BACKUP</base>
+    <trans>The following files are contained in the backup file:</trans>
+   </entry>
