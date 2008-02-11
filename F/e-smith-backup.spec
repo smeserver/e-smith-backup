@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 16
+%define release 17
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -24,6 +24,7 @@ Patch12: e-smith-backup-1.14.0-reminderemail.patch
 Patch13: e-smith-backup-1.14.0-backuptype.patch3
 Patch14: e-smith-backup-1.14.0-proxyenv.patch
 Patch15: e-smith-backup-1.14.0-bklistexist.patch
+Patch16: e-smith-backup-1.14.0-rmLexDuplicates.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -40,6 +41,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Mon Feb 11 2008 Gavin Weight <gweight@gmail.com> 1.14.0-17
+- Backport remove duplicates <base> entries. [SME: 3887]
+
 * Sun Jul 01 2007 Shad L. Lords <slords@mail.com> 1.14.0-16
 - Remove files/dirs that don't exist from the backup list [SME: 3115]
 
@@ -992,6 +996,7 @@ e-smith server central backup administration panel
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
