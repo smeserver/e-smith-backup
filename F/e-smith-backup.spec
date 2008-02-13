@@ -36,7 +36,7 @@ Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
 * Wed Feb 13 2008 Stephen Noble <support@dungog.net> 1.15.0-10
-- Remove <base> tags now in general [SME: 3913]
+- Remove <base> tags now in general [SME: 3912]
 
 * Sun Feb 10 2008 Stephen Noble <support@dungog.net> 1.15.0-9
 - Remove duplicate <base> entries [SME: 3887]
