@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 9
+%define release 10
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -16,6 +16,7 @@ Patch4: e-smith-backup-1.15.0-DarWorkstation.patch3
 Patch5: e-smith-backup-1.15.0-FixCompressionSetting.patch
 Patch6: e-smith-backup-1.15.0-WrongRestoreLocationFix.patch
 Patch7: e-smith-backup-1.15.0-rmLexDuplicates.patch
+Patch8: e-smith-backup-1.15.0-tags2general.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -31,8 +32,12 @@ Requires: perl(Digest::MD5)
 Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 Requires: dar
+Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
+* Wed Feb 13 2008 Stephen Noble <support@dungog.net> 1.15.0-10
+- Remove <base> tags now in general [SME: 3913]
+
 * Sun Feb 10 2008 Stephen Noble <support@dungog.net> 1.15.0-9
 - Remove duplicate <base> entries [SME: 3887]
 
@@ -1005,6 +1010,7 @@ e-smith server central backup administration panel
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
