@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 17
+%define release 18
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -25,11 +25,13 @@ Patch13: e-smith-backup-1.14.0-backuptype.patch3
 Patch14: e-smith-backup-1.14.0-proxyenv.patch
 Patch15: e-smith-backup-1.14.0-bklistexist.patch
 Patch16: e-smith-backup-1.14.0-rmLexDuplicates.patch
+Patch17: e-smith-backup-1.14.0-tags2general.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
 BuildArchitectures: noarch
 Requires: e-smith-base
+Requires: e-smith-formmagick >= 1.4.0-9
 Requires: e-smith-lib >= 1.15.1-19
 Requires: perl(Quota)
 Requires: perl(Unix::PasswdFile)
@@ -41,6 +43,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Thu Feb 14 2008 Gavin Weight <gweight@gmail.com> 1.14.0-18
+- Backport remove <base> tags now in general. [SME: 3912]
+
 * Mon Feb 11 2008 Gavin Weight <gweight@gmail.com> 1.14.0-17
 - Backport remove duplicates <base> entries. [SME: 3887]
 
@@ -997,6 +1002,7 @@ e-smith server central backup administration panel
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
