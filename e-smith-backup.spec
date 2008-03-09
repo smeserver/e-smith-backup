@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 11
+%define release 12
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -18,6 +18,8 @@ Patch6: e-smith-backup-1.15.0-WrongRestoreLocationFix.patch
 Patch7: e-smith-backup-1.15.0-rmLexDuplicates.patch
 Patch8: e-smith-backup-1.15.0-tags2general.patch
 Patch9: e-smith-backup-1.15.0-DarDesc.patch
+Patch10: e-smith-backup-1.15.0-brFix.patch
+
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -36,6 +38,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
+* Sat Mar 07 2008 Stephen Noble <support@dungog.net> 1.15.0-12
+- Remove <br> tag from error msg  [SME: 3989]
+
 * Sat Mar 07 2008 Stephen Noble <support@dungog.net> 1.15.0-11
 - Move/copy Backup_Desc to Backup_Desc_Dar for 1.15 rel [SME: 4024]
 
@@ -1016,6 +1021,7 @@ e-smith server central backup administration panel
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
