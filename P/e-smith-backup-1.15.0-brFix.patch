@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-03-09 12:28:40.000000000 +1100
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-03-09 12:26:58.000000000 +1100
+@@ -1004,7 +1004,7 @@
+ 	unless(system("/sbin/e-smith/signal-event", "post-upgrade") == 0)
+ 	{
+ 		$rec->set_prop('errmsg', $rec->prop('errmsg').
+-			'<br>ERR_UPDATING_CONF_AFTER_TAPE_RESTORE');
++			'ERR_UPDATING_CONF_AFTER_TAPE_RESTORE');
+ 		$rec->delete_prop('state');
+ 	    die ($fm->localise('ERR_UPDATING_CONF_AFTER_TAPE_RESTORE'));
+ 	}
