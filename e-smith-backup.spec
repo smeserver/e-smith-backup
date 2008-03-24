@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 19
+%define release 20
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -26,7 +26,7 @@ Patch14: e-smith-backup-1.14.0-proxyenv.patch
 Patch15: e-smith-backup-1.14.0-bklistexist.patch
 Patch16: e-smith-backup-1.14.0-rmLexDuplicates.patch
 Patch17: e-smith-backup-1.14.0-tags2general.patch
-Patch18: e-smith-backup-1.15.0-brFix.patch
+Patch18: e-smith-backup-1.14.0-brFix.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -44,6 +44,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-20
+- Fix patches to get rid of .orig files
+
 * Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-19
 - Backport remove <br> from error msg. [SME: 3989]
 

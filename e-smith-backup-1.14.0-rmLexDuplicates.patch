@@ -1,7 +1,7 @@
-diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
---- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-02-10 09:52:55.000000000 +1100
-+++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-02-10 09:51:36.000000000 +1100
-@@ -103,10 +103,6 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-03-24 15:59:04.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-03-24 15:58:42.000000000 -0600
+@@ -92,10 +92,6 @@
     <trans>Refresh this display</trans>
    </entry>
    <entry>
@@ -12,7 +12,7 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/e
     <base>RESTORE_COMPLETED</base>
     <trans>A system restore has completed</trans>
    </entry>
-@@ -188,10 +184,6 @@
+@@ -177,10 +173,6 @@
     <trans>Restore</trans>
    </entry>
    <entry>
@@ -23,7 +23,7 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/e
     <base>VERIFY_BACKUP_DESC</base>
     <trans>
      <![CDATA[
-@@ -269,10 +261,6 @@
+@@ -258,10 +250,6 @@
     <trans>Could not decode backup file: </trans>
    </entry>
    <entry>
