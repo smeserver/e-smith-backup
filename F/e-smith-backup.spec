@@ -49,7 +49,7 @@ Requires: perl(esmith::I18N)
 - Fix localization in restore routine [SME: 3989]
 
 * Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-20
-- Fix patches to get rid of .orig files
+- Fix patches to get rid of .orig files [SME: 4100]
 
 * Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-19
 - Backport remove <br> from error msg. [SME: 3989]
