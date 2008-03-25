@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 20
+%define release 21
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -27,6 +27,7 @@ Patch15: e-smith-backup-1.14.0-bklistexist.patch
 Patch16: e-smith-backup-1.14.0-rmLexDuplicates.patch
 Patch17: e-smith-backup-1.14.0-tags2general.patch
 Patch18: e-smith-backup-1.14.0-brFix.patch
+Patch19: e-smith-backup-1.14.0-fixerrmsg.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -44,6 +45,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Tue Mar 25 2008 Shad L. Lords <slords@mail.com> 1.14.0-21
+- Fix localization in restore routine [SME: 3989]
+
 * Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-20
 - Fix patches to get rid of .orig files
 
@@ -1011,6 +1015,7 @@ e-smith server central backup administration panel
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
