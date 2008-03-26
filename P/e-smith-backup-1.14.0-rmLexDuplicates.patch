@@ -34,3 +34,15 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/locale/e
     <base>FILES_IN_BACKUP</base>
     <trans>The following files are contained in the backup file:</trans>
    </entry>
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup	2008-03-26 13:42:56.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/web/functions/backup	2008-03-26 13:42:52.000000000 -0600
+@@ -533,7 +533,7 @@
+     my (undef, undef, $tmpfree, $halffree) = &CalculateSizes();
+ 
+     esmith::cgi::genHeaderNonCacheable ($q, undef,
+-	$fm->localise('VERIFY_DESKTOP_BACKUP_FILE'));
++	$fm->localise('DESKTOP_VERIFY'));
+ 
+     print $q->p ($fm->localise('VERIFY_BACKUP_DESC'));
+ 
