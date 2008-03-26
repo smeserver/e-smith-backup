@@ -46,3 +46,12 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/web/func
  
      print $q->p ($fm->localise('VERIFY_BACKUP_DESC'));
  
+@@ -733,7 +733,7 @@
+     if (open(RD, "-|"))
+     {
+ 	esmith::cgi::genHeaderNonCacheable ($q,
+-	    undef, $fm->localise("VERIFY_DESKTOP_BACKUP_FILE"));
++	    undef, $fm->localise("DESKTOP_VERIFY"));
+ 
+ 	print $q->p($fm->localise('FILES_IN_BACKUP'));
+ 
