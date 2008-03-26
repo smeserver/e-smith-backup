@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 21
+%define release 22
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -45,11 +45,14 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Tue Mar 25 2008 Shad L. Lords <slords@mail.com> 1.14.0-22
+- Use correct patch for remove duplicates [SME: 3887]
+
 * Tue Mar 25 2008 Shad L. Lords <slords@mail.com> 1.14.0-21
 - Fix localization in restore routine [SME: 3989]
 
 * Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-20
-- Fix patches to get rid of .orig files
+- Fix patches to get rid of .orig files [SME: 4100]
 
 * Mon Mar 24 2008 Shad L. Lords <slords@mail.com> 1.14.0-19
 - Backport remove <br> from error msg. [SME: 3989]
