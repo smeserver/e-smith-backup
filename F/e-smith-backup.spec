@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 13
+%define release 14
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -20,6 +20,7 @@ Patch8: e-smith-backup-1.15.0-tags2general.patch
 Patch9: e-smith-backup-1.15.0-DarDesc.patch
 Patch10: e-smith-backup-1.15.0-brFix.patch
 Patch11: e-smith-backup-1.15.0-fixerrmsg.patch
+Patch12: e-smith-backup-1.15.0-hours.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -38,6 +39,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
+* Sat Mar 07 2008 Stephen Noble <support@dungog.net> 1.15.0-14
+- Minor fix in translation of hours [SME: 4179]
+
 * Tue Mar 25 2008 Shad L. Lords <slords@mail.com> 1.15.0-13
 - Fix localization in restore routine [SME: 3989]
 
@@ -1026,6 +1030,7 @@ e-smith server central backup administration panel
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
