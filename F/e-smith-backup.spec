@@ -39,7 +39,7 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
-* Sat Mar 07 2008 Stephen Noble <support@dungog.net> 1.15.0-14
+* Wed Apr 09 2008 Stephen Noble <support@dungog.net> 1.15.0-14
 - Minor fix in translation of hours [SME: 4179]
 
 * Tue Mar 25 2008 Shad L. Lords <slords@mail.com> 1.15.0-13
