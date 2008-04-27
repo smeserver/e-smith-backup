@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 14
+%define release 15
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -21,6 +21,7 @@ Patch9: e-smith-backup-1.15.0-DarDesc.patch
 Patch10: e-smith-backup-1.15.0-brFix.patch
 Patch11: e-smith-backup-1.15.0-fixerrmsg.patch
 Patch12: e-smith-backup-1.15.0-hours.patch
+Patch13: e-smith-backup-1.15.0-add2general.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -39,6 +40,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
+* Sun Apr 27 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-15
+- Add common <base> tags to e-smith-formmagick's general
+
 * Wed Apr 09 2008 Stephen Noble <support@dungog.net> 1.15.0-14
 - Minor fix in translation of hours [SME: 4179]
 
@@ -1031,6 +1035,7 @@ e-smith server central backup administration panel
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
