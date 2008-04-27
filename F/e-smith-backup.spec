@@ -41,7 +41,7 @@ Requires: e-smith-formmagick >= 1.4.0-9
 
 %changelog
 * Sun Apr 27 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-15
-- Add common <base> tags to e-smith-formmagick's general
+- Add common <base> tags to e-smith-formmagick's general [SME: 4286]
 
 * Wed Apr 09 2008 Stephen Noble <support@dungog.net> 1.15.0-14
 - Minor fix in translation of hours [SME: 4179]
