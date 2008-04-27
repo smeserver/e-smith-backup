@@ -1,0 +1,48 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-04-27 10:28:40.000000000 +0200
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-04-27 10:26:13.000000000 +0200
+@@ -154,10 +154,6 @@
+    <trans>Select an action</trans>
+   </entry>
+   <entry>
+-   <base>PERFORM</base>
+-   <trans>Perform</trans>
+-  </entry>
+-  <entry>
+    <base>X_BACKUP_OR_RESTORE</base>
+    <trans>X Backup or restore server data</trans>
+   </entry>
+@@ -204,10 +200,6 @@
+    <trans>Backup file to restore from</trans>
+   </entry>
+   <entry>
+-   <base>RESTORE</base>
+-   <trans>Restore</trans>
+-  </entry>
+-  <entry>
+    <base>VERIFY_BACKUP_DESC</base>
+    <trans>
+     <![CDATA[
+@@ -615,10 +607,6 @@
+    </trans>
+   </entry>
+   <entry>
+-   <base>WORKSTN_PASSWORD</base>
+-   <trans>Password</trans>
+-  </entry>
+-  <entry>
+    <base>WORKSTATION_BACKUP_DEST</base>
+    <trans>Backup workstation settings</trans>
+   </entry>
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-04-27 10:28:40.000000000 +0200
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-04-27 10:27:46.000000000 +0200
+@@ -1326,7 +1326,7 @@
+ 	print $q->Tr(
+ 		    esmith::cgi::genCell(
+ 			    $q,
+-			    $fm->localise('WORKSTN_PASSWORD')
++			    $fm->localise('PASSWORD')
+ 			),
+ 
+ 	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkPassword',
