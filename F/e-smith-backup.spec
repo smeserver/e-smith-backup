@@ -37,7 +37,7 @@ Requires: perl(Digest::MD5)
 Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 Requires: dar
-Requires: e-smith-formmagick >= 1.4.0-9
+Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
 * Sun Apr 27 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-15
