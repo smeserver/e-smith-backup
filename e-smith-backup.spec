@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 22
+%define release 23
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
