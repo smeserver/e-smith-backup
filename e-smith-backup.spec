@@ -28,12 +28,13 @@ Patch16: e-smith-backup-1.14.0-rmLexDuplicates.patch
 Patch17: e-smith-backup-1.14.0-tags2general.patch
 Patch18: e-smith-backup-1.14.0-brFix.patch
 Patch19: e-smith-backup-1.14.0-fixerrmsg.patch
+Patch20: e-smith-backup-1.14.0-add2general.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
 BuildArchitectures: noarch
 Requires: e-smith-base
-Requires: e-smith-formmagick >= 1.4.0-9
+Requires: e-smith-formmagick >= 1.4.0-12
 Requires: e-smith-lib >= 1.15.1-19
 Requires: perl(Quota)
 Requires: perl(Unix::PasswdFile)
@@ -45,6 +46,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Mon Apr 28 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.14.0-23
+- Add common <base> tags to e-smith-formmagick's general [SME: 4286]
+
 * Tue Mar 25 2008 Shad L. Lords <slords@mail.com> 1.14.0-22
 - Use correct patch for remove duplicates [SME: 3887]
 
@@ -1019,6 +1023,7 @@ e-smith server central backup administration panel
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
