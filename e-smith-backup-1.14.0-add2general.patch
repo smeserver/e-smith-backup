@@ -1,0 +1,25 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-04-28 13:22:32.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-04-28 13:22:09.000000000 -0600
+@@ -115,10 +115,6 @@
+    <trans>Select an action</trans>
+   </entry>
+   <entry>
+-   <base>PERFORM</base>
+-   <trans>Perform</trans>
+-  </entry>
+-  <entry>
+    <base>X_BACKUP_OR_RESTORE</base>
+    <trans>X Backup or restore server data</trans>
+   </entry>
+@@ -165,10 +161,6 @@
+    <trans>Backup file to restore from</trans>
+   </entry>
+   <entry>
+-   <base>RESTORE</base>
+-   <trans>Restore</trans>
+-  </entry>
+-  <entry>
+    <base>VERIFY_BACKUP_DESC</base>
+    <trans>
+     <![CDATA[
