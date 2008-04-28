@@ -34,7 +34,7 @@ BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
 BuildArchitectures: noarch
 Requires: e-smith-base
-Requires: e-smith-formmagick >= 1.4.0-9
+Requires: e-smith-formmagick >= 1.4.0-12
 Requires: e-smith-lib >= 1.15.1-19
 Requires: perl(Quota)
 Requires: perl(Unix::PasswdFile)
