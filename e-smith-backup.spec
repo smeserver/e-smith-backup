@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 15
+%define release 16
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -22,6 +22,7 @@ Patch10: e-smith-backup-1.15.0-brFix.patch
 Patch11: e-smith-backup-1.15.0-fixerrmsg.patch
 Patch12: e-smith-backup-1.15.0-hours.patch
 Patch13: e-smith-backup-1.15.0-add2general.patch
+Patch14: e-smith-backup-1.15.0-FixDarExpandTemplate.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -40,6 +41,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon May 26 2008 Gavin Weight <gweight@gmail.com> 1.15.0-16
+- Fix Dar to expand correctly. [SME: 4304]
+
 * Sun Apr 27 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-15
 - Add common <base> tags to e-smith-formmagick's general [SME: 4286]
 
@@ -1036,6 +1040,8 @@ e-smith server central backup administration panel
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
+
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

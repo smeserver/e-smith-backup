@@ -1,0 +1,280 @@
+--- e-smith-backup-1.15.0/createlinks.DarWorkstation4	2007-09-05 21:45:52.000000000 +0200
++++ e-smith-backup-1.15.0/createlinks	2008-05-24 16:11:01.000000000 +0200
+@@ -34,6 +34,14 @@
+ templates2events("/etc/crontab", $event);
+ 
+ #--------------------------------------------------
++# events for pre-backup action
++#--------------------------------------------------
++
++$event = "pre-backup";
++
++templates2events("/etc/dar/DailyBackup.dcf", $event);
++
++#--------------------------------------------------
+ # events for rewind-tape action
+ #--------------------------------------------------
+ foreach $event (qw(restore-tape pre-backup post-backup))
+--- e-smith-backup-1.15.0/root/etc/e-smith/events/actions/workstation-backup-dar.DarWorkstation4	2008-05-24 16:22:39.000000000 +0200
++++ e-smith-backup-1.15.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-05-24 15:18:28.000000000 +0200
+@@ -114,22 +114,22 @@
+ 
+ if ($VFSType eq 'cifs')
+ {
+-    $err = qx(/bin/mount -t cifs $smbhost:$smbshare $mntdir -o user=$login,pass=$password 2>&1);
++    $err = qx(/bin/mount -t cifs "$smbhost:$smbshare" $mntdir -o user=$login,pass=$password 2>&1);
+     ldie("Error while mounting $smbhost:$smbshare : \n" . $err) if $err; 
+ }
+ elsif ($VFSType eq 'smbfs')
+ {
+-    $err = qx(/bin/mount -t smbfs //$smbhost/$smbshare $mntdir -o username=$login,password=$password,dmask=777,fmask=777,ip=$smbhost 2>&1);
++    $err = qx(/bin/mount -t smbfs "//$smbhost/$smbshare" $mntdir -o username=$login,password=$password,dmask=777,fmask=777,ip=$smbhost 2>&1);
+     ldie("Error while mounting //$smbhost/$smbshare : \n" . $err) if $err; 
+ }
+ elsif ($VFSType eq 'nfs')
+ {
+-    $err = qx(/bin/mount -t nfs -o nolock $smbhost:/$smbshare $mntdir 2>&1);
++    $err = qx(/bin/mount -t nfs -o nolock "$smbhost:/$smbshare" $mntdir 2>&1);
+     ldie("Error while mounting $smbhost:/$smbshare : \n" . $err) if $err; 
+ }
+ elsif ($VFSType eq 'usb')
+ {
+-    $err = qx(/bin/mount /$smbshare 2>&1);
++    $err = qx(/bin/mount "/$smbshare" 2>&1);
+     if ($err) {ldie("Error while mounting /$smbshare : \n" . $err)};
+     $mntdir = "/$smbshare";
+ }
+@@ -301,7 +301,7 @@
+ }
+ 
+ # unmount shared folder
+-system("/bin/umount -f $mntdir");
++system("/bin/umount", "-f", "$mntdir");
+ 
+ # time now to update backup configuration
+ 
+@@ -334,6 +334,6 @@
+ 	print MAIL $report;
+ 	close(MAIL);
+     }
+-    system("/bin/umount $mntdir") if $mntdone;
++    system("/bin/umount", "$mntdir") if $mntdone;
+     die($errmsg);
+ }
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup.DarWorkstation4	2008-05-24 16:22:39.000000000 +0200
++++ e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-05-25 10:35:13.000000000 +0200
+@@ -1772,7 +1772,7 @@
+     unless ( -d $mntbkdir) 
+ 	{ 
+ 	if ($mounted) {
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	    }	
+         esmith::cgi::genResult(
+@@ -1796,7 +1796,7 @@
+ 	}
+ 
+     if ($mounted) {
+-	system("/bin/umount $mntdir") == 0
++	system("/bin/umount", "$mntdir") == 0
+     	    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+ 
+@@ -1888,7 +1888,7 @@
+     { 
+ 	if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+         esmith::cgi::genResult($q, $fm->localise('ERR_NO_HOST_DIR'.$id));
+@@ -1904,7 +1904,7 @@
+     {
+ 	if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+ 	die('Unsecure data : ' . $backupkey);
+@@ -1943,11 +1943,11 @@
+ 	select(STDOUT);
+ 	$| = 1;
+ 
+-	system ("/usr/bin/dar --list $backupkey --noconf") == 0
++	system ("/usr/bin/dar", "--list", "$backupkey", "--noconf") == 0
+ 	    or die ($fm->localise('ERR_EXTRACT')." : ".$!);
+ 
+ 	if ($mounted) {
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	    }
+ 	exit(0);
+@@ -2024,7 +2024,7 @@
+     { 
+ 	if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+         esmith::cgi::genResult($q, $fm->localise('ERR_NO_HOST_DIR'.$id));
+@@ -2048,7 +2048,7 @@
+ 
+     if ($mounted)
+     {
+-	system("/bin/umount $mntdir") == 0
++	system("/bin/umount", "$mntdir") == 0
+     	    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+     }
+ 
+@@ -2178,7 +2178,7 @@
+     { 
+ 	if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+         esmith::cgi::genResult(
+@@ -2320,17 +2320,17 @@
+ 	    {
+ 		if ($mounted)
+ 		{
+-		    system("/bin/umount $mntdir") == 0
++		    system("/bin/umount", "$mntdir") == 0
+ 			or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 		}
+ 		die('Unsecure data : ' . $file);
+ 	    }
+-	    system ("/usr/bin/dar -x $file -v -N -R / -wa");
++	    system ("/usr/bin/dar", "-x", "$file", "-v", "-N", "-R", "/", "-wa");
+ 	}
+ 
+ 	if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+ 
+@@ -2412,7 +2412,7 @@
+     { 
+ 	if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+         esmith::cgi::genResult(
+@@ -2424,7 +2424,7 @@
+     my $catalog = "$mntbkdir/dar-catalog";
+     unless ( -e $catalog) 
+     { 
+-	system("/usr/bin/dar_manager -C $catalog") == 0
++	system("/usr/bin/dar_manager", "-C", "$catalog") == 0
+ 	    or die($fm->localise('ERR_DAR_CATALOG'),"\n");
+     }
+ 
+@@ -2460,7 +2460,7 @@
+ 	    {
+ 		$del = $1;
+ 	    }
+-	    system("/usr/bin/dar_manager -B $catalog -D $del 1>&2") == 0
++	    system("/usr/bin/dar_manager", "-B", "$catalog", "-D", "$del", "1>&2") == 0
+ 		or die($fm->localise('ERR_DAR_CATALOG'),"\n");
+ 	}
+ 	$j--;
+@@ -2484,7 +2484,7 @@
+ 	    {
+ 		$add = $1;
+ 	    }
+-	    system("/usr/bin/dar_manager -B $catalog -A $add") == 0
++	    system("/usr/bin/dar_manager", "-B", "$catalog", "-A", "$add") == 0
+ 		or die($fm->localise('ERR_DAR_CATALOG'),"\n"); 
+ 	} unless $exists;
+     }
+@@ -2568,7 +2568,7 @@
+ 
+     if ($mounted)
+     {
+-	system("/bin/umount $mntdir") == 0
++	system("/bin/umount", "$mntdir") == 0
+     	    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+     }
+ }
+@@ -2640,7 +2640,7 @@
+     { 
+         if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+         esmith::cgi::genResult(
+@@ -2672,12 +2672,12 @@
+ 	select(STDOUT);
+ 	$| = 1;
+ 
+-        system ("/usr/bin/dar_manager -B $mntbkdir/dar-catalog -u $backupkey") == 0
++        system ("/usr/bin/dar_manager", "-B", "$mntbkdir/dar-catalog", "-u", "$backupkey") == 0
+ 		or die ($fm->localise('ERR_EXTRACT')." : ".$!);
+ 
+         if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+ 	exit(0);
+@@ -2808,7 +2808,7 @@
+     { 
+         if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+         esmith::cgi::genResult(
+@@ -2875,7 +2875,7 @@
+ 	    
+         if ($mounted)
+ 	{
+-	    system("/bin/umount $mntdir") == 0
++	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
+ 
+@@ -3054,15 +3054,15 @@
+     
+     if ($VFSType eq 'cifs')
+     {
+-	return ( qx(/bin/mount -t cifs $host:$share $mountdir -o user=$login,pass=$password) );
++	return ( qx(/bin/mount -t cifs "$host:$share" $mountdir -o user=$login,pass=$password) );
+     }
+     elsif ($VFSType eq 'smbfs')
+     {
+-	return ( qx(/bin/mount -t smbfs //$host/$share $mountdir -o username=$login,password=$password,dmask=777,fmask=777,ip=$host 2>&1) );
++	return ( qx(/bin/mount -t smbfs "//$host/$share" $mountdir -o username=$login,password=$password,dmask=777,fmask=777,ip=$host 2>&1) );
+     }
+     elsif ($VFSType eq 'nfs')
+     {
+-	return ( qx(/bin/mount -t nfs -o nolock $host:/$share $mountdir 2>&1) );
++	return ( qx(/bin/mount -t nfs -o nolock "$host:/$share" $mountdir 2>&1) );
+     }
+     elsif ($VFSType eq 'usb')
+     {
+--- e-smith-backup-1.15.0/root/sbin/e-smith/do_backupwk.DarWorkstation4	2008-05-24 16:22:39.000000000 +0200
++++ e-smith-backup-1.15.0/root/sbin/e-smith/do_backupwk	2008-05-24 15:55:31.000000000 +0200
+@@ -47,7 +47,7 @@
+     exit bad_exit($backup_rec, "pre-backup", $status);
+ }
+ 
+-if ($status = system("/etc/e-smith/events/actions/workstation-backup-$program DailyBackup"))
++if ($status = system("/etc/e-smith/events/actions/workstation-backup-$program", "DailyBackup"))
+ {
+     exit bad_exit($backup_rec, "backup", $status);
+ }
