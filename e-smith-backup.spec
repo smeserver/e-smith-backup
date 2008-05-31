@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 16
+%define release 17
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -23,6 +23,7 @@ Patch11: e-smith-backup-1.15.0-fixerrmsg.patch
 Patch12: e-smith-backup-1.15.0-hours.patch
 Patch13: e-smith-backup-1.15.0-add2general.patch
 Patch14: e-smith-backup-1.15.0-FixDarExpandTemplate.patch
+Patch15: e-smith-backup-1.15.0-FixDarManagerRedirect.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -41,6 +42,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat May 31 2008 Gavin Weight <gweight@gmail.com> 1.15.0-17
+- Fix Dar manager to redirect correctly in system call. [SME: 4304]
+
 * Mon May 26 2008 Gavin Weight <gweight@gmail.com> 1.15.0-16
 - Fix Dar to expand correctly. [SME: 4304]
 
@@ -1041,7 +1045,7 @@ e-smith server central backup administration panel
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
-
+%patch15 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

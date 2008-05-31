@@ -1,0 +1,11 @@
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup.FixDarManagerRedirect	2008-05-27 07:25:35.000000000 +0200
++++ e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-05-28 20:21:08.000000000 +0200
+@@ -2460,7 +2460,7 @@
+ 	    {
+ 		$del = $1;
+ 	    }
+-	    system("/usr/bin/dar_manager", "-B", "$catalog", "-D", "$del", "1>&2") == 0
++	    system("/usr/bin/dar_manager", "-B", "$catalog", "-D", "$del") == 0
+ 		or die($fm->localise('ERR_DAR_CATALOG'),"\n");
+ 	}
+ 	$j--;
