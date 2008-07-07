@@ -46,3 +46,27 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/func
  			),
  
  	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkPassword',
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup.add2general2	2008-07-07 19:31:53.000000000 +0200
++++ e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-07-07 19:34:51.000000000 +0200
+@@ -2263,7 +2263,7 @@
+ 		system("/usr/sbin/usermod", "-g", "$www_gid", "www") == 0
+ 		    or warn ($fm->localise('ERR_RESTORING_INITIAL_GRP')."\n");
+ 		system("/sbin/e-smith/signal-event", "post-upgrade") == 0
+-		    or die ($fm->localise('ERR_UPDATING_SYSCONF')."\n");
++		    or die ($fm->localise('ERROR_UPDATING_CONFIGURATION')."\n");
+ 	    }
+ 	    else
+ 	    {
+--- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.add2general2	2008-07-07 19:31:53.000000000 +0200
++++ e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-07-07 19:33:20.000000000 +0200
+@@ -261,10 +261,6 @@
+    <trans>Error occured while restoring initial group of 'www'.</trans>
+   </entry>
+   <entry>
+-   <base>ERR_UPDATING_SYSCONF</base>
+-   <trans>Error occurred while updating system configuration.</trans>
+-  </entry>
+-  <entry>
+    <base>RESTORE_FAILED</base>
+    <trans>Restore failed! The backup file was incomplete.</trans>
+   </entry>
