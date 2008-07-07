@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 17
+%define release 18
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -42,6 +42,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sun Jul 7 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-18
+- Add common <base> tags to e-smith-formmagick's general [SME: 4286]
+
 * Sat May 31 2008 Gavin Weight <gweight@gmail.com> 1.15.0-17
 - Fix Dar manager to redirect correctly in system call. [SME: 4304]
 
