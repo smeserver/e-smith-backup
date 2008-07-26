@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 19
+%define release 20
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -25,6 +25,7 @@ Patch13: e-smith-backup-1.15.0-add2general.patch
 Patch14: e-smith-backup-1.15.0-FixDarExpandTemplate.patch
 Patch15: e-smith-backup-1.15.0-FixDarManagerRedirect.patch
 Patch16: e-smith-backup-1.15.0-stderr.patch
+Patch17: e-smith-backup-1.15.0-fullPriority.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -43,6 +44,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat Jul 26 2008 Shad L. Lords <slords@mail.com> 1.15.0-20
+- Make full backups have priority over incremental [SME: 4395]
+
 * Sat Jul 26 2008 Shad L. Lords <slords@mail.com> 1.15.0-19
 - Fix redirect to stderr on check tape cronjob [SME: 4458]
 
@@ -1054,6 +1058,7 @@ e-smith server central backup administration panel
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
