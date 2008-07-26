@@ -1,0 +1,13 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/events/actions/workstation-backup-dar mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-1.15.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-07-26 09:57:05.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-07-26 09:56:48.000000000 -0600
+@@ -171,7 +171,8 @@
+ # rotating backup indicators
+ 
+ ++$incnum;
+-$incnum %= $daysinset;
++$incnum = 0 if ($dow == $fullday && $incnum > $daysinset-7) || 
++               ($fullday == 7 && $incnum >= $daysinset);
+ if ($incnum == 0)
+ {
+     ++$setnum;
