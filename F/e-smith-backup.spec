@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 18
+%define release 19
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -24,6 +24,7 @@ Patch12: e-smith-backup-1.15.0-hours.patch
 Patch13: e-smith-backup-1.15.0-add2general.patch
 Patch14: e-smith-backup-1.15.0-FixDarExpandTemplate.patch
 Patch15: e-smith-backup-1.15.0-FixDarManagerRedirect.patch
+Patch16: e-smith-backup-1.15.0-stderr.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -42,6 +43,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat Jul 26 2008 Shad L. Lords <slords@mail.com> 1.15.0-19
+- Fix redirect to stderr on check tape cronjob [SME: 4458]
+
 * Sun Jul 7 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-18
 - Add common <base> tags to e-smith-formmagick's general [SME: 4286]
 
@@ -1049,6 +1053,7 @@ e-smith server central backup administration panel
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
