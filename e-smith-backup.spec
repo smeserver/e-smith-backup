@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 24
+%define release 25
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -47,6 +47,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Mon Jul 28 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.14.0-25
+- Backport patch to add common <base> tags to e-smith-formmagick's general [SME: 4286] 
+
 * Sat Jul 26 2008 Shad L. Lords <slords@mail.com> 1.14.0-24
 - Fix redirect to stderr on check tape cronjob [SME: 4458]
 
