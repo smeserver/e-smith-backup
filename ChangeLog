@@ -166,3 +166,8 @@ Sat Jul 26 08:52:08 2008                        Shad L. Lords (slords)
 
 See changelog
 ----------------------------------------------------------------------
+Mon Jul 28 23:02:13 2008                                    smebuilder
+
+* Mon Jul 28 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.14.0-25
+- Backport patch to add common <base> tags to e-smith-formmagick's general [SME: 4286]
+----------------------------------------------------------------------
