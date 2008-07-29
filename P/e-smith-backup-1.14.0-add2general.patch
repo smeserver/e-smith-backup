@@ -23,29 +23,6 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/e
     <base>VERIFY_BACKUP_DESC</base>
     <trans>
      <![CDATA[
-@@ -615,10 +607,6 @@
-    </trans>
-   </entry>
-   <entry>
--   <base>WORKSTN_PASSWORD</base>
--   <trans>Password</trans>
--  </entry>
--  <entry>
-    <base>WORKSTATION_BACKUP_DEST</base>
-    <trans>Backup workstation settings</trans>
-   </entry>
-diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup
---- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-04-27 10:28:40.000000000 +0200
-+++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-04-27 10:27:46.000000000 +0200
-@@ -1326,7 +1326,7 @@
- 	print $q->Tr(
- 		    esmith::cgi::genCell(
- 			    $q,
--			    $fm->localise('WORKSTN_PASSWORD')
-+			    $fm->localise('PASSWORD')
- 			),
- 
- 	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkPassword',
 --- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup.add2general2	2008-07-07 19:31:53.000000000 +0200
 +++ e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-07-07 19:34:51.000000000 +0200
 @@ -2263,7 +2263,7 @@
