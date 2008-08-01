@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.14.0
-%define release 25
+%define release 26
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -47,6 +47,9 @@ Requires: perl(File::Copy)
 Requires: perl(esmith::I18N)
 
 %changelog
+* Fri Aug 1 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.14.0-26
+- Fix too greedy removel of locale key CONFIGURE_TAPE_BACKUP [SME: 4469] 
+
 * Mon Jul 28 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.14.0-25
 - Backport patch to add common <base> tags to e-smith-formmagick's general [SME: 4286] 
 
