@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 20
+%define release 21
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -44,6 +44,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Fri Aug 1 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-21
+- Fix too greedy removel of locale key CONFIGURE_TAPE_BACKUP [SME: 4469]
+
 * Sat Jul 26 2008 Shad L. Lords <slords@mail.com> 1.15.0-20
 - Make full backups have priority over incremental [SME: 4395]
 
