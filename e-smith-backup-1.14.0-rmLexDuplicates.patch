@@ -1,17 +1,6 @@
 diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
 --- e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-03-24 15:59:04.000000000 -0600
 +++ mezzanine_patched_e-smith-backup-1.14.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-03-24 15:58:42.000000000 -0600
-@@ -92,10 +92,6 @@
-    <trans>Refresh this display</trans>
-   </entry>
-   <entry>
--   <base>CONFIGURE_TAPE_BACKUP</base>
--   <trans>Configure tape backup</trans>
--  </entry>
--  <entry>
-    <base>RESTORE_COMPLETED</base>
-    <trans>A system restore has completed</trans>
-   </entry>
 @@ -177,10 +173,6 @@
     <trans>Restore</trans>
    </entry>
