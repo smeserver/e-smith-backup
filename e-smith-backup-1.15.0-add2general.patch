@@ -1,7 +1,7 @@
 diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
---- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-04-27 10:28:40.000000000 +0200
-+++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-04-27 10:26:13.000000000 +0200
-@@ -154,10 +154,6 @@
+--- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-08-04 07:45:33.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-08-04 07:45:17.000000000 -0600
+@@ -158,10 +158,6 @@
     <trans>Select an action</trans>
    </entry>
    <entry>
@@ -12,7 +12,7 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/e
     <base>X_BACKUP_OR_RESTORE</base>
     <trans>X Backup or restore server data</trans>
    </entry>
-@@ -204,10 +200,6 @@
+@@ -208,10 +204,6 @@
     <trans>Backup file to restore from</trans>
    </entry>
    <entry>
@@ -23,7 +23,18 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/e
     <base>VERIFY_BACKUP_DESC</base>
     <trans>
      <![CDATA[
-@@ -615,10 +607,6 @@
+@@ -273,10 +265,6 @@
+    <trans>Error occured while restoring initial group of 'www'.</trans>
+   </entry>
+   <entry>
+-   <base>ERR_UPDATING_SYSCONF</base>
+-   <trans>Error occurred while updating system configuration.</trans>
+-  </entry>
+-  <entry>
+    <base>RESTORE_FAILED</base>
+    <trans>Restore failed! The backup file was incomplete.</trans>
+   </entry>
+@@ -619,10 +607,6 @@
     </trans>
    </entry>
    <entry>
@@ -35,8 +46,8 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/locale/e
     <trans>Backup workstation settings</trans>
    </entry>
 diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup
---- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-04-27 10:28:40.000000000 +0200
-+++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-04-27 10:27:46.000000000 +0200
+--- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-08-04 07:45:33.000000000 -0600
++++ mezzanine_patched_e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-08-04 07:45:17.000000000 -0600
 @@ -1326,7 +1326,7 @@
  	print $q->Tr(
  		    esmith::cgi::genCell(
@@ -46,8 +57,6 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/func
  			),
  
  	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkPassword',
---- e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup.add2general2	2008-07-07 19:31:53.000000000 +0200
-+++ e-smith-backup-1.15.0/root/etc/e-smith/web/functions/backup	2008-07-07 19:34:51.000000000 +0200
 @@ -2263,7 +2263,7 @@
  		system("/usr/sbin/usermod", "-g", "$www_gid", "www") == 0
  		    or warn ($fm->localise('ERR_RESTORING_INITIAL_GRP')."\n");
@@ -57,16 +66,3 @@ diff -Nur -x '*.orig' -x '*.rej' e-smith-backup-1.15.0/root/etc/e-smith/web/func
  	    }
  	    else
  	    {
---- e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.add2general2	2008-07-07 19:31:53.000000000 +0200
-+++ e-smith-backup-1.15.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-07-07 19:33:20.000000000 +0200
-@@ -261,10 +261,6 @@
-    <trans>Error occured while restoring initial group of 'www'.</trans>
-   </entry>
-   <entry>
--   <base>ERR_UPDATING_SYSCONF</base>
--   <trans>Error occurred while updating system configuration.</trans>
--  </entry>
--  <entry>
-    <base>RESTORE_FAILED</base>
-    <trans>Restore failed! The backup file was incomplete.</trans>
-   </entry>
