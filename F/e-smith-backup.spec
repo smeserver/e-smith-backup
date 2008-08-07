@@ -2,7 +2,7 @@ Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 1.15.0
-%define release 21
+%define release 22
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -26,6 +26,7 @@ Patch14: e-smith-backup-1.15.0-FixDarExpandTemplate.patch
 Patch15: e-smith-backup-1.15.0-FixDarManagerRedirect.patch
 Patch16: e-smith-backup-1.15.0-stderr.patch
 Patch17: e-smith-backup-1.15.0-fullPriority.patch
+Patch18: e-smith-backup-1.15.0-LocaliseStatus.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -44,6 +45,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu Aug 7 2008 Shad L. Lords <slords@mail.com> 1.15.0-22
+- Localise status of workstation backup [SME: 4481]
+
 * Fri Aug 1 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.15.0-21
 - Fix too greedy removel of locale key CONFIGURE_TAPE_BACKUP [SME: 4469]
 
@@ -1062,6 +1066,7 @@ e-smith server central backup administration panel
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
