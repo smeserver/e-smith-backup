@@ -1,32 +1,15 @@
+# $Id: e-smith-backup.spec,v 1.26 2008/10/07 19:27:49 slords Exp $
+
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
-%define version 1.15.0
-%define release 22
+%define version 2.2.0
+%define release 1
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-backup-1.15.0-DarWorkstation.patch
-Patch1: e-smith-backup-1.15.0-reformat.patch
-Patch2: e-smith-backup-1.15.0-no_desktop_verify_restore.patch
-Patch3: e-smith-backup-1.15.0-DarWorkstation.patch2
-Patch4: e-smith-backup-1.15.0-DarWorkstation.patch3
-Patch5: e-smith-backup-1.15.0-FixCompressionSetting.patch
-Patch6: e-smith-backup-1.15.0-WrongRestoreLocationFix.patch
-Patch7: e-smith-backup-1.15.0-rmLexDuplicates.patch
-Patch8: e-smith-backup-1.15.0-tags2general.patch
-Patch9: e-smith-backup-1.15.0-DarDesc.patch
-Patch10: e-smith-backup-1.15.0-brFix.patch
-Patch11: e-smith-backup-1.15.0-fixerrmsg.patch
-Patch12: e-smith-backup-1.15.0-hours.patch
-Patch13: e-smith-backup-1.15.0-add2general.patch
-Patch14: e-smith-backup-1.15.0-FixDarExpandTemplate.patch
-Patch15: e-smith-backup-1.15.0-FixDarManagerRedirect.patch
-Patch16: e-smith-backup-1.15.0-stderr.patch
-Patch17: e-smith-backup-1.15.0-fullPriority.patch
-Patch18: e-smith-backup-1.15.0-LocaliseStatus.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -45,6 +28,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue Oct 7 2008 Shad L. Lords <slords@mail.com> 2.2.0-1.sme
+- Roll new stream to separate sme7/sme8 trees [SME: 4633]
+
 * Thu Aug 7 2008 Shad L. Lords <slords@mail.com> 1.15.0-22
 - Localise status of workstation backup [SME: 4481]
 
@@ -1048,25 +1034,6 @@ e-smith server central backup administration panel
 
 %prep
 %setup
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
