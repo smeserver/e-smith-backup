@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.27 2008/10/09 20:36:24 slords Exp $
+# $Id: e-smith-backup.spec,v 1.28 2008/10/09 20:39:36 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -30,7 +30,7 @@ Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
 * Thu Oct 9 2008 Shad L. Lords <slords@mail.com> 2.2.0-2.sme
-- Fix localization strings in backup panel [SME: ]
+- Fix localization strings in backup panel [SME: 4650]
 
 * Tue Oct 7 2008 Shad L. Lords <slords@mail.com> 2.2.0-1.sme
 - Roll new stream to separate sme7/sme8 trees [SME: 4633]
