@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.29 2008/10/16 14:58:46 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.30 2008/10/16 16:15:54 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 3
+%define release 4
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -12,6 +12,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch1: e-smith-backup-2.0.0-localise_fix.patch
 Patch2: e-smith-backup-2.0.0-fixPleaseConfigure.patch
+Patch3: e-smith-backup-2.0.0-restore_list.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -30,6 +31,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu Oct 16 2008 Shad L. Lords <slords@mail.com> 2.0.0-4.sme
+- Make dar use defined list of directories to backup [SME: 4676]
+
 * Thu Oct 16 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-3.sme
 - Correct translation of CONFIGURATION_TO_BE_DONE to be proper English [SME: 4669]
 
@@ -1044,6 +1048,7 @@ e-smith server central backup administration panel
 %setup
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
