@@ -1,16 +1,17 @@
-# $Id: e-smith-backup.spec,v 1.28 2008/10/09 20:39:36 slords Exp $
+# $Id: e-smith-backup.spec,v 1.29 2008/10/16 15:00:42 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 2
+%define release 3
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch1: e-smith-backup-2.2.0-localise_fix.patch
+Patch2: e-smith-backup-2.2.0-fixPleaseConfigure.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -29,6 +30,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu Oct 16 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-3.sme
+- Correct translation of CONFIGURATION_TO_BE_DONE to be proper English [SME: 4669]
+
 * Thu Oct 9 2008 Shad L. Lords <slords@mail.com> 2.2.0-2.sme
 - Fix localization strings in backup panel [SME: 4650]
 
@@ -1039,6 +1043,7 @@ e-smith server central backup administration panel
 %prep
 %setup
 %patch1 -p1
+%patch2 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

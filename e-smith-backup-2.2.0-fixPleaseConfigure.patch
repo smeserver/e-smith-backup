@@ -1,0 +1,11 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.fixPleaseConfigure	2008-10-07 19:34:31.000000000 +0200
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-10-16 16:47:31.000000000 +0200
+@@ -775,7 +775,7 @@
+   </entry>
+   <entry>
+    <base>CONFIGURATION_TO_BE_DONE</base>
+-   <trans>You must before execute Workstation backup configuration option</trans>
++   <trans>Please configure the backup settings.</trans>
+   </entry>
+   <entry>
+    <base>WORKSTN_BACKUP_DESC</base>
