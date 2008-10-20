@@ -22,3 +22,40 @@
 +        $OUT .= "--go-into $dir\n";
 +    }
 +}
+--- e-smith-backup-2.0.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm.restore_list	2007-09-05 13:45:52.000000000 -0600
++++ e-smith-backup-2.0.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm	2008-10-20 09:25:37.000000000 -0600
+@@ -59,34 +59,6 @@
+     return $self;
+ }
+ 
+-=head2 restore_list
+-
+-Returns an (ordered) array of files/directories to recover from the
+-backup. The pathnames are relative to root.
+-
+-=cut
+-
+-sub restore_list
+-{
+-    my ($self) = @_;
+-
+-    return (
+-        'home/e-smith',
+-        'etc/e-smith/templates-custom',
+-        'etc/e-smith/templates-user-custom',
+-        'etc/ssh',
+-        'root',
+-        'etc/sudoers',
+-        'etc/passwd',
+-        'etc/shadow',
+-        'etc/group',
+-        'etc/gshadow',
+-        'etc/samba/secrets.tdb',
+-        'etc/samba/smbpasswd',
+-        'etc/smbpasswd',
+-    );
+-}
+-
+ =head2 merge_passwd
+ 
+ Merge password files. Takes a filename of a restored password
