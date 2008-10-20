@@ -1,0 +1,171 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/defaults/backupwk/VFSType.smbfs	2008-10-07 11:34:31.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/defaults/backupwk/VFSType	2008-10-20 09:39:09.000000000 -0600
+@@ -1 +1 @@
+-smbfs
++cifs
+--- e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.smbfs	2008-10-20 09:33:53.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup	2008-10-20 09:38:33.000000000 -0600
+@@ -1050,8 +1050,8 @@
+     my $VFSType;
+     my $dof;
+     my @dlabels = split(' ', $fm->localise('DOW'));
+-    my @VFST = ('smbfs', 'cifs', 'nfs', 'usb');
+-    my %VFST = ('smbfs', 'smbfs', 'cifs', 'cifs', 'nfs', 'nfs', 'usb', 'local usb disk'); 
++    my @VFST = ('cifs', 'nfs', 'usb');
++    my %VFST = ('cifs', 'cifs', 'nfs', 'nfs', 'usb', 'local usb disk'); 
+         
+     # Obtain backup informations from configuration
+     my $rec = $conf->get('backupwk');
+@@ -1068,7 +1068,7 @@
+ 	$backupwkIncOnlyTimeout = $rec->prop('IncOnlyTimeout') || 'yes';
+ 	$compression = $rec->prop('Compression') || '0';
+ 	$dof = (defined $rec->prop('FullDay')) ? $rec->prop('FullDay') : '7';
+-	$VFSType = $rec->prop('VFSType') || 'smbfs';
++	$VFSType = $rec->prop('VFSType') || 'cifs';
+ 	$backupwk_status = $rec->prop('status');
+     }
+ 
+@@ -1087,7 +1087,7 @@
+     	    print ' ', $fm->localise('WORKSTN_BACKUP_VFSTYPE'), ' ', $VFSType, '<br/>';
+ 	    }
+ 	print $fm->localise('WORKSTN_BACKUP_SHARE'), ' ', $backupwkFolder, '<br/>';
+-	if (($VFSType eq 'smbfs') || ($VFSType eq 'cifs')) {
++	if ($VFSType eq 'cifs') {
+     	    print $fm->localise('LOGIN'), ' ', $backupwkLogin, '<br/>';
+     	    print $fm->localise('PASSWORD'), ' ', $backupwkPassword, '<br/>';
+ 	    }
+@@ -1311,7 +1311,7 @@
+     	    );
+ 	}
+ 
+-    if ( ( $VFSType eq 'smbfs' ) || ( $VFSType eq 'cifs' ) ) {
++    if ( $VFSType eq 'cifs' ) {
+ 	print $q->Tr(
+ 		    esmith::cgi::genCell(
+ 			    $q,
+@@ -1520,7 +1520,7 @@
+     } else {
+         $backupwkLogin = "";
+     }
+-    if ( ( $backupwkLogin eq "" ) && (( $VFSType eq 'smbfs' ) || ( $VFSType eq 'cifs' )) )
++    if ( ( $backupwkLogin eq "" ) && ( $VFSType eq 'cifs' ) )
+     {
+         esmith::cgi::genResult(
+     	    $q, $fm->localise('ERR_INVALID_LOGIN')
+@@ -1534,7 +1534,7 @@
+     } else {
+         $backupwkPassword = "";
+     }
+-    if ( ( $backupwkPassword eq "" ) && (( $VFSType eq 'smbfs' ) || ( $VFSType eq 'cifs' )) )
++    if ( ( $backupwkPassword eq "" ) && ( $VFSType eq 'cifs' ) )
+     {
+         esmith::cgi::genResult(
+     	    $q, $fm->localise('ERR_INVALID_PASSWORD')
+@@ -1732,7 +1732,7 @@
+     my $id = $rec->prop('Id') || $conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+     my $smbhost = $rec->prop('SmbHost');
+     my $smbshare = $rec->prop('SmbShare');
+-    my $VFSType = $rec->prop('VFSType') || 'smbfs';
++    my $VFSType = $rec->prop('VFSType') || 'cifs';
+     my $err;
+     
+     my $setbackuplist = sub {
+@@ -1866,7 +1866,7 @@
+     my $id = $backupwkrec->prop('Id') ||
+ 	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+     my $err;
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'smbfs';
++    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+     
+     # Mounting backup shared folder
+     
+@@ -1979,7 +1979,7 @@
+     my $key;
+     my $id = $rec->prop('Id') ||
+ 	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my $VFSType = $rec->prop('VFSType') || 'smbfs';
++    my $VFSType = $rec->prop('VFSType') || 'cifs';
+     my $smbhost = $rec->prop('SmbHost');
+     my $smbshare = $rec->prop('SmbShare');
+     my $err;
+@@ -2151,7 +2151,7 @@
+ 	|| $conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+     my $mntdir = $backupwkrec->prop('MountDir') || '/mnt/smb';
+     my $mounted;
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'smbfs';
++    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+     my $smbhost = $backupwkrec->prop('SmbHost');
+     my $smbshare = $backupwkrec->prop('SmbShare');
+     my $err;
+@@ -2365,7 +2365,7 @@
+     my @blabels;
+     my $backups = 0;
+     my $filterexp;
+-    my $VFSType = $rec->prop('VFSType') || 'smbfs';
++    my $VFSType = $rec->prop('VFSType') || 'cifs';
+     my $smbhost = $rec->prop('SmbHost');
+     my $smbshare = $rec->prop('SmbShare');
+     my $err;
+@@ -2607,7 +2607,7 @@
+ 	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+     my @flabels;
+     my %flabels = ();
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'smbfs';
++    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+     my $err;
+     
+     my $backupkey = $q->param ('backupset');
+@@ -2785,7 +2785,7 @@
+ 	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+     my $mntdir = $backupwkrec->prop('MountDir') || '/mnt/smb';
+     my $mounted;
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'smbfs';
++    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+     my $smbhost = $backupwkrec->prop('SmbHost');
+     my $smbshare = $backupwkrec->prop('SmbShare');
+     my $err;
+@@ -3057,10 +3057,6 @@
+     {
+ 	return ( qx(/bin/mount -t cifs "$host:$share" $mountdir -o user=$login,pass=$password) );
+     }
+-    elsif ($VFSType eq 'smbfs')
+-    {
+-	return ( qx(/bin/mount -t smbfs "//$host/$share" $mountdir -o username=$login,password=$password,dmask=777,fmask=777,ip=$host 2>&1) );
+-    }
+     elsif ($VFSType eq 'nfs')
+     {
+ 	return ( qx(/bin/mount -t nfs -o nolock "$host:/$share" $mountdir 2>&1) );
+--- e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.smbfs	2008-10-20 09:33:53.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-10-20 09:39:38.000000000 -0600
+@@ -66,7 +66,7 @@
+ my $incnum = $backupwk->prop('IncNum'); $incnum = ($daysinset-1) unless defined $incnum;
+ my $timeout = (($backupwk->prop('Timeout') * 3600) - 30)  || '88500';
+ my $inconly = $backupwk->prop('IncOnlyTimeout') || 'no';
+-my $VFSType = $backupwk->prop('VFSType') || 'smbfs';
++my $VFSType = $backupwk->prop('VFSType') || 'cifs';
+ my $fullday = $backupwk->prop('FullDay') || 7;
+ my $mail = $backupwk->prop('MailNotify') || 'yes';
+ my $mntdir = $backupwk->prop('Mount') || '/mnt/smb';
+@@ -119,11 +119,6 @@
+     $err = qx(/bin/mount -t cifs "$smbhost:$smbshare" $mntdir -o user=$login,pass=$password 2>&1);
+     ldie("Error while mounting $smbhost:$smbshare : \n" . $err) if $err; 
+ }
+-elsif ($VFSType eq 'smbfs')
+-{
+-    $err = qx(/bin/mount -t smbfs "//$smbhost/$smbshare" $mntdir -o username=$login,password=$password,dmask=777,fmask=777,ip=$smbhost 2>&1);
+-    ldie("Error while mounting //$smbhost/$smbshare : \n" . $err) if $err; 
+-}
+ elsif ($VFSType eq 'nfs')
+ {
+     $err = qx(/bin/mount -t nfs -o nolock "$smbhost:/$smbshare" $mntdir 2>&1);
+--- e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.smbfs	2008-10-20 09:33:53.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-10-20 09:40:17.000000000 -0600
+@@ -57,7 +57,7 @@
+      <P>The workstation backup method uses a software package called <I>dar</I>
+      to back up your server configuration and data files to a workstation 
+      on your LAN (or a local USB disk). This requires you provide a writable share 
+-     (smbfs, cifs, or nfs) on the backup workstation or an a local USB disk. You can manage 
++     (cifs or nfs) on the backup workstation or an a local USB disk. You can manage 
+      how many rotating sets of backup are kept on the backup share, and also make each 
+      set doing incremental backup upon several days. The backup is performed 
+      automatically at the selected time every night. Currently 
