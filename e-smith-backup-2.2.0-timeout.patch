@@ -1,0 +1,109 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.timeout	2008-10-07 11:34:31.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-10-20 09:32:14.000000000 -0600
+@@ -30,6 +30,8 @@
+ use esmith::ConfigDB;
+ 
+ sub ldie;
++sub start_dar_killer;
++sub run_backup;
+ 
+ my $job = shift || 'DailyBackup';
+ my $report;
+@@ -257,32 +259,7 @@
+ 
+ # launching dar backup
+ 
+-$err = system("/usr/bin/timeout",
+-    "-s",
+-    "TERM",
+-    "$timeout",
+-    "/usr/bin/dar",
+-    "-c",
+-    "$tmpdir/$id/$bkname",
+-    split(/\s+/,$ref),
+-    "-B",
+-    "/etc/dar/$job.dcf");
+-
+-if ($err == 0)
+-{
+-    $report .= "Backup completed successfully on temporary dir \n";
+-}
+-elsif ($err == 15) 
+-{
+-    $report .= "Partial backup stored on temp dir.\n" 
+-	. " Session closed by timeout after $timeout seconds.\n"
+-	. "Not an error, backup process will continue next night.\n";
+-}
+-else
+-{
+-    $err = $err >> 8;
+-    ldie("Dar error during backup : $err \n");
+-}
++run_backup();
+ 
+ if ($incnum == 0)
+ {
+@@ -338,3 +315,63 @@
+     system("/bin/umount", "$mntdir") if $mntdone;
+     die($errmsg);
+ }
++
++sub start_dar_killer
++{
++    my ($darpid, $gracetime) = @_;
++	my $tick = $gracetime/10;
++	
++    my $killer = fork;
++    return $killer if $killer;
++
++     POSIX::setsid;
++     chdir '/';
++     #fork && exit;
++
++     warn "Dar killer $$ started for PID $darpid with gracetime $gracetime\n";
++     # wait for timeout or backup termination
++	 while ($tick > 0) {
++		sleep 10;
++		$tick--;
++		exit unless (kill(0, $darpid));
++	}
++	
++	if (kill(0, $darpid)) {
++		do {
++			warn "Cleanly stops $darpid dar process\n";
++		} while (kill('QUIT', $darpid) != 1);
++	}
++	warn "Partial backup stored on backup workstation.\n", 
++		"Session cleanly closed by timeout after $timeout seconds.\n",
++		"Not an error, backup process will continue next night.\n";
++
++	exit;
++}
++
++sub run_backup
++{
++    my $data = undef;
++    my $pid = undef;
++    my $killerpid = undef;
++
++    eval {
++		($pid = open INPUT, "-|", "/usr/bin/dar", "--create", "$tmpdir/$id/$bkname", split(/\s+/,$ref),  "-B", "/etc/dar/$job.dcf") or ldie("cannot start : $!" );
++         warn "Running dar backup with PID $pid\n";
++
++         if ($pid) {
++            $killerpid = start_dar_killer($pid, $timeout);         }
++			$data = do { local($/); <INPUT> };
++         close(INPUT);
++    };
++	$report .= $data;
++	 
++    if ($killerpid && kill(0, $killerpid)) {
++         do {
++             warn "Killing killer $killerpid\n";
++         } while (kill(9, $killerpid) != 1);
++
++         waitpid($killerpid, 0);
++     }
++
++	return;
++}

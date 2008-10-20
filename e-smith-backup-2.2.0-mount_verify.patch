@@ -1,0 +1,11 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.mount_verify	2008-10-20 09:43:26.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-10-20 09:52:53.000000000 -0600
+@@ -87,7 +87,7 @@
+ # verify backup directory not already mounted
+ 
+ open FD, '/proc/mounts';
+-if ( $VFSType eq 'usb' )
++if ( $VFSType ne 'usb' )
+ {
+     while (<FD>)
+     {

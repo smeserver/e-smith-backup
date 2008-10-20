@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.30 2008/10/16 16:15:54 slords Exp $
+# $Id: e-smith-backup.spec,v 1.31 2008/10/20 16:03:58 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 4
+%define release 7
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -13,6 +13,9 @@ Source: %{name}-%{version}.tar.gz
 Patch1: e-smith-backup-2.2.0-localise_fix.patch
 Patch2: e-smith-backup-2.2.0-fixPleaseConfigure.patch
 Patch3: e-smith-backup-2.2.0-restore_list.patch
+Patch4: e-smith-backup-2.2.0-timeout.patch
+Patch5: e-smith-backup-2.2.0-smbfs.patch
+Patch6: e-smith-backup-2.2.0-mount_verify.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -31,6 +34,15 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.2.0-7.sme
+- Fix already mounted check [SME: 4688]
+
+* Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.2.0-6.sme
+- Remove obsolete smbfs backup method [SME: 4678]
+
+* Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.2.0-5.sme
+- Use perl routines for timeout checking [SME: 4660]
+
 * Thu Oct 16 2008 Shad L. Lords <slords@mail.com> 2.2.0-4.sme
 - Make dar use defined list of directories to backup [SME: 4676]
 
@@ -1049,6 +1061,9 @@ e-smith server central backup administration panel
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
