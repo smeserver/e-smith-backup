@@ -1,0 +1,24 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/40go-into.restore_list	2008-10-07 11:34:31.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/40go-into	2008-10-16 10:11:42.000000000 -0600
+@@ -1,13 +1,8 @@
+---go-into etc/e-smith/templates-custom
+---go-into etc/e-smith/templates-user-custom
+---go-into etc/group
+---go-into etc/gshadow
+---go-into etc/passwd
+---go-into etc/samba/secrets.tdb
+---go-into etc/samba/smbpasswd
+---go-into etc/shadow
+---go-into etc/smbpasswd
+---go-into etc/ssh
+---go-into etc/sudoers
+---go-into home/e-smith
+---go-into root
++{
++    use esmith::Backup;
++
++    my @backup_list = esmith::Backup->restore_list;
++    foreach my $dir ( @backup_list ) {
++        $OUT .= "--go-into $dir\n";
++    }
++}
