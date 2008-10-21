@@ -1,0 +1,46 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.verbose	2008-10-21 14:12:17.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-10-21 14:11:56.000000000 -0600
+@@ -323,7 +323,6 @@
+      chdir '/';
+      #fork && exit;
+ 
+-     warn "Dar killer $$ started for PID $darpid with gracetime $gracetime\n";
+      # wait for timeout or backup termination
+ 	 while ($tick > 0) {
+ 		sleep 10;
+@@ -332,9 +331,9 @@
+ 	}
+ 	
+ 	if (kill(0, $darpid)) {
+-		do {
+-			warn "Cleanly stops $darpid dar process\n";
+-		} while (kill('QUIT', $darpid) != 1);
++		while (kill('QUIT', $darpid) != 1) {
++			warn "Failed to stop $darpid dar process\n";
++		}
+ 	}
+ 	warn "Partial backup stored on backup workstation.\n", 
+ 		"Session cleanly closed by timeout after $timeout seconds.\n",
+@@ -350,8 +349,7 @@
+     my $killerpid = undef;
+ 
+     eval {
+-		($pid = open INPUT, "-|", "/usr/bin/dar", "--create", "$tmpdir/$id/$bkname", split(/\s+/,$ref),  "-B", "/etc/dar/$job.dcf") or ldie("cannot start : $!" );
+-         warn "Running dar backup with PID $pid\n";
++         		($pid = open INPUT, "-|", "/usr/bin/dar", "-Q", "--create", "$tmpdir/$id/$bkname", split(/\s+/,$ref),  "-B", "/etc/dar/$job.dcf") or ldie("cannot start : $!" );
+ 
+          if ($pid) {
+             $killerpid = start_dar_killer($pid, $timeout);         }
+@@ -361,9 +359,9 @@
+ 	$report .= $data;
+ 	 
+     if ($killerpid && kill(0, $killerpid)) {
+-         do {
+-             warn "Killing killer $killerpid\n";
+-         } while (kill(9, $killerpid) != 1);
++         while (kill(9, $killerpid) != 1) {
++             warn "Failed to kill $killerpid killer process\n";
++         }
+ 
+          waitpid($killerpid, 0);
+      }

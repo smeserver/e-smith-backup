@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.36 2008/10/21 13:50:57 slords Exp $
+# $Id: e-smith-backup.spec,v 1.37 2008/10/21 20:21:32 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 10
+%define release 11
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -17,6 +17,7 @@ Patch4: e-smith-backup-2.0.0-timeout.patch
 Patch5: e-smith-backup-2.0.0-smbfs.patch
 Patch6: e-smith-backup-2.0.0-mount_verify.patch
 Patch7: e-smith-backup-2.0.0-nocompressogg.patch
+Patch8: e-smith-backup-2.0.0-verbose.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -35,6 +36,10 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue Oct 21 2008 Shad L. Lords <slords@mail.com> 2.0.0-11.sme
+- Fix patch to remove orig file [SME: 4700]
+- Patch dar backup to be less verbose [SME: 4699]
+
 * Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.0.0-10.sme
 - no compression for ogg media files [SME: 4677]
 
@@ -1072,6 +1077,7 @@ e-smith server central backup administration panel
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
