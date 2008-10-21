@@ -1,5 +1,5 @@
---- e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/60exclude-compression.nocompressogg	2008-10-08 04:34:30.000000000 +1100
-+++ e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/60exclude-compression	2008-10-21 21:54:58.000000000 +1100
+--- e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/60exclude-compression.nocompressogg	2008-10-07 11:34:31.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/60exclude-compression	2008-10-21 13:52:01.000000000 -0600
 @@ -25,5 +25,10 @@
  --exclude-compression "*.rpm"
  --exclude-compression "*.iso"
@@ -11,4 +11,4 @@
 +--exclude-compression "*.ogg"
  '
  }
-
+\ No newline at end of file
