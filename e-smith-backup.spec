@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.32 2008/10/21 09:36:04 dungog Exp $
+# $Id: e-smith-backup.spec,v 1.33 2008/10/21 09:36:53 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -34,7 +34,7 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
-* Wed Apr 09 2008 Stephen Noble <support@dungog.net> 2.0.0-8.sme
+* Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.0.0-8.sme
 - replace defined list of directories to backup [SME: 4676]
 
 * Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.0.0-7.sme
