@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.35 2008/10/21 11:21:52 dungog Exp $
+# $Id: e-smith-backup.spec,v 1.36 2008/10/21 13:50:57 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -12,7 +12,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch1: e-smith-backup-2.2.0-localise_fix.patch
 Patch2: e-smith-backup-2.2.0-fixPleaseConfigure.patch
-Patch3: e-smith-backup-2.2.0-restore_list.patch2
+Patch3: e-smith-backup-2.2.0-restore_list.patch
 Patch4: e-smith-backup-2.2.0-timeout.patch
 Patch5: e-smith-backup-2.2.0-smbfs.patch
 Patch6: e-smith-backup-2.2.0-mount_verify.patch
