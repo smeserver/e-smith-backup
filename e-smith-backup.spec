@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.33 2008/10/21 11:08:55 dungog Exp $
+# $Id: e-smith-backup.spec,v 1.34 2008/10/21 11:11:04 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -16,7 +16,7 @@ Patch3: e-smith-backup-2.2.0-restore_list.patch2
 Patch4: e-smith-backup-2.2.0-timeout.patch
 Patch5: e-smith-backup-2.2.0-smbfs.patch
 Patch6: e-smith-backup-2.2.0-mount_verify.patch
-Patch7: e-smith-backup-2.0.0-nocompressogg.patch
+Patch7: e-smith-backup-2.2.0-nocompressogg.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
