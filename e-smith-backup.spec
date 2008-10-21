@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.34 2008/10/21 11:11:04 dungog Exp $
+# $Id: e-smith-backup.spec,v 1.35 2008/10/21 11:21:52 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 9
+%define release 10
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -35,7 +35,7 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
-* Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.0.0-9.sme
+* Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.0.0-10.sme
 - no compression for ogg media files [SME: 4677]
 
 * Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.2.0-8.sme
