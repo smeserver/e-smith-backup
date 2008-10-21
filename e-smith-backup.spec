@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.31 2008/10/20 16:03:58 slords Exp $
+# $Id: e-smith-backup.spec,v 1.32 2008/10/21 09:36:04 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 7
+%define release 8
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -12,7 +12,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch1: e-smith-backup-2.0.0-localise_fix.patch
 Patch2: e-smith-backup-2.0.0-fixPleaseConfigure.patch
-Patch3: e-smith-backup-2.0.0-restore_list.patch
+Patch3: e-smith-backup-2.0.0-restore_list.patch2
 Patch4: e-smith-backup-2.0.0-timeout.patch
 Patch5: e-smith-backup-2.0.0-smbfs.patch
 Patch6: e-smith-backup-2.0.0-mount_verify.patch
@@ -34,6 +34,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Wed Apr 09 2008 Stephen Noble <support@dungog.net> 2.0.0-8.sme
+- replace defined list of directories to backup [SME: 4676]
+
 * Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.0.0-7.sme
 - Fix already mounted check [SME: 4688]
 
