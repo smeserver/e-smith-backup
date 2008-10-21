@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.33 2008/10/21 09:36:53 dungog Exp $
+# $Id: e-smith-backup.spec,v 1.34 2008/10/21 11:05:45 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 8
+%define release 9
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -16,6 +16,7 @@ Patch3: e-smith-backup-2.0.0-restore_list.patch2
 Patch4: e-smith-backup-2.0.0-timeout.patch
 Patch5: e-smith-backup-2.0.0-smbfs.patch
 Patch6: e-smith-backup-2.0.0-mount_verify.patch
+Patch7: e-smith-backup-2.0.0-nocompressogg.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -34,6 +35,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.0.0-9.sme
+- no compression for ogg media files [SME: 4677]
+
 * Tue Oct 21 2008 Stephen Noble <support@dungog.net> 2.0.0-8.sme
 - replace defined list of directories to backup [SME: 4676]
 
@@ -1067,6 +1071,7 @@ e-smith server central backup administration panel
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
