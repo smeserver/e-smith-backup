@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.37 2008/10/21 20:21:32 slords Exp $
+# $Id: e-smith-backup.spec,v 1.38 2008/10/22 18:40:49 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 11
+%define release 12
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -18,6 +18,7 @@ Patch5: e-smith-backup-2.2.0-smbfs.patch
 Patch6: e-smith-backup-2.2.0-mount_verify.patch
 Patch7: e-smith-backup-2.2.0-nocompressogg.patch
 Patch8: e-smith-backup-2.2.0-verbose.patch
+Patch9: e-smith-backup-2.2.0-email.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -36,6 +37,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Wed Oct 22 2008 Shad L. Lords <slords@mail.com> 2.2.0-12.sme
+- Fix from address on email [SME: 4702]
+
 * Tue Oct 21 2008 Shad L. Lords <slords@mail.com> 2.2.0-11.sme
 - Fix patch to remove orig file [SME: 4700]
 - Patch dar backup to be less verbose [SME: 4699]
@@ -1078,6 +1082,7 @@ e-smith server central backup administration panel
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
