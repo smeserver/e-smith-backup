@@ -1,0 +1,11 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.email	2008-10-22 12:29:43.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2008-10-22 12:37:33.000000000 -0600
+@@ -72,7 +72,7 @@
+ my $mntdir = $backupwk->prop('Mount') || '/mnt/smb';
+ my $tmpdir = $mntdir . "/tmp_dir";
+ 
+-$report .= "From: Backup-Program\n";
++$report .= "From: admin-backup\n";
+ $report .= "Subject: Daily Backup Report\n\n";
+ $report .= "================================== \n";
+ $report .= "DAILY BACKUP TO WORKSTATION REPORT \n";
