@@ -1,0 +1,92 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.mountusb	2008-10-21 21:59:54.000000000 +1100
++++ e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup	2008-10-25 18:00:30.000000000 +1100
+@@ -1765,7 +1765,7 @@
+ 		);
+ 	return;
+ 	}
+-    elsif ( $VFSType ne 'usb' ) {$mounted = 1}
++    else  {$mounted = 1}
+     
+     # Test if backup subdirectory for our server
+     
+@@ -1877,10 +1877,7 @@
+ 		);
+ 	return;
+     }
+-    elsif ( $VFSType ne 'usb' )
+-    {
+-	$mounted = 1;
+-    }
++    else  {$mounted = 1}
+ 
+     # Test if backup subdirectory for our server
+     
+@@ -2013,10 +2010,7 @@
+ 	    $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err);
+ 	return;
+     }
+-    elsif ($VFSType ne 'usb')
+-    {
+-	$mounted = 1;
+-    }
++    else  {$mounted = 1}
+ 
+     # Test if backup subdirectory for our server
+     
+@@ -2167,10 +2161,7 @@
+ 		);
+ 	return;
+     }
+-    elsif ($VFSType ne 'usb')
+-    {
+-	$mounted = 1;
+-    }
++    else  {$mounted = 1}
+ 
+     # Test if backup subdirectory for our server
+     
+@@ -2401,10 +2392,7 @@
+ 		);
+ 	return;
+     }
+-    elsif ($VFSType ne 'usb')
+-    {
+-	$mounted = 1;
+-    }
++    else  {$mounted = 1}
+ 
+     # Test if backup subdirectory for our server
+     
+@@ -2629,10 +2617,7 @@
+ 		);
+ 	return;
+     }
+-    elsif ($VFSType ne 'usb')
+-    {
+-	$mounted = 1;
+-    }
++    else  {$mounted = 1}
+ 
+     # Test if backup subdirectory for our server
+     
+@@ -2797,10 +2782,7 @@
+ 		);
+ 	return;
+     }
+-    elsif ($VFSType ne 'usb')
+-    {
+-	$mounted = 1;
+-    }
++    else  {$mounted = 1}
+ 
+     # Test if backup subdirectory for our server
+     
+@@ -3064,7 +3046,7 @@
+     elsif ($VFSType eq 'usb')
+     {
+ 	$_[2] = "/" . $share;
+-	return
++        return ( qx(/bin/mount "/$share" 2>&1) );
+     }
+     else
+     {
