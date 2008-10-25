@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.38 2008/10/22 18:40:49 slords Exp $
+# $Id: e-smith-backup.spec,v 1.39 2008/10/25 07:21:44 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 12
+%define release 13
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -19,6 +19,7 @@ Patch6: e-smith-backup-2.0.0-mount_verify.patch
 Patch7: e-smith-backup-2.0.0-nocompressogg.patch
 Patch8: e-smith-backup-2.0.0-verbose.patch
 Patch9: e-smith-backup-2.0.0-email.patch
+Patch10: e-smith-backup-2.0.0-mount_usb.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -37,6 +38,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat Oct 25 2008 Stephen Noble <support@dungog.net> 2.0.0-13.sme
+- correct mounting for usb disks [SME: 4695]
+
 * Wed Oct 22 2008 Shad L. Lords <slords@mail.com> 2.0.0-12.sme
 - Fix from address on email [SME: 4702]
 
@@ -1083,6 +1087,7 @@ e-smith server central backup administration panel
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
