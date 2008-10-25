@@ -1,0 +1,20 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.verbose_panel	2008-10-25 18:33:34.000000000 +1100
++++ e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup	2008-10-25 19:01:32.000000000 +1100
+@@ -1941,7 +1941,7 @@
+ 	select(STDOUT);
+ 	$| = 1;
+ 
+-	system ("/usr/bin/dar", "--list", "$backupkey", "--noconf") == 0
++	system ("/usr/bin/dar", "-Q", "--list", "$backupkey", "--noconf") == 0
+ 	    or die ($fm->localise('ERR_EXTRACT')." : ".$!);
+ 
+ 	if ($mounted) {
+@@ -2317,7 +2317,7 @@
+ 		}
+ 		die('Unsecure data : ' . $file);
+ 	    }
+-	    system ("/usr/bin/dar", "-x", "$file", "-v", "-N", "-R", "/", "-wa");
++	    system ("/usr/bin/dar", "-Q", "-x", "$file", "-v", "-N", "-R", "/", "-wa");
+ 	}
+ 
+ 	if ($mounted)
