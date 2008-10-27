@@ -1,0 +1,20 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.empty	2008-10-27 08:20:00.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup	2008-10-27 08:22:08.000000000 -0600
+@@ -1514,7 +1514,7 @@
+         return;
+     }
+ 
+-    my $backupwkLogin = $q->param ('backupwkLogin');
++    my $backupwkLogin = $q->param ('backupwkLogin') || '';
+     if ($backupwkLogin =~ /^(.*)$/) {
+         $backupwkLogin = $1;
+     } else {
+@@ -1528,7 +1528,7 @@
+         return;
+     }
+ 
+-    my $backupwkPassword = $q->param ('backupwkPassword');
++    my $backupwkPassword = $q->param ('backupwkPassword') || '';
+     if ($backupwkPassword =~ /^(.*)$/) {
+         $backupwkPassword = $1;
+     } else {

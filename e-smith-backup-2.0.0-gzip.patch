@@ -1,0 +1,21 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/defaults/backupwk/Compression.gzip	2008-10-07 11:34:31.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/defaults/backupwk/Compression	2008-10-27 08:01:58.000000000 -0600
+@@ -1 +1 @@
+-4
++6
+--- e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/defaults/backupwk/CompressionProg.gzip	2008-10-27 08:05:43.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/defaults/backupwk/CompressionProg	2008-10-27 08:05:51.000000000 -0600
+@@ -0,0 +1 @@
++gzip
+--- e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/10compression.gzip	2008-10-07 11:34:31.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/templates/etc/dar/DailyBackup.dcf/10compression	2008-10-27 08:12:33.000000000 -0600
+@@ -1,3 +1,6 @@
+ {
+-($backupwk{Compression} || '0') eq '0' ?  "#Compression off\n" : "--bzip2=$backupwk{Compression}\n"
+-}
+\ No newline at end of file
++    $level = $backupwk{Compression} || 0;
++    $prog = $backupwk{CompressionProg} || 'gzip';
++
++    $OUT = ($level eq '0' or $prog eq 'none') ?  "#Compression off" : "--$prog=$level"
++}
