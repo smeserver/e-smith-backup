@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.42 2008/10/28 23:03:58 slords Exp $
+# $Id: e-smith-backup.spec,v 1.43 2008/10/28 23:05:38 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -41,7 +41,7 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
-* Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.2.0-16.sme
+* Tue Oct 28 2008 Shad L. Lords <slords@mail.com> 2.2.0-16.sme
 - Migrate smbfs to cifs to complete removal [SME: 4678]
 
 * Mon Oct 27 2008 Shad L. Lords <slords@mail.com> 2.2.0-15.sme
