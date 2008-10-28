@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.41 2008/10/27 14:24:23 slords Exp $
+# $Id: e-smith-backup.spec,v 1.42 2008/10/28 23:03:58 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 15
+%define release 16
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -41,6 +41,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Oct 20 2008 Shad L. Lords <slords@mail.com> 2.0.0-16.sme
+- Migrate smbfs to cifs to complete removal [SME: 4678]
+
 * Mon Oct 27 2008 Shad L. Lords <slords@mail.com> 2.0.0-15.sme
 - Fix compression to default to gzip [SME: 4630]
 - Fix uninitialized values in backup [SME: 4720]

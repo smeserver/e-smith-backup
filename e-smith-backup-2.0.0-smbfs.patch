@@ -169,3 +169,14 @@
       how many rotating sets of backup are kept on the backup share, and also make each 
       set doing incremental backup upon several days. The backup is performed 
       automatically at the selected time every night. Currently 
+--- e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/migrate/30vfstype.migrate	2008-10-28 16:59:19.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/db/configuration/migrate/30vfstype	2008-10-28 17:00:33.000000000 -0600
+@@ -0,0 +1,8 @@
++{
++    my $vfs = $DB->get_prop('backupwk', 'VFSType');
++    return unless defined $vfs;
++    if ($vfs eq 'smbfs')
++    {
++      $DB->set_prop('backupwk', 'VFSType', 'cifs')
++    }
++}
