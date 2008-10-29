@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.43 2008/10/28 23:05:38 slords Exp $
+# $Id: e-smith-backup.spec,v 1.44 2008/10/29 19:38:12 slords Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 16
+%define release 17
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -23,6 +23,8 @@ Patch10: e-smith-backup-2.2.0-mount_usb.patch
 Patch11: e-smith-backup-2.2.0-verbose_panel.patch
 Patch12: e-smith-backup-2.2.0-gzip.patch
 Patch13: e-smith-backup-2.2.0-empty.patch
+Patch14: e-smith-backup-2.2.0-spelling.patch
+Patch15: e-smith-backup-2.2.0-password.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -41,6 +43,10 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Wed Oct 29 2008 Shad L. Lords <slords@mail.com> 2.2.0-17.sme
+- Fix spelling mistakes in backup panel [SME: 4732]
+- Hide password from manager panel [SME: 4734]
+
 * Tue Oct 28 2008 Shad L. Lords <slords@mail.com> 2.2.0-16.sme
 - Migrate smbfs to cifs to complete removal [SME: 4678]
 
@@ -1104,6 +1110,8 @@ e-smith server central backup administration panel
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
+%patch15 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
