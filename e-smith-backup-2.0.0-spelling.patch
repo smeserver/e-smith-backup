@@ -1,0 +1,45 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.spelling	2008-10-29 13:15:35.000000000 -0600
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-10-29 13:20:19.000000000 -0600
+@@ -258,11 +258,11 @@
+   </entry>
+   <entry>
+    <base>ERR_RESTORING_GID</base>
+-   <trans>Error occured while restoring gid of 'www'</trans>
++   <trans>Error occurred while restoring gid of 'www'</trans>
+   </entry>
+   <entry>
+    <base>ERR_RESTORING_INITIAL_GRP</base>
+-   <trans>Error occured while restoring initial group of 'www'.</trans>
++   <trans>Error occurred while restoring initial group of 'www'.</trans>
+   </entry>
+   <entry>
+    <base>RESTORE_FAILED</base>
+@@ -366,7 +366,7 @@
+   </entry>
+   <entry>
+    <base>ERR_CONF_BACKUP</base>
+-   <trans>Error occured during conf-backup event.</trans>
++   <trans>Error occurred during conf-backup event.</trans>
+   </entry>
+   <entry>
+    <base>SUCCESSFULLY_ENABLED_TAPE</base>
+@@ -614,7 +614,7 @@
+    <base>CONFIGURE_WORKSTN_BACKUP_DESC</base>
+    <trans>You can set the number of 
+    successive backup sets to keep on the workstation, with automatic rotation. 
+-   Each set may contain saved datas for several consecutive days.
++   Each set may contain saved data for several consecutive days.
+    In this case first backup of the set is full backup, others daily backups are 
+    incremental. You can also set a time limit for each backup session or for incremental 
+    backups only. When this limit occurs, backup is cleanly stopped and the next 
+@@ -710,8 +710,8 @@
+    so you can choose the ones to restore. To restrict the number of files and directories 
+    displayed in this panel, you have the option to give now a filtering expression, 
+    applied as a regular expression to the displayed names.<br/><br/>
+-   You have the responsability <b>not to restore</b> files which could break the functioning
+-   of your server.<br/> <br/>Currently, files will be restored from :  
++   You have the responsibility not to restore files which could break the
++   functioning of your server.<br/> <br/>Currently, files will be restored from :  
+    ]]>
+    </trans>
+   </entry>
