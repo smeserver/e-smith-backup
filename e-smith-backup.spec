@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.44 2008/10/29 19:38:12 slords Exp $
+# $Id: e-smith-backup.spec,v 1.45 2008/12/09 22:04:41 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 17
+%define release 18
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -25,6 +25,7 @@ Patch12: e-smith-backup-2.0.0-gzip.patch
 Patch13: e-smith-backup-2.0.0-empty.patch
 Patch14: e-smith-backup-2.0.0-spelling.patch
 Patch15: e-smith-backup-2.0.0-password.patch
+Patch16: e-smith-backup-2.0.0-fixCompressionLevelRange.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -43,6 +44,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue Dec  9 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-18.sme
+- Fix discrepancy in maximum compression level [SME: 4841]
+
 * Wed Oct 29 2008 Shad L. Lords <slords@mail.com> 2.0.0-17.sme
 - Fix spelling mistakes in backup panel [SME: 4732]
 - Hide password from manager panel [SME: 4734]
@@ -1112,6 +1116,7 @@ e-smith server central backup administration panel
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
