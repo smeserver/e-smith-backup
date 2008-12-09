@@ -1,0 +1,11 @@
+--- e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.fixCompressionLevelRange	2008-12-09 22:56:31.000000000 +0100
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2008-12-09 22:57:06.000000000 +0100
+@@ -837,7 +837,7 @@
+   </entry>
+   <entry>
+    <base>WORKSTN_BACKUP_COMPRESSION</base>
+-   <trans>Compression level (0-7) of backup is </trans>
++   <trans>Compression level (0-9) of backup is </trans>
+   </entry>
+   <entry>
+    <base>WORKSTN_BACKUP_TIMEOUT</base>
