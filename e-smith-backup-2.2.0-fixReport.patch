@@ -1,0 +1,49 @@
+diff -ruN e-smith-backup-2.0.0.old/root/etc/e-smith/events/actions/workstation-backup-dar e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.0.0.old/root/etc/e-smith/events/actions/workstation-backup-dar	2009-05-16 23:00:49.000000000 +0100
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2009-05-16 14:23:07.000000000 +0100
+@@ -78,7 +78,7 @@
+ $report .= "DAILY BACKUP TO WORKSTATION REPORT \n";
+ $report .= "================================== \n";
+ $report .= "Backup started at " .$tim . "\n";
+-$report .= "Backup of mysql databases has been done.\n";
++$report .= "Backup of mysql databases has been done\n";
+ 
+ # mounting backup directory
+ 
+@@ -177,10 +177,14 @@
+ }
+ 
+ $report .= "Using set number $setnum of $setsmax\n";
+-$report .= "Attempt to " .
+-    ($incnum == 0) ?
+-	"full backup \n" :
+-	"incremental backup number $incnum of $daysinset\n";
++if ($incnum == 0)
++{
++	$report .= "Attempt full backup \n";
++}
++else
++{
++	$report .= "Attempt incremental backup number $incnum of $daysinset\n";
++}
+ 
+ # if no set directory, make it
+ my $setname = "set" . $setnum;
+@@ -235,7 +239,7 @@
+ }
+ 
+ $report .= "Backup base file name is $bkname \n";
+-$report .= "Making backup on temporary dir... \n";
++$report .= "Making backup in temp directory\n";
+ 
+ # calculate real timeout if we timeout incrementals only.
+ # timeout of 88500 is a security for aborting backup within 24h
+@@ -244,7 +248,7 @@
+ {
+     $timeout = 88500;
+ }
+-$report .= "using a backup session timeout of : $timeout seconds\n";
++$report .= "Using a backup session timeout of : $timeout seconds\n";
+ 
+ # expanding backup configuration file template
+ 
