@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.45 2008/12/09 22:04:41 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.46 2009/05/17 07:49:03 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 18
+%define release 19
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -26,6 +26,7 @@ Patch13: e-smith-backup-2.0.0-empty.patch
 Patch14: e-smith-backup-2.0.0-spelling.patch
 Patch15: e-smith-backup-2.0.0-password.patch
 Patch16: e-smith-backup-2.0.0-fixCompressionLevelRange.patch
+Patch17: e-smith-backup-2.0.0-fixReport.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -44,6 +45,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sun May 17 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-19.sme
+- Fix DAR e-mail message with regards to incremental backups [SME: 4579]
+
 * Tue Dec  9 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-18.sme
 - Fix discrepancy in maximum compression level [SME: 4841]
 
@@ -1117,6 +1121,7 @@ e-smith server central backup administration panel
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
