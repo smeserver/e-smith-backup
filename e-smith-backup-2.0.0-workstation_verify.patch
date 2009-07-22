@@ -1,0 +1,445 @@
+diff -up e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.workstation_verify e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup.workstation_verify	2009-07-22 15:00:02.000000000 +0200
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2009-07-22 15:03:40.000000000 +0200
+@@ -57,10 +57,10 @@
+      <P>The workstation backup method uses a software package called <I>dar</I>
+      to back up your server configuration and data files to a workstation 
+      on your LAN (or a local USB disk). This requires you provide a writable share 
+-     (cifs or nfs) on the backup workstation or an a local USB disk. You can manage 
++     (cifs or nfs) on the backup workstation or have a local USB disk. You can manage 
+      how many rotating sets of backup are kept on the backup share, and also make each 
+      set doing incremental backup upon several days. The backup is performed 
+-     automatically at the selected time every night. Currently 
++     automatically at the selected time every day. Currently 
+      configuration and data files total approximately <b>$tarsize</b> uncompressed.
+       Twice the compressed data size must be available on the backup share.</P>
+ 
+@@ -278,7 +278,7 @@
+   </entry>
+   <entry>
+    <base>FILES_IN_BACKUP</base>
+-   <trans>The following files are contained in the backup file:</trans>
++   <trans>The following files are considered in the backup :</trans>
+   </entry>
+   <entry>
+    <base>VERIFY_COMPLETE</base>
+@@ -529,7 +529,7 @@
+   </entry>
+   <entry>
+    <base>VERIFY_WORKSTN_BACKUP_FILE</base>
+-   <trans>Verify workstation backup file</trans>
++   <trans>Verify workstation backup</trans>
+   </entry>
+   <entry>
+    <base>VERIFY_WORKSTN_BACKUP_DESC</base>
+@@ -539,8 +539,8 @@
+     in a previously created workstation daily backup. You
+     can use this option to verify the contents of the
+     backup.<b>You must choose the backup you want to verify</b></p>
+-    <p>You will see all files in the selected backup.</p>
+-    Backup files are verified from shared folder :  
++    <p>Only files flagged with [Saved] are contained in the backup.</p>
++    <br/>Backup files are verified from shared folder :  
+     ]]>
+    </trans>
+   </entry>
+@@ -871,4 +871,33 @@
+    <base>HOURS</base>
+    <trans>hours.</trans>
+   </entry>
++  <entry>
++   <base>ERR_NO_FULL_BACKUP</base>
++   <trans>Aborting restore because needed full backup is missing or unreadable.</trans>
++  </entry>
++  <entry>
++   <base>ERR_NO_INC_BACKUP</base>
++   <trans>Aborting restore because the set has missing or unreadable incremental backup number</trans>
++  </entry>
++  <entry>
++   <base>CHECK_TO_VERIFY_FULL_RESTORE</base>
++   <trans>Check here to test integrity of all backups needed for a full restore with the selected backup </trans>
++  </entry>
++  <entry>
++   <base>TESTING_NEEDED_BACKUPS_FOR_RESTORE</base>
++   <trans>Testing all backups needed for a full restore with selected backup</trans>
++  </entry>
++  <entry>
++   <base>TESTED_BACKUP</base>
++   <trans>Testing integrity of backup</trans>
++  </entry>
++  <entry>
++   <base>RESTORE_VERIFY_FAILED</base>
++   <trans>Verify integrity failed</trans>
++  </entry>
++  <entry>
++   <base>CHECK_INTEGRITY_WARNING</base>
++   <trans>Warning : For large backups, checking integrity may be a long task and should be made with daily workstation backup disabled.</trans>
++  </entry>
+  </lexicon>
++ 
+\ Pas de fin de ligne à la fin du fichier.
+diff -up e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.workstation_verify e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.workstation_verify	2009-07-22 15:00:02.000000000 +0200
++++ e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup	2009-07-22 15:04:19.000000000 +0200
+@@ -1830,6 +1830,25 @@ sub workstnVerify ()
+ 	)
+     );
+ 
++    print $q->table ({border => 0, cellspacing => 0, cellpadding => 4},
++
++        esmith::cgi::genWidgetRow(
++	    $q,
++	    $fm->localise('CHECK_TO_VERIFY_FULL_RESTORE'),
++	    $q->checkbox (
++		-name => 'verifyall',
++		-checked=>0,
++		-label=>''
++	    )
++	), 
++	$q->Tr(
++            esmith::cgi::genTextRow(
++		    $q, 
++    	        $fm->localise('CHECK_INTEGRITY_WARNING') 
++    	    )
++    	)
++    ),"\n";
++    
+     print $q->table ({width => "100%", -class => "sme-noborders"},
+ 	    esmith::cgi::genButtonRow(
+ 		    $q,
+@@ -1839,7 +1858,7 @@ sub workstnVerify ()
+ 			)
+ 		)
+ 	),"\n";
+-
++    
+     print $q->hidden(
+ 	    -name => 'state',
+ 	    -override => 1,
+@@ -1867,6 +1886,7 @@ sub performWorkstnVerify
+ 	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+     my $err;
+     my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
++    my $verifyref = $q->param ('backupset');
+     
+     # Mounting backup shared folder
+     
+@@ -1893,62 +1913,201 @@ sub performWorkstnVerify
+ 	return;
+     }
+ 
+-    my $backupkey = $q->param ('backupset');
+-    if ($backupkey =~ /^(.*)$/)
+-    {
+-	$backupkey = $1;
+-    }
+-    else
++    my $fullverify = $q->param('verifyall');
++
++    if ( $fullverify eq "on" ) 
+     {
+-	if ($mounted)
++	# Test all backups needed to full restore
++    
++        my %backupsetfiles = ();
++	my @restorefiles;
++        my $set = $verifyref;
++        $set =~ s/\/[^\/]*$//;
++        my $backupsetlist = sub {
++		if ( $_ =~ /\.dar/ )
++	    {
++		my $backupref = $File::Find::name;
++        	$backupref =~ s/\.[0-9]+\.dar//;
++        	$_ =~ s/\..*\.dar//;
++		$_ =~ s/.*-//;
++    		$backupsetfiles{$_} = $backupref;
++	    }
++	};
++
++	# find list of available backups and verify
++	# it contains all backups needed for full restore
++
++	find { wanted => \&$backupsetlist, untaint => 1 }, $set ;
++    
++	my $key;
++	my $num = 0;
++	foreach $key (sort keys %backupsetfiles)
+ 	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
++	    push @restorefiles, $backupsetfiles{$key};
++	    if ( $num == 0 )
++	    {
++		unless ( $backupsetfiles{$key} =~ /\/full-/ ) 
++		{
++		    esmith::cgi::genHeaderNonCacheable(
++			$q,
++			undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE')
++		    );
++	    	    esmith::cgi::genResult(
++			$q, $fm->localise('ERR_NO_FULL_BACKUP')
++			);
++		    return;
++		}
++	    }
++	    else
++	    {
++		my $numf = sprintf("%03d", $num);
++		unless ( $backupsetfiles{$key} =~ /\/inc-$numf-/ )
++		{
++	    	    esmith::cgi::genHeaderNonCacheable(
++		 	$q,
++			undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE')
++		    );
++
++		    esmith::cgi::genResult(
++			$q, $fm->localise('ERR_NO_INC_BACKUP') . " " . $numf
++		    );
++		    return;
++		}
++
++	    }
++	    $num++;	
++	    last if ( $backupsetfiles{$key} eq $verifyref );
+ 	}
+-	die('Unsecure data : ' . $backupkey);
+-    }
++	
++	# and test them 
++	
++        $| = 1;
+ 
+-    if (open(RD, "-|"))
+-    {
+-	esmith::cgi::genHeaderNonCacheable ($q,
+-	    undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE'));
++	if (open(RD, "-|"))
++	{
++	    esmith::cgi::genHeaderNonCacheable ($q, undef, 
++		$fm->localise('VERIFY_WORKSTN_BACKUP_FILE'));
+ 
+-	print $q->p($fm->localise('FILES_IN_BACKUP'));
++	    print $q->p (
++		$q->b ($fm->localise('TESTING_NEEDED_BACKUPS_FOR_RESTORE') )
++		);
++	    print '<UL>';
++	    
++	    while (<RD>)
++	    {
++		print "<li>$_</li>\n";
++	    }
+ 
+-	print '<UL>';
++	    print '</UL>';
++	    my $message;
++	    if (!close RD)
++	    {
++		print $q->p ($q->b ( $fm->localise('RESTORE_VERIFY_FAILED') ));
++	    }
++	    else
++	    {
++		print $q->p ($q->b ( $fm->localise('VERIFY_COMPLETE') ));
++	    }
+ 
+-	my $complete = 0;
+-	while (<RD>)
++	    esmith::cgi::genFooter ($q);
++	}
++	else
+ 	{
+-	    $complete++ if /etc\/smbpasswd$/;
+-	    $complete++ if /etc\/samba\/smbpasswd$/; # >6.0 base
+-	    print "<li>$_</li>\n";
++	    select(STDOUT);
++	    $| = 1;
++	
++	    my $file;
++	    foreach $file (@restorefiles)
++	    {
++		if ($file =~ /^(.*)$/)
++		{
++		    $file = $1;
++		}
++		else
++		{
++		    if ($mounted)
++	 	    {
++			system("/bin/umount", "$mntdir") == 0
++			    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
++		    }
++		    die('Unsecure data : ' . $file);
++		}
++		print $q->p($fm->localise('TESTED_BACKUP') . "  " . $file);
++		system ("/usr/bin/dar", "-Q", "--test", "$file", "--noconf");
++	    }
++
++	    if ($mounted)
++	    {
++		system("/bin/umount", "$mntdir") == 0
++		    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
++	    }
++
++	    exit(0);
+ 	}
++	return;
+ 
+-	print '</UL>';
+-	my $status = close RD ?
++    }
++    else 
++    {
++	# verify selected backup only
++	# and display files saved in the backup
++	
++	my $backupkey = $verifyref;
++        if ($backupkey =~ /^(.*)$/)
++	{
++	    $backupkey = $1;
++	}
++	else
++	{
++	    if ($mounted)
++	    { 
++		system("/bin/umount", "$mntdir") == 0
++		    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
++	    }
++	    die('Unsecure data : ' . $backupkey);
++	}
++
++	if (open(RD, "-|"))
++	{
++	    esmith::cgi::genHeaderNonCacheable ($q,
++		undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE'));
++	    print $q->p($fm->localise('FILES_IN_BACKUP'));
++	    
++	    print '<UL>';
++
++	    my $complete = 0;
++	    while (<RD>)
++	    {
++		$complete++ if /etc\/smbpasswd$/;
++		$complete++ if /etc\/samba\/smbpasswd$/; # >6.0 base
++		print "<li>$_</li>\n";
++	    }
++
++	    print '</UL>';
++	    my $status = close RD ?
+ 			($complete ?
+ 			    $fm->localise('VERIFY_COMPLETE') :
+ 			    $fm->localise('BACKUP_FILE_INCOMPLETE'))
+ 			: ($fm->localise('ERROR_READING_FILE').' : '.$backupkey);
+-	print $q->p ($q->b ($status));
++	    print $q->p ($q->b ($status));
+ 
+-	esmith::cgi::genFooter ($q);
++	    esmith::cgi::genFooter ($q);
+ 
+-    }
+-    else
+-    {
+-	select(STDOUT);
+-	$| = 1;
++	}
++	else
++	{
++	    select(STDOUT);
++	    $| = 1;
+ 
+-	system ("/usr/bin/dar", "-Q", "--list", "$backupkey", "--noconf") == 0
+-	    or die ($fm->localise('ERR_EXTRACT')." : ".$!);
++	    system ("/usr/bin/dar", "-Q", "--list", "$backupkey", "--noconf") == 0
++		or die ($fm->localise('ERR_EXTRACT')." : ".$!);
+ 
+-	if ($mounted) {
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	    }
+-	exit(0);
++	    if ($mounted) {
++		system("/bin/umount", "$mntdir") == 0
++		    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
++		}
++	    exit(0);
++	}
+     }
+ 
+     return;
+@@ -1992,7 +2151,7 @@ sub workstnRestore ()
+ 	    $_ =~ s/.*-//;
+     	    @{$backupfiles{$_}}[0] = $dir;
+     	    @{$backupfiles{$_}}[1] =  $backupref;	
+-	}
++ 	}
+     };
+     
+     # Mounting backup shared folder
+@@ -2173,20 +2332,58 @@ sub performWorkstnRestore
+ 	    system("/bin/umount", "$mntdir") == 0
+ 		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 	}
++	esmith::cgi::genHeaderNonCacheable(
++		$q,
++		undef, $fm->localise('RESTORE_CANNOT_PROCEED')
++	    );
+         esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_NO_HOST_DIR'), $id
++	    $q, $fm->localise('ERR_NO_HOST_DIR') . $id
+ 		);
+ 	return;
+     }
+ 
+      # finding list of available backups
+-
++    # and verifying all needed backup files are available
++    
+     find { wanted => \&$backupsetlist, untaint => 1 }, $set ;
+     
+     my $key;
++    my $num = 0;
+     foreach $key (sort keys %backupsetfiles)
+     {
+ 	push @restorefiles, $backupsetfiles{$key};
++	if ( $num == 0 )
++	{
++	    unless ( $backupsetfiles{$key} =~ /\/full-/ ) 
++	    {
++		esmith::cgi::genHeaderNonCacheable(
++			$q,
++			undef, $fm->localise('RESTORE_CANNOT_PROCEED')
++		);
++	        esmith::cgi::genResult(
++		    $q, $fm->localise('ERR_NO_FULL_BACKUP')
++		    );
++		return;
++	    }
++	}
++	else
++	{
++	    my $numf = sprintf("%03d", $num);
++	    unless ( $backupsetfiles{$key} =~ /\/inc-$numf-/ )
++	    {
++	    	esmith::cgi::genHeaderNonCacheable(
++		 	$q,
++		    undef, $fm->localise('RESTORE_CANNOT_PROCEED')
++		);
++
++		esmith::cgi::genResult(
++		    $q, $fm->localise('ERR_NO_INC_BACKUP') . $numf
++		);
++		return;
++	    }
++
++	}
++	$num++;	
+ 	last if ( $backupsetfiles{$key} eq $restoreref );
+     }
+ 
+@@ -2311,7 +2508,7 @@ sub performWorkstnRestore
+ 	    else
+ 	    {
+ 		if ($mounted)
+-		{
++	 	{
+ 		    system("/bin/umount", "$mntdir") == 0
+ 			or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+ 		}
