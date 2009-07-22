@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.46 2009/05/17 07:49:03 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.47 2009/07/22 13:59:42 gnujpl Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 19
+%define release 20
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -27,6 +27,7 @@ Patch14: e-smith-backup-2.0.0-spelling.patch
 Patch15: e-smith-backup-2.0.0-password.patch
 Patch16: e-smith-backup-2.0.0-fixCompressionLevelRange.patch
 Patch17: e-smith-backup-2.0.0-fixReport.patch
+Patch18: e-smith-backup-2.0.0-workstation_verify.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -45,6 +46,11 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Wed Jul 22 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.0.0-20.sme
+- workstation restore: all needed backups must be available before restore [SME: 5397]
+- workstation verify: add option to check integrity of backups needed in a full restore [SME: 5396] 
+- minor fix in translation
+
 * Sun May 17 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-19.sme
 - Fix DAR e-mail message with regards to incremental backups [SME: 4579]
 
@@ -1122,6 +1128,7 @@ e-smith server central backup administration panel
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
