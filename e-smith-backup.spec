@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.47 2009/07/22 13:59:42 gnujpl Exp $
+# $Id: e-smith-backup.spec,v 1.48 2009/07/22 17:38:10 bytegw Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -47,9 +47,9 @@ Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
 * Wed Jul 22 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.0.0-20.sme
-- workstation restore: all needed backups must be available before restore [SME: 5397]
+- workstation restore: all needed backups must be available before restore [SME: 5395]
 - workstation verify: add option to check integrity of backups needed in a full restore [SME: 5396] 
-- minor fix in translation
+- minor fix in translation [SME: 5406]
 
 * Sun May 17 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-19.sme
 - Fix DAR e-mail message with regards to incremental backups [SME: 4579]
