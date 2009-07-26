@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.49 2009/07/26 15:09:36 gnujpl Exp $
+# $Id: e-smith-backup.spec,v 1.50 2009/07/26 19:11:42 gnujpl Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -48,7 +48,7 @@ Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
 * Sun Jul 26 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.2.0-21.sme
-- workstation backup: allow many backups in the same day [SME: 5393]
+- workstation backup: allow many backups in the same day [SME: 5411]
 
 * Wed Jul 22 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.2.0-20.sme
 - workstation restore: all needed backups must be available before restore [SME: 5397]
