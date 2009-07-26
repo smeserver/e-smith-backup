@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.48 2009/07/22 17:38:10 bytegw Exp $
+# $Id: e-smith-backup.spec,v 1.49 2009/07/26 15:09:36 gnujpl Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 20
+%define release 21
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -28,6 +28,7 @@ Patch15: e-smith-backup-2.2.0-password.patch
 Patch16: e-smith-backup-2.2.0-fixCompressionLevelRange.patch
 Patch17: e-smith-backup-2.2.0-fixReport.patch
 Patch18: e-smith-backup-2.2.0-workstation_verify.patch
+Patch19: e-smith-backup-2.2.0-many_daily_dar.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -46,6 +47,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sun Jul 26 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.2.0-21.sme
+- workstation backup: allow many backups in the same day [SME: 5393]
+
 * Wed Jul 22 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.2.0-20.sme
 - workstation restore: all needed backups must be available before restore [SME: 5397]
 - workstation verify: add option to check integrity of backups needed in a full restore [SME: 5405] 
@@ -1129,6 +1133,7 @@ e-smith server central backup administration panel
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
