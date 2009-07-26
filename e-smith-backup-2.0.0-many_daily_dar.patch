@@ -1,0 +1,16 @@
+diff -up e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.many_daily_dar e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar.many_daily_dar	2009-07-24 15:27:42.000000000 +0200
++++ e-smith-backup-2.0.0/root/etc/e-smith/events/actions/workstation-backup-dar	2009-07-24 15:51:07.000000000 +0200
+@@ -48,6 +48,12 @@ $bkname .= $tm->mon + 1;
+ $bkname .= "0" if ($tm->mday < 10);
+ $bkname .= $tm->mday;
+ 
++$bkname .= "0" if ($tm->hour < 10);
++$bkname .= $tm->hour;
++
++$bkname .= "0" if ($tm->min < 10);
++$bkname .= $tm->min;
++
+ my $dow = $tm->wday;
+ my $id = $backupwk->prop('Id') ||
+     $confdb->get('SystemName')->value . "." . $confdb->get('DomainName')->value;
