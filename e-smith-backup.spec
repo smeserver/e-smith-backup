@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.49 2009/07/26 15:09:04 gnujpl Exp $
+# $Id: e-smith-backup.spec,v 1.50 2009/08/25 18:27:52 gnujpl Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 21
+%define release 22
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -29,6 +29,7 @@ Patch16: e-smith-backup-2.0.0-fixCompressionLevelRange.patch
 Patch17: e-smith-backup-2.0.0-fixReport.patch
 Patch18: e-smith-backup-2.0.0-workstation_verify.patch
 Patch19: e-smith-backup-2.0.0-many_daily_dar.patch
+Patch20: e-smith-backup-2.0.0-CIFScredentials.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -47,6 +48,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue Aug 25 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.0.0-22.sme
+- workstation backup: using credentials file for cifs mount [SME: 4850]
+
 * Sun Jul 26 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.0.0-21.sme
 - workstation backup: allow many backups in the same day [SME: 5393]
 
@@ -1134,6 +1138,7 @@ e-smith server central backup administration panel
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
