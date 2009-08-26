@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.51 2009/08/26 17:34:27 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.52 2009/08/26 18:09:22 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -49,8 +49,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
-* Wed Aug 26 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.2.0-22.sme
-- workstation backup: using credentials file for cifs mount [SME: 5442]
+* Wed Aug 26 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-22.sme
+Porting Jean-Paul Leclere changes in the SME Server 7 tree to SME Server 8:
+- using credentials file for cifs mount [SME: 5442]
 - workstation backup: add cifs credentials expand to bootstrap-console-save [SME: 5442]
 
 * Sun Jul 26 2009 Jean-Paul Leclere <jean-paul@leclere.org> 2.2.0-21.sme
