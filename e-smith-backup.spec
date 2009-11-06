@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.52 2009/08/26 18:09:22 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.53 2009/11/06 14:30:57 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 22
+%define release 23
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -31,6 +31,7 @@ Patch18: e-smith-backup-2.2.0-workstation_verify.patch
 Patch19: e-smith-backup-2.2.0-many_daily_dar.patch
 Patch20: e-smith-backup-2.2.0-CIFScredentials.patch
 Patch21: e-smith-backup-2.2.0-CIFScredentials2.patch
+Patch22: e-smith-backup-2.2.0-moreexcludes.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -49,6 +50,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Fri Nov 6 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-23.sme
+- Add more excludes for compressed filetypes [SME: 4765]
+
 * Wed Aug 26 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-22.sme
 Porting Jean-Paul Leclere changes in the SME Server 7 tree to SME Server 8:
 - using credentials file for cifs mount [SME: 5442]
@@ -1143,6 +1147,7 @@ e-smith server central backup administration panel
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
