@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.53 2009/11/06 14:30:57 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.54 2009/11/25 17:12:12 filippocarletti Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 23
+%define release 24
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -32,6 +32,7 @@ Patch19: e-smith-backup-2.2.0-many_daily_dar.patch
 Patch20: e-smith-backup-2.2.0-CIFScredentials.patch
 Patch21: e-smith-backup-2.2.0-CIFScredentials2.patch
 Patch22: e-smith-backup-2.2.0-moreexcludes.patch
+Patch23: e-smith-backup-2.2.0-fullSunday.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -50,6 +51,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Wed Nov 25 2009 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-24.sme
+- Fix full backup on Sunday diplayed as Everyday [SME: 5623]
+
 * Fri Nov 6 2009 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-23.sme
 - Add more excludes for compressed filetypes [SME: 4765]
 
@@ -1148,6 +1152,7 @@ e-smith server central backup administration panel
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
