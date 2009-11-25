@@ -1,0 +1,12 @@
+diff -up e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.FullSunday e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup.FullSunday	2009-11-25 18:44:44.000000000 +0000
++++ e-smith-backup-2.0.0/root/etc/e-smith/web/functions/backup	2009-11-25 18:47:09.000000000 +0000
+@@ -1195,7 +1195,7 @@ sub WorkstnBackupConfig1
+ 	$backupwkTimeout = $rec->prop('Timeout') || '12';
+ 	$backupwkIncOnlyTimeout = $rec->prop('IncOnlyTimeout') || 'yes';
+ 	$compression = $rec->prop('Compression') || '0';
+-	$dof = $rec->prop('FullDay') || '7';
++	$dof = (defined $rec->prop('FullDay')) ? $rec->prop('FullDay') : '7';
+     }
+ 
+     ($backupwkHour, $backupwkMin) = split (':', $backupwkTime, -1);
