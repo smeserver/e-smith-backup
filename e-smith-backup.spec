@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.54 2009/11/25 17:12:12 filippocarletti Exp $
+# $Id: e-smith-backup.spec,v 1.55 2010/01/25 12:27:13 filippocarletti Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 24
+%define release 25
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -33,6 +33,7 @@ Patch20: e-smith-backup-2.2.0-CIFScredentials.patch
 Patch21: e-smith-backup-2.2.0-CIFScredentials2.patch
 Patch22: e-smith-backup-2.2.0-moreexcludes.patch
 Patch23: e-smith-backup-2.2.0-fullSunday.patch
+Patch24: e-smith-backup-2.2.0-once_a_day.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -51,6 +52,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Jan 25 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-25.sme
+- Don't backup more than once per day [SME: 5445]
+
 * Wed Nov 25 2009 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-24.sme
 - Fix full backup on Sunday diplayed as Everyday [SME: 5623]
 
@@ -1153,6 +1157,7 @@ e-smith server central backup administration panel
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
