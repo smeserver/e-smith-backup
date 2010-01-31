@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.55 2010/01/25 12:27:13 filippocarletti Exp $
+# $Id: e-smith-backup.spec,v 1.56 2010/01/31 05:22:09 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 25
+%define release 26
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -34,6 +34,7 @@ Patch21: e-smith-backup-2.2.0-CIFScredentials2.patch
 Patch22: e-smith-backup-2.2.0-moreexcludes.patch
 Patch23: e-smith-backup-2.2.0-fullSunday.patch
 Patch24: e-smith-backup-2.2.0-once_a_day.patch
+Patch25: e-smith-backup-2.2.0-perform_backup-hal.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -52,6 +53,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sun Jan 31 2010 Stephen Noble <support@dungog.net> 2.2.0-26.sme
+- Fix mounting usb disks [SME: 4809]
+
 * Mon Jan 25 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-25.sme
 - Don't backup more than once per day [SME: 5445]
 
@@ -1158,6 +1162,7 @@ e-smith server central backup administration panel
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

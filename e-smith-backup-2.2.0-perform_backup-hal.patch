@@ -1,0 +1,128 @@
+diff -urN e-smith-backup-2.2.0.po/root/etc/e-smith/db/configuration/migrate/30lcSmbShare e-smith-backup-2.2.0.new/root/etc/e-smith/db/configuration/migrate/30lcSmbShare
+--- e-smith-backup-2.2.0.po/root/etc/e-smith/db/configuration/migrate/30lcSmbShare	1970-01-01 10:00:00.000000000 +1000
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/db/configuration/migrate/30lcSmbShare	2010-01-30 18:54:56.000000000 +1100
+@@ -0,0 +1,6 @@
++{
++    my $SmbShare = $DB->get_prop('backupwk', 'SmbShare');
++    return unless defined $SmbShare;
++    $SmbShare = lc("$SmbShare");
++    $DB->set_prop('backupwk', 'SmbShare', $SmbShare)
++}
+diff -urN e-smith-backup-2.2.0.po/root/etc/e-smith/events/actions/workstation-backup-dar e-smith-backup-2.2.0.new/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.2.0.po/root/etc/e-smith/events/actions/workstation-backup-dar	2010-01-30 03:05:13.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/events/actions/workstation-backup-dar	2010-01-31 14:51:32.000000000 +1100
+@@ -132,8 +132,35 @@
+ }
+ elsif ($VFSType eq 'usb')
+ {
+-    $err = qx(/bin/mount "/$smbshare" 2>&1);
+-    if ($err) {ldie("Error while mounting /$smbshare : \n" . $err)};
++    my $device = "";
++    my $blkdev = "";
++    my $vollbl = "";
++    foreach my $udi (qx(hal-find-by-property --key volume.fsusage --string filesystem)) {
++        $udi =~ m/^(\S+)/;
++        my $is_mounted = qx(hal-get-property --udi $1 --key volume.is_mounted);
++
++        if ($is_mounted eq "false\n") {
++            $blkdev = qx(hal-get-property --udi $1 --key block.device);
++            $blkdev =~ m/^(\S+)/;
++        }
++        if ($is_mounted eq "false\n") {
++            $vollbl = qx(hal-get-property --udi $1 --key volume.label);
++            $vollbl =~ m/^(\S+)/;
++            if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
++        }
++
++        chomp $vollbl;
++        chomp $blkdev;
++        $vollbl = lc("media/$vollbl");
++        if  ($vollbl eq $smbshare) {
++          $device = $blkdev;
++        } 
++    }
++
++    system("/bin/mkdir -p /$smbshare");
++
++    $err = qx(/bin/mount $device "/$smbshare" 2>&1);
++    if ($err) {ldie("Error while mounting $device /$smbshare : \n" . $err)};
+     $mntdir = "/$smbshare";
+ }
+ else
+diff -urN e-smith-backup-2.2.0.po/root/etc/e-smith/web/functions/backup e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.2.0.po/root/etc/e-smith/web/functions/backup	2010-01-30 03:05:13.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup	2010-01-31 15:05:32.000000000 +1100
+@@ -349,16 +349,6 @@
+ 	    )
+ 	),"\n";
+ 	
+-        #print esmith::cgi::genWidgetRow(
+-        #        $q,
+-        #        $fm->localise("SELECT_AN_ACTION"),
+-        #        $q->popup_menu (
+-        #            -name => 'function',
+-        #            -values => [ @labels ],
+-        #            -default => $default_action,
+-        #            -labels => \%labels
+-        #        )
+-        #);
+     }
+ 
+     print $q->end_table,"\n";
+@@ -1226,14 +1216,15 @@
+ 	$q, undef, $fm->localise('CONFIGURE_WORKSTN_BACKUP'));
+ 
+     if ( $VFSType eq 'usb' ) {
+-	my @usbdisklist;
+-	@usbdisklist = qx'ls /media';
+-	for (@usbdisklist) {
+-	    next if /floppy/;
+-	    next if /cdrom/;
+-	    push @usbdisks, $_;
+-	    }
+-	unless (scalar @usbdisks) {
++        foreach my $udi (qx(hal-find-by-property --key volume.fsusage --string filesystem)) {
++        $udi =~ m/^(\S+)/;
++        my $vollbl = qx(hal-get-property --udi $1 --key volume.label);
++        $vollbl =~ m/^(\S+)/;
++        if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
++        push @usbdisks, lc($vollbl);
++        }
++
++        unless ($usbdisks[0]){
+ 	    esmith::cgi::genResult(
+ 		    $fm->{cgi}, $fm->localise('ERR_NO_USB_DISK'));
+ 	    return
+@@ -3243,7 +3234,31 @@
+     elsif ($VFSType eq 'usb')
+     {
+ 	$_[2] = "/" . $share;
+-        return ( qx(/bin/mount "/$share" 2>&1) );
++        my $device = "";
++        my $blkdev = "";
++        my $vollbl = "";
++        foreach my $udi (qx(hal-find-by-property --key volume.fsusage --string filesystem)) {
++          $udi =~ m/^(\S+)/;
++          my $is_mounted = qx(hal-get-property --udi $1 --key volume.is_mounted);
++
++          if ($is_mounted eq "false\n") {
++              $blkdev = qx(hal-get-property --udi $1 --key block.device);
++              if ($blkdev =~ m/^(\S+)/) {$blkdev = $1;}
++          }
++          if ($is_mounted eq "false\n") {
++              $vollbl = qx(hal-get-property --udi $1 --key volume.label);
++              $vollbl =~ m/^(\S+)/;
++              if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
++          }
++
++          chomp $vollbl;
++          chomp $blkdev;
++          $vollbl = lc("media/$vollbl");
++          if  ($vollbl eq $share) {
++            $device = $blkdev;
++          } 
++        }
++        return ( qx(/bin/mount $device "/$share" 2>&1) );
+     }
+     else
+     {
