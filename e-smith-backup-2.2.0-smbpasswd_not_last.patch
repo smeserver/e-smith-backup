@@ -1,0 +1,29 @@
+diff -urN e-smith-backup-2.2.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup e-smith-backup-2.2.0.new/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.2.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2010-01-31 16:53:17.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2010-01-31 16:55:32.000000000 +1100
+@@ -211,8 +211,6 @@
+     in a previously created desktop backup file. You
+     can use this option to verify the contents of the
+     backup file.</p>
+-    <p>The last file contained in the backup file should be
+-    the file named "smbpasswd".</p>
+     ]]>
+    </trans>
+   </entry>
+@@ -240,8 +238,7 @@
+    <base>RESTORE_IN_PROGRESS_DESC</base>
+    <trans>
+     After the restore completes you must reboot the server. Your restore is
+-    complete when /etc/smbpasswd has been restored and the words "Restore
+-    complete" appear at the bottom of your screen.
++    complete when the words "Restore complete" appear at the bottom of your screen.
+    </trans>
+   </entry>
+   <entry>
+@@ -900,4 +897,4 @@
+    <trans>Warning : For large backups, checking integrity may be a long task and should be made with daily workstation backup disabled.</trans>
+   </entry>
+  </lexicon>
+- 
+\ No newline at end of file
++ 
