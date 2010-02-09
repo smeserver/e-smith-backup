@@ -1,0 +1,11 @@
+diff -urN e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup	2010-02-10 00:19:34.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup	2010-02-10 00:23:23.000000000 +1100
+@@ -1494,6 +1494,7 @@
+     if ($backupwkFolder =~ /^(.*)$/) {
+         $backupwkFolder = $1;
+ 	$backupwkFolder =~ s/^\//; # remove leading /
++        mkdir "/$backupwkFolder";
+     } else {
+         $backupwkFolder = "";
+     }
