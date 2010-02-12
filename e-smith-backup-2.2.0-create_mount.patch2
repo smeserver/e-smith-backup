@@ -4,8 +4,8 @@ diff -urN e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup e-smith-bac
 @@ -1494,6 +1494,7 @@
      if ($backupwkFolder =~ /^(.*)$/) {
          $backupwkFolder = $1;
- 	$backupwkFolder =~ s/^\//; # remove leading /
 +        mkdir "/$backupwkFolder";
+	$backupwkFolder =~ s/^\//; # remove leading /
      } else {
          $backupwkFolder = "";
      }

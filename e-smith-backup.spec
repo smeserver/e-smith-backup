@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.58 2010/02/09 13:28:12 dungog Exp $
+# $Id: e-smith-backup.spec,v 1.59 2010/02/12 13:08:07 dungog Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 28
+%define release 29
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -36,7 +36,7 @@ Patch23: e-smith-backup-2.2.0-fullSunday.patch
 Patch24: e-smith-backup-2.2.0-once_a_day.patch
 Patch25: e-smith-backup-2.2.0-perform_backup-hal.patch
 Patch26: e-smith-backup-2.2.0-smbpasswd_not_last.patch
-Patch27: e-smith-backup-2.2.0-create_mount.patch
+Patch27: e-smith-backup-2.2.0-create_mount.patch2
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -55,6 +55,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Fri Feb 12 2010 Stephen Noble <support@dungog.net> 2.2.0-29.sme
+- fix mount point for verify [SME: 5765]
+
 * Tue Feb 9 2010 Stephen Noble <support@dungog.net> 2.2.0-28.sme
 - create mount point for verify [SME: 5765]
 
