@@ -1,0 +1,3308 @@
+diff -urN e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar e-smith-backup-2.2.0.new/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar	2010-02-15 20:54:05.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/events/actions/workstation-backup-dar	2010-02-15 20:58:18.000000000 +1100
+@@ -151,7 +151,7 @@
+ 
+         chomp $vollbl;
+         chomp $blkdev;
+-        $vollbl = lc("media/$vollbl");
++        $vollbl = "media/$vollbl";
+         if  ($vollbl eq $smbshare) {
+           $device = $blkdev;
+         } 
+diff -urN e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup	2010-02-15 20:54:05.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup	2010-02-15 20:57:42.000000000 +1100
+@@ -1221,7 +1221,7 @@
+         my $vollbl = qx(hal-get-property --udi $1 --key volume.label);
+         $vollbl =~ m/^(\S+)/;
+         if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
+-        push @usbdisks, lc($vollbl);
++        push @usbdisks, $vollbl;
+         }
+ 
+         unless ($usbdisks[0]){
+@@ -3254,7 +3254,7 @@
+ 
+           chomp $vollbl;
+           chomp $blkdev;
+-          $vollbl = lc("media/$vollbl");
++          $vollbl = "media/$vollbl";
+           if  ($vollbl eq $share) {
+             $device = $blkdev;
+           } 
+diff -urN e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup.orig e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup.orig
+--- e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup.orig	2010-02-15 20:54:05.000000000 +1100
++++ e-smith-backup-2.2.0.new/root/etc/e-smith/web/functions/backup.orig	1970-01-01 10:00:00.000000000 +1000
+@@ -1,3271 +0,0 @@
+-#!/usr/bin/perl -wT
+-#----------------------------------------------------------------------
+-# heading     : Administration
+-# description : Backup or restore
+-# navigation  : 4000 4200
+-# Copyright (C) 2002 Mitel Networks Corporation
+-#
+-# This program is free software; you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation; either version 2 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program; if not, write to the Free Software
+-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+-#
+-# Technical support for this program is available from Mitel Networks
+-# Please visit our web site www.mitel.com/sme/ for details.
+-#----------------------------------------------------------------------
+-use strict;
+-use esmith::FormMagick;
+-use esmith::ConfigDB;
+-use esmith::Backup;
+-use esmith::BackupHistoryDB;
+-use esmith::AccountsDB;
+-use esmith::cgi;
+-use esmith::util;
+-use esmith::lockfile;
+-use File::Find;
+-
+-$File::Find::dont_use_nlink = 1;  # fix for Windows shares
+-
+-my $fm = esmith::FormMagick->new();
+-
+-# These statements _must_ come _after_ the FormMagick constructor. It sets
+-# POST_MAX and DISABLE_UPLOADS to values that will cause this script to fail
+-# on restores and verification of files.
+-$CGI::POST_MAX = -1; # allow any size POST
+-$CGI::DISABLE_UPLOADS = 0; # need to upload to restore from desktop
+-
+-$fm->parse_xml();
+-
+-my $conf = esmith::ConfigDB->open()
+-	|| die $fm->localise('CANNOT_OPEN').'configuration db';
+-
+-my $restore = esmith::ConfigDB->open('/etc/e-smith/restore')
+-	|| die $fm->localise('CANNOT_OPEN').'/etc/e-smith/restore';
+-
+-my $es_backup = new esmith::Backup or die "Couldn't create Backup object\n";
+-
+-my @directories = $es_backup->restore_list;
+-@directories = grep { -e "/$_" } @directories;
+-
+-# Unbuffer standard output so that files and directories are listed as
+-# they are restored
+-$| = 1;
+-
+-# Store away current gid of 'www' group.
+-my $www_gid = getgrnam("www");
+-
+-#------------------------------------------------------------
+-# examine state parameter and display the appropriate form
+-#------------------------------------------------------------
+-
+-my $q = $fm->{cgi};
+-
+-if (! grep (/^state$/, $q->param))
+-{
+-    showInitial ($q, '');
+-}
+-elsif ($q->param ('state') eq "perform")
+-{
+-    performAndShowResult ($q);
+-}
+-elsif ($q->param ('state') eq "tape-configure")
+-{
+-    updateTapeBackupConfig($q);
+-}
+-elsif ($q->param ('state') eq "tape-restore")
+-{
+-    performTapeRestore ($q);
+-}
+-elsif ($q->param ('state') eq "workstn-configure")
+-{
+-    WorkstnBackupConfig1($q);
+-}
+-elsif ($q->param ('state') eq "workstn-configure1")
+-{
+-    updateWorkstnBackupConfig($q);
+-}
+-elsif ($q->param ('state') eq "workstn-verify")
+-{
+-    performWorkstnVerify($q);
+-}
+-elsif ($q->param ('state') eq "workstn-restore")
+-{
+-    performWorkstnRestore ($q);
+-}
+-elsif ($q->param ('state') eq "workstn-sel-restore")
+-{
+-    performWorkstnSelRestore ($q);
+-}
+-elsif ($q->param ('state') eq "workstn-sel-restore2")
+-{
+-    performWorkstnSelRestore2 ($q);
+-}
+-else
+-{
+-    esmith::cgi::genStateError ($q, undef);
+-}
+-
+-exit (0);
+-
+-#------------------------------------------------------------
+-# subroutine to display initial form
+-#------------------------------------------------------------
+-
+-sub showInitial
+-{
+-    my ($q, $msg) = @_;
+-
+-	my $rec = $restore->get('restore');
+-	if($msg eq '')
+-	{
+-		if($rec)
+-		{
+-			$msg = $rec->prop('errmsg') || '';
+-			$rec->delete_prop('errmsg');
+-		}
+-	}
+-
+-    if ($msg eq '')
+-    {
+-	esmith::cgi::genHeaderNonCacheable ($q, undef,
+-		$fm->localise('BACKUP_TITLE'));
+-    }
+-    else
+-    {
+-	esmith::cgi::genHeaderNonCacheable
+-	($q, undef, $fm->localise('OPERATION_STATUS_REPORT'));
+-
+-	print $q->div ({-class => "sme-error"}, $msg);
+-	print $q->hr;
+-    }
+-    print $q->div({-class => 'error'},
+-	$q->h5('Warning: a reboot is required before proceeding!
+-	    Failure to reboot now may leave your system in an unknown
+-	    state!'))
+-	    if $conf->get_prop('bootstrap-console', 'Run') eq 'yes';
+-
+-    my ($tarsize, $dumpsize, undef, undef) = &CalculateSizes();
+-
+-    my $module = $conf->get('backup');
+-    if ($module)
+-    {
+-	$module = $module->prop('Program');
+-    }
+-
+-    # The default e-smith backup program is flexbackup.
+-
+-    unless (defined $module)
+-    {
+-	$module = "flexbackup";
+-    }
+-    elsif ($module eq '')
+-    {
+-	$module = "flexbackup";
+-    }
+-
+-    # Hack to evaluate embedded vars
+-    print eval 'return "'.$fm->localise('BACKUP_DESC_DAR').'\n";';
+-
+-    if ($tarsize =~ /Tb/ or $tarsize =~ /(\d+)Gb/ and $1 >= 2)
+-    {
+-        print $fm->localise("BACKUP_DESKTOP_TOO_BIG"), "\n";
+-    }
+-
+-    print $q->h2($fm->localise("BACKUP_CONFIG_STATUS")),"\n";
+-
+-    my $backup_status = $conf->get('backup');
+-    if ($backup_status)
+-    {
+-	$backup_status = $backup_status->prop('status');
+-    }
+-
+-    if (defined $backup_status && $backup_status eq "enabled")
+-    {
+-	my $backupTime = $conf->get('backup')->prop('backupTime');
+-	my $reminderTime = $conf->get('backup')->prop('reminderTime');
+-
+-	print $q->p ($fm->localise('TAPE_BACKUPS_ENABLED'),
+-		$fm->localise('BACKUPS_RUN_AT'),$q->b($backupTime),
+-		$fm->localise('REMINDER_MESSAGE_AT'),$q->b($reminderTime)),
+-		"\n";
+-    }
+-    else
+-    {
+-	print $q->p($fm->localise('TAPE_BACKUPS_DISABLED')),"\n";
+-    }
+-
+-    my $backupwk_status = $conf->get('backupwk');
+-    if ($backupwk_status)
+-    {
+-	$backupwk_status = $backupwk_status->prop('status');
+-    }
+-
+-    if (defined $backupwk_status && $backupwk_status eq "enabled")
+-    {
+-	my $backupwkTime = $conf->get('backupwk')->prop('BackupTime');
+-
+-	print $q->p ($fm->localise('WORKSTN_BACKUPS_ENABLED'),
+-		$fm->localise('WKBACKUPS_RUN_AT'),$q->b($backupwkTime));
+-    }
+-    else
+-    {
+-	print $q->p($fm->localise('WORKSTN_BACKUPS_DISABLED'));
+-    }
+-
+-    my %labels = (
+-	    "desktop-backup"    =>  $fm->localise('DESKTOP_BACKUP'),
+-	    "tape-configure"    =>  $fm->localise('TAPE_CONFIGURE'),
+-	    "tape-restore"      =>  $fm->localise('TAPE_RESTORE'),
+-	    "workstn-configure"    =>  $fm->localise('WORKSTN_CONFIGURE'),
+-	    "workstn-verify"    =>  $fm->localise('WORKSTN_VERIFY'),
+-	    "workstn-restore"      =>  $fm->localise('WORKSTN_RESTORE'),
+-	    "workstn-sel-restore"      =>  $fm->localise('WORKSTN_SEL_RESTORE'),
+-	);
+-
+-    my @labels = (
+-	    'desktop-backup',
+-	    'tape-configure',
+-	    'tape-restore',
+-	    'workstn-configure',
+-	    'workstn-verify',
+-	    'workstn-restore',
+-	    'workstn-sel-restore',
+-	);
+-
+-    my $default_action = 'desktop-backup';
+-
+-    my $restore_state;
+-    if($rec)
+-    {
+-	$restore_state = $rec->prop('state');
+-    }
+-
+-    unless (defined $restore_state)
+-    {
+-	# Undefined, set it to idle
+-	if ($rec)
+-	{
+-	    $rec->reset_props(type=>'status', state=>'idle', finish=>0,
+-		start=>0);
+-	}
+-	else
+-	{
+-	    $rec = $restore->new_record('restore',
+-		{type=>'status', state=>'idle', finish=>0, start=>0});
+-	}
+-	$restore_state = 'idle';
+-    }
+-    elsif ($restore_state eq 'running')
+-    {
+-	my $start = $rec->prop('start');
+-	$start = scalar localtime($start);
+-
+-	print $q->p ($fm->localise('RESTORE_IN_PROGRESS_BEGAN_AT')
+-		. "<b>$start</b>.\n" );
+-
+-	%labels = (
+-		"refresh"	=> $fm->localise('REFRESH_THIS_DISPLAY'),
+-		"tape-configure" => $fm->localise('CONFIGURE_TAPE_BACKUP'),
+-		"workstn-configure" => $fm->localise('CONFIGURE_WORKSTN_BACKUP'),
+-	    );
+-
+-	@labels = (
+-		'refresh',
+-		'tape-configure',
+-		'workstn-configure',
+-	    );
+-
+-	$default_action = 'refresh';
+-    }
+-    elsif ($restore_state eq 'complete')
+-    {
+-        my $start = $rec->prop('start');
+-        $start = scalar localtime($start);
+-        my $finish = $rec->prop('finish');
+-        $finish = scalar localtime($finish);
+-
+-        print $q->p ($fm->localise('RESTORE_COMPLETED'),$q->br(),
+-                     $fm->localise('STARTED_AT'),$q->b($start),$q->br(),
+-                     $fm->localise('FINISHED_AT'),$q->b($finish)),"\n";
+-
+-        print $q->p (
+-                     $q->b ($fm->localise('YOU_MUST_REBOOT')
+-                           )
+-                    ),"\n";
+-
+-        $default_action = 'reboot';
+-    }
+-    else
+-    {
+-	# Unknown state. Reset it to idle
+-
+-	$rec->set_prop('state', 'idle');
+-	$restore_state = 'idle';
+-    }
+-
+-    print $q->startform(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	),"\n";
+-
+-    print $q->start_table ({-class => "sme-noborders"}),"\n";
+-
+-    if ($default_action eq 'reboot')
+-    {
+-        print $q->start_table ({width => "100%", -class => "sme-noborders"}),"\n";
+-        print esmith::cgi::genButtonRow(
+-                $q,
+-                $q->submit (-name => 'action', -value =>
+-                $fm->localise('REBOOT'))
+-        );
+-        # Put in a hidden widget to store the reboot value.
+-        print $q->hidden(
+-                        -name => 'function',
+-                        -value => 'reboot'
+-                        ),"\n";
+-        print $q->end_table,"\n";
+-    }
+-    else
+-    {
+-	print $q->Tr(
+-	    $q->td({-class => "sme-noborders-label"},    
+-                $fm->localise("SELECT_AN_ACTION")),
+-	    $q->td({-class => "sme-noborders-content"},    
+-                $q->popup_menu (
+-                    -name => 'function',
+-                    -values => [ @labels ],
+-                    -default => $default_action,
+-                    -labels => \%labels
+-		)
+-	    )
+-	),"\n";
+-	
+-    }
+-
+-    print $q->end_table,"\n";
+-
+-    if ($default_action ne 'reboot')
+-    {
+-        print $q->start_table ({width => "100%", -class => "sme-noborders"}),
+-		"\n";
+-
+-        print esmith::cgi::genButtonRow(
+-                $q,
+-                $q->submit (-name => 'action', -value =>
+-                $fm->localise('PERFORM'))
+-        );
+-
+-	print $q->end_table,"\n";
+-    }
+-
+-    print $q->hidden (
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'perform'
+-	),"\n";
+-
+-    print $q->endform,"\n";
+-
+-    esmith::cgi::genFooter($fm);
+-
+-    return;
+-}
+-
+-sub performAndShowResult
+-{
+-    my ($q) = @_;
+-
+-    my $function = $q->param ('function');
+-
+-    if ($function eq 'refresh')
+-    {
+-	showInitial ($q, '');
+-    }
+-    elsif ($function eq 'reboot')
+-    {
+-	performReboot();
+-    }
+-    elsif ($function eq 'desktop-backup')
+-    {
+-	desktopBackup();
+-    }
+-    elsif ($function eq 'tape-configure')
+-    {
+-	TapeBackupConfig ($q);
+-    }
+-    elsif ($function eq 'tape-restore')
+-    {
+-	tapeRestore();
+-    }
+-    elsif ($function eq 'workstn-configure')
+-    {
+-	WorkstnBackupConfig ($q);
+-    }
+-    elsif ($function eq 'workstn-verify')
+-    {
+-	workstnVerify();
+-    }
+-    elsif ($function eq 'workstn-restore')
+-    {
+-	workstnRestore();
+-    }
+-    elsif ($function eq 'workstn-sel-restore')
+-    {
+-	workstnSelRestore();
+-    }
+-    else
+-    {
+-	# Unknown function - refresh the screen anyway
+-	showInitial ($q, 'unknown');
+-    }
+-
+-    return;
+-
+-    esmith::cgi::genHeaderNonCacheable ($q, undef,
+-	$fm->localise("X_BACKUP_OR_RESTORE"));
+-    print $q->p ( $function );
+-    esmith::cgi::genFooter($fm);
+-}
+-
+-sub desktopBackupRecordStatus
+-{
+-    my ($backup, $phase, $status) = @_;
+-    my $now = time();
+-
+-    warn("Backup terminated: $phase failed - status: $status\n");
+-    $backup->set_prop('EndEpochTime', "$now");
+-    $backup->set_prop('Result', "$phase:$status");
+-}
+-
+-sub desktopBackup ()
+-{
+-    # Generate a header that will trigger a download and send data as
+-    # an octet stream.
+-
+-    my $backups = esmith::BackupHistoryDB->open;
+-    my $now = time();
+-    my $backup_rec = $backups->new_record($now, {
+-				type => 'backup_record',
+-				BackupType => 'desktop',
+-				StartEpochTime => $now,
+-			    });
+-
+-    # Dump the current mysql tables so that they are part of the image.
+-    # The events handle cases where mysqld is not enabled, and/or is
+-    # not running.
+-
+-    my $status = system("/sbin/e-smith/signal-event", "pre-backup", "desktop");
+-    if ($status)
+-    {
+-	desktopBackupRecordStatus($backup_rec, 'pre-backup', $status);
+-	esmith::cgi::genHeaderNonCacheable(
+-	    $fm->{cgi},
+-	    undef, $fm->localise('OPERATION_STATUS_REPORT'));
+-	esmith::cgi::genResult(
+-	    $fm->{cgi}, $fm->localise('ERR_PRE_BACKUP'));
+-	return;
+-    }
+-
+-    print "Expires: 0\n";
+-    print "Content-type: application/octet-stream\n";
+-    print "Content-disposition: attachment; filename=smeserver.tgz\n";
+-    print "\n";
+-    setpgrp;
+-    my $ourpgrp = getpgrp;
+-    local $SIG{PIPE} = sub
+-	    {
+-		local $SIG{HUP} = 'IGNORE';
+-		warn "Got sigpipe - sending HUP to $ourpgrp\n";
+-		kill HUP => -$ourpgrp;
+-		desktopBackupRecordStatus($backup_rec,
+-		    'send2browser', 'Incomplete');
+-		exit 1;
+-	    };
+-
+-    open(RD,
+-	    "/bin/tar --directory / --create @directories --file=-"
+-	    . " | /usr/bin/gzip |"
+-	);
+-
+-    while (<RD>)
+-    {
+-	print;
+-    }
+-
+-    close RD;
+-
+-    # Remove the dumped tables.
+-
+-    $status = system("/sbin/e-smith/signal-event", "post-backup", "desktop");
+-    if ($status)
+-    {
+-	desktopBackupRecordStatus($backup_rec, 'post-backup', $status);
+-	die ($fm->localise('ERR_POST_BACKUP'),"\n");
+-    }
+-    $now = time();
+-    $backup_rec->set_prop('EndEpochTime', "$now");
+-    $backup_rec->set_prop('Result', "0");
+-}
+-
+-sub TapeBackupConfig
+-{
+-    my ($q) = @_;
+-    my $enabledChk = "";
+-    my $backupAMPM = 'AM';
+-    my $backupMin;
+-    my $backupHour;
+-    my $reminderAMPM = 'AM';
+-    my $reminderMin;
+-    my $reminderHour;
+-
+-    esmith::cgi::genHeaderNonCacheable(
+-	$q, undef, $fm->localise('ENABLE_DISABLE_TAPE'));
+-
+-    print $q->p ($fm->localise('TAPE_CONFIG_DESC'));
+-
+-    # Obtain time for backup from the backup cron template
+-    my $rec = $conf->get('backup');
+-    my $backupTime = "2:00";
+-    if ($rec)
+-    {
+-	$backupTime = $rec->prop('backupTime') || "2:00";
+-    }
+-
+-    ($backupHour, $backupMin) = split (":", $backupTime, -1);
+-
+-    if ($backupHour > 11)
+-    {
+-	if ($backupHour > 12)
+-	{
+-	    $backupHour -= 12;
+-	}
+-	$backupAMPM = 'PM';
+-    }
+-
+-    # Obtain time for reminder notice from the backup cron template
+-    my $reminderTime = "14:00";
+-    if ($rec)
+-    {
+-	$reminderTime = $rec->prop('reminderTime') || "14:00";
+-    }
+-
+-    ($reminderHour, $reminderMin) = split (":", $reminderTime, -1);
+-
+-    if ($reminderHour > 12)
+-    {
+-	$reminderHour -= 12;
+-	$reminderAMPM = 'PM';
+-    }
+-
+-    print $q->startform(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $q->start_table ({-class => "sme-noborders"});
+-
+-    my $backup_status;
+-    if ($rec)
+-    {
+-	$backup_status = $rec->prop('status');
+-    }
+-
+-    if (defined $backup_status && $backup_status eq "enabled")
+-    {
+-	$enabledChk = "checked";
+-    }
+-
+-    print $q->Tr(
+-	    $q->td(
+-		    $fm->localise('ENABLE_TAPE_BACKUP')
+-		    . " <input type=\"checkbox\""
+-		    . " name=\"tapebackup\""
+-		    . " $enabledChk"
+-		    . " value=\"on\">"
+-		)
+-	);
+-
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,$fm->localise('TAPE_BACKUP_TIME')
+-			),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupHour',
+-						-override => 1,
+-						-default => $backupHour,
+-						-size => 2)),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupMin',
+-						-override => 1,
+-						-default => $backupMin,
+-						-size => 2)),
+-
+-	esmith::cgi::genCell ($q, "AM/PM:"),
+-
+-	esmith::cgi::genCell ($q, $q->popup_menu (-name => 'backupAMPM',
+-						-values => ['AM', 'PM'],
+-						-default => $backupAMPM)));
+-
+-    my %timelabels=('AM' => $fm->localise('AM'),'PM' => $fm->localise('PM'));
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q, $fm->localise('LOAD_TAPE_REMINDER_TIME')
+-			),
+-
+-	    esmith::cgi::genCell(
+-		    $q,
+-		    $q->textfield(
+-			    -name  => 'reminderHour',
+-			    -override => 1,
+-			    -default => $reminderHour,
+-			    -size => 2
+-			)
+-		),
+-
+-	    esmith::cgi::genCell(
+-		    $q,
+-		    $q->textfield(
+-			    -name  => 'reminderMin',
+-			    -override => 1,
+-			    -default => $reminderMin,
+-			    -size => 2
+-			)
+-		),
+-
+-	    esmith::cgi::genCell($q, $fm->localise("AM/PM").":"),
+-
+-	    esmith::cgi::genCell(
+-		    $q,
+-		    $q->popup_menu(
+-			    -name => 'reminderAMPM',
+-			    -values => ['AM', 'PM'],
+-			    -labels => \%timelabels,
+-			    -default => $reminderAMPM
+-			)
+-		)
+-	);
+-
+-    print "</table>\n";
+-    print $q->start_table ({width => "100%", -class => "sme-noborders"});
+-    print $q->Tr($q->th({-class => "sme-layout"},
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('UPDATE_CONF')
+-		    )
+-		)
+-	);
+-
+-    print $q->hidden(
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'tape-configure'
+-	);
+-
+-    print $q->endform;
+-    print '</table>';
+-
+-    esmith::cgi::genFooter($fm);
+-    return;
+-}
+-
+-sub updateTapeBackupConfig
+-{
+-    my ($q) = @_;
+-
+-    my $status = $q->param ('tapebackup');
+-    my $ampm;
+-
+-    esmith::cgi::genHeaderNonCacheable(
+-	    $q,
+-	    undef, $fm->localise('UPDATING_TAPE_CONF')
+-	);
+-
+-    if (defined $status && $status eq "on")
+-    {
+-
+-    	#--------------------------------------------------
+-    	# Untaint parameters and check for validity
+-    	#--------------------------------------------------
+-
+-	my $backupHour = $q->param ('backupHour');
+-	if ($backupHour =~ /^(.*)$/) {
+-	    $backupHour = $1;
+-	} else {
+-	    $backupHour = "12";
+-	}
+-	if (($backupHour < 1) || ($backupHour > 12))
+-	{
+-	    esmith::cgi::genResult(
+-		    $fm->{cgi}, $fm->localise('ERR_INVALID_HOUR').$backupHour.
+-			$fm->localise('BETWEEN_1_AND_12')
+-		);
+-
+-	    return;
+-	}
+-
+-	my $backupMin = $q->param ('backupMin');
+-    	if ($backupMin =~ /^(.*)$/) {
+-	    $backupMin = $1;
+-    	} else {
+-	    $backupMin = "0";
+-    	}
+-	if (($backupMin < 0) || ($backupMin > 59))
+-    	{
+-	    esmith::cgi::genResult(
+-		    $fm->{cgi}, $fm->localise('ERR_INVALID_MINUTE').$backupMin.
+-			$fm->localise('BETWEEN_0_AND_59')
+-		);
+-
+-	    return;
+-    	}
+-
+-	$backupMin = sprintf("%02d", $backupMin);
+-
+-	$ampm = $q->param ('backupAMPM');
+-	if ($ampm =~ /^(.*)$/) {
+-	    $ampm = $1;
+-    	} else {
+-	    $ampm = "AM";
+-    	}
+-
+-    	# convert to 24 hour time
+-
+-    	$backupHour = $backupHour % 12;
+-    	if ($ampm eq "PM")
+-    	{
+-	    $backupHour = $backupHour + 12;
+-    	}
+-
+-    	my $reminderHour = $q->param ('reminderHour');
+-    	if ($reminderHour =~ /^(.*)$/) {
+-	    $reminderHour = $1;
+-    	} else {
+-	    $reminderHour = "12";
+-    	}
+-    	if (($reminderHour < 1) || ($reminderHour > 12))
+-    	{
+-	    esmith::cgi::genResult(
+-			$fm->{cgi}, 
+-			$fm->localise('ERR_INVALID_REMINDER_HOUR').$reminderHour
+-			.$fm->localise('BETWEEN_1_AND_12')
+-		);
+-
+-	    return;
+-    	}
+-
+-    	my $reminderMin = $q->param ('reminderMin');
+-    	if ($reminderMin =~ /^(.*)$/) {
+-	    $reminderMin = $1;
+-    	} else {
+-	    $reminderMin = "0";
+-    	}
+-    	if (($reminderMin < 0) || ($reminderMin > 59))
+-    	{
+-	    esmith::cgi::genResult(
+-		    $fm->{cgi}, $fm->localise('ERR_INVALID_REMINDER_MINUTE').
+-			$reminderMin.$fm->localise('BETWEEN_0_AND_59')
+-		);
+-	    return;
+-    	}
+-
+-	$reminderMin = sprintf("%02d", $reminderMin);
+-
+-    	$ampm = $q->param ('reminderAMPM');
+-    	if ($ampm =~ /^(.*)$/) {
+-	    $ampm = $1;
+-    	} else {
+-	    $ampm = "AM";
+-    	}
+-
+-    	# convert to 24 hour time
+-
+-	$reminderHour = $reminderHour % 12;
+-    	if ($ampm eq "PM")
+-    	{
+-	    $reminderHour = $reminderHour + 12;
+-    	}
+-
+-	# variables passed validity checks, set configuration database values
+-	my $old = $conf->get('UnsavedChanges')->value;
+-
+-	my $rec = $conf->get('backup');
+-	unless (defined $rec)
+-	{
+-	    $rec = $conf->new_record('backup', {type=>'service'});
+-	}
+-
+-	$rec->set_prop('status', 'enabled');
+-
+-	my $module = $rec->prop('Program');
+-
+-	# The default e-smith backup program is flexbackup.
+-
+-	unless (defined $module)
+-	{
+-	    $module = "flexbackup";
+-	}
+-	elsif ($module eq '')
+-	{
+-	    $module = "flexbackup";
+-	}
+-
+-	$rec->set_prop('Program', $module);
+-	$rec->set_prop('backupTime', "$backupHour:$backupMin");
+-	$rec->set_prop('reminderTime', "$reminderHour:$reminderMin");
+-
+-	$conf->get('UnsavedChanges')->set_value($old);
+-
+-	system("/sbin/e-smith/signal-event", "conf-backup") == 0
+-	    or die($fm->localise('ERR_CONF_BACKUP'),"\n");
+-
+-	esmith::cgi::genResult(
+-		$fm->{cgi}, $fm->localise('SUCCESSFULLY_ENABLED_TAPE').$q->br().
+-		$fm->localise('WITH_BACKUP_TIME')."$backupHour:$backupMin".
+-		$q->br().$fm->localise('WITH_REMINDER_TIME').
+-		"$reminderHour:$reminderMin");
+-    }
+-    else
+-    {
+-	# set service to disabled
+-	my $old = $conf->get('UnsavedChanges')->value;
+-
+-	my $rec = $conf->get('backup');
+-	unless ($rec)
+-	{
+-	    $rec = $conf->new_record('backup', {type=>'service'});
+-	}
+-
+-	$rec->set_prop('status', 'disabled');
+-	$conf->get('UnsavedChanges')->set_value($old);
+-
+-	system("/sbin/e-smith/signal-event", "conf-backup") == 0
+-	    or die($fm->localise('ERR_CONF_BACKUP')."\n");
+-
+-	esmith::cgi::genResult(
+-		$fm->{cgi}, $fm->localise('SUCCESSFULLY_DISABLED')
+-	    );
+-    }
+-
+-    return;
+-}
+-
+-sub tapeRestore ()
+-{
+-    esmith::cgi::genHeaderNonCacheable(
+-	$q, undef, $fm->localise('RESTORE_CONF_FROM_TAPE'));
+-
+-    print $fm->localise('RESTORE_CONF_FROM_TAPE_DESC');
+-
+-    print $q->start_multipart_form(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $q->start_table ({width => "100%", -class => "sme-noborders"});
+-
+-    print esmith::cgi::genButtonRow(
+-		    $q,
+-		    $q->submit (-name => 'action',
+-                                -value => $fm->localise('RESTORE_FROM_TAPE'))
+-	);
+-    print "</table>\n";
+-	print $q->hidden(
+-		-name => 'state',
+-		-override => 1,
+-		-default => 'tape-restore'
+-	    );
+-
+-	print $q->endform;
+-	esmith::cgi::genFooter($fm);
+-}
+-
+-sub performTapeRestore
+-{
+-    my ($q) = @_;
+-
+-    #----------------------------------------
+-    # restore system from backup tape
+-    #----------------------------------------
+-
+-    my $lock_file = "/var/lock/subsys/e-smith-restore";
+-    my $file_handle = &esmith::lockfile::LockFileOrReturn($lock_file);
+-
+-    unless ($file_handle)
+-    {
+-	esmith::cgi::genHeaderNonCacheable(
+-		$q,
+-		undef,
+-		$fm->localise('UNABLE_TO_RESTORE_CONF')
+-	    );
+-
+-	print $q->p (
+-	    $q->b ($fm->localise('ANOTHER_RESTORE_IN_PROGRESS')
+-		)
+-	    );
+-
+-	esmith::cgi::genFooter($fm);
+-	return;
+-    }
+-
+-    my $rec = $restore->get('restore');
+-    $rec->set_prop('state', 'running');
+-    $rec->set_prop('start', time);
+-
+-	my $sec = 10;
+-	print "Refresh: $sec; URL=/server-manager/cgi-bin/backup\n";
+-    esmith::cgi::genHeaderNonCacheable(
+-	    $q, undef, $fm->localise()
+-	);
+-
+-    print $q->p($fm->localise('NOW_RESTORING_FROM_TAPE')
+-	);
+-
+-    print $q->p (
+-	$q->b ($fm->localise('MUST_REBOOT_AFTER_RESTORE'))
+-	);
+-
+-	print $q->p($fm->localise('PAGE_REFRESH_IN', {sec=>$sec}));
+-
+-    my $child;
+-
+-    if ($child = fork)
+-    {
+-	# Parent
+-
+-	$SIG{'CHLD'} = 'IGNORE';
+-	&esmith::lockfile::UnlockFile($file_handle);
+-
+-	esmith::cgi::genFooter($fm);
+-	return;
+-    }
+-    elsif (defined $child)
+-    {
+-	# Child
+-
+-	# Re-establish the lock. Wait till it is relinquished by the parent.
+-
+-	$file_handle = &esmith::lockfile::LockFileOrWait($lock_file);
+-
+-	# Close STDOUT so that the web server connection is closed.
+-
+-	close STDOUT;
+-
+-	# Now reopen STDOUT for the child. Redirect it to STDERR.
+-
+-	open(STDOUT, ">&STDERR");
+-
+-	unless(system("/sbin/e-smith/signal-event", "pre-restore") == 0)
+-	{
+-		$rec->set_prop('errmsg', $fm->localise('ERR_PRE_RESTORE'));
+-		$rec->delete_prop('state');
+-	    die ($fm->localise('ERR_PRE_RESTORE'),"\n");
+-	}
+-	unless(system("/sbin/e-smith/signal-event", "restore-tape") == 0)
+-	{
+-		$rec->set_prop('errmsg', $fm->localise('ERR_RESTORING_FROM_TAPE'));
+-		$rec->delete_prop('state');
+-	    die ($fm->localise('ERR_RESTORING_FROM_TAPE')."\n");
+-	}
+-
+-	#----------------------------------------
+-	# regenerate configuration files
+-	#----------------------------------------
+-
+-	unless(system("/usr/sbin/groupmod", "-g", "$www_gid", "www") == 0)
+-	{
+-		$rec->set_prop('errmsg', $rec->prop('errmsg').'<br>'.
+-		    $fm->localise('ERR_RESTORING_GID'));
+-	    warn ($fm->localise('ERR_RESTORING_GID')."\n");
+-	}
+-	unless(system("/usr/sbin/usermod", "-g", "$www_gid", "www") == 0)
+-	{
+-		$rec->set_prop('errmsg', $rec->prop('errmsg').'<br>'.
+-			$fm->localise('ERR_RESTORING_INITIAL_GRP'));
+-	    warn ($fm->localise('ERR_RESTORING_INITIAL_GRP')."\n");
+-	}
+-	unless(system("/sbin/e-smith/signal-event", "post-upgrade") == 0)
+-	{
+-		$rec->set_prop('errmsg', $rec->prop('errmsg').'<br>'.
+-			$fm->localise('ERR_UPDATING_CONF_AFTER_TAPE_RESTORE'));
+-		$rec->delete_prop('state');
+-	    die ($fm->localise('ERR_UPDATING_CONF_AFTER_TAPE_RESTORE'));
+-	}
+-
+-	my $finish = time;
+-	$rec->set_prop('state', 'complete');
+-	$rec->set_prop('finish', $finish);
+-
+-	my $start = $rec->prop('start');
+-	$start = scalar localtime($start);
+-	$finish = scalar localtime($finish);
+-
+-	&esmith::lockfile::UnlockFile($file_handle);
+-
+-	exit;
+-    }
+-    else
+-    {
+-	# Error
+-
+-	$rec->delete_prop('state');
+-	$rec->set_prop('errmsg', $fm->localise('COULD_NOT_FORK'));
+-	die ($fm->localise("COULD_NOT_FORK")."$!\n");
+-    }
+-}
+-
+-sub WorkstnBackupConfig
+-{
+-    my ($q) = @_;
+-    my $backupwk_status;
+-    my $enabledIncOnlyTimeout = "";
+-    my $backupwkLogin = 'backup';
+-    my $backupwkPassword = 'backup';
+-    my $backupwkStation = 'host';
+-    my $backupwkFolder = 'share';
+-    my $setsNumber;
+-    my $filesinset;
+-    my $backupwkTime;
+-    my $backupwkTimeout;
+-    my $backupwkIncOnlyTimeout;
+-    my $compression;
+-    my $VFSType;
+-    my $dof;
+-    my @dlabels = split(' ', $fm->localise('DOW'));
+-    my @VFST = ('cifs', 'nfs', 'usb');
+-    my %VFST = ('cifs', 'cifs', 'nfs', 'nfs', 'usb', 'local usb disk'); 
+-        
+-    # Obtain backup informations from configuration
+-    my $rec = $conf->get('backupwk');
+-    if ($rec)
+-    {
+-	$backupwkTime = $rec->prop('BackupTime') || '2:00';
+-	$backupwkLogin = $rec->prop('Login') || 'backup';
+-	$backupwkPassword = $rec->prop('Password') || 'backup';
+-	$backupwkStation = $rec->prop('SmbHost') || 'host';
+-	$backupwkFolder = $rec->prop('SmbShare') || 'share';
+-	$setsNumber = $rec->prop('SetsMax') || '1';
+-	$filesinset = $rec->prop('DaysInSet') || '1';
+-	$backupwkTimeout = $rec->prop('Timeout') || '12';
+-	$backupwkIncOnlyTimeout = $rec->prop('IncOnlyTimeout') || 'yes';
+-	$compression = $rec->prop('Compression') || '0';
+-	$dof = (defined $rec->prop('FullDay')) ? $rec->prop('FullDay') : '7';
+-	$VFSType = $rec->prop('VFSType') || 'cifs';
+-	$backupwk_status = $rec->prop('status');
+-    }
+-
+-    esmith::cgi::genHeaderNonCacheable(
+-	$q, undef, $fm->localise('CONFIGURE_WORKSTN_BACKUP'));
+-
+-    if ($rec) {
+-	print $fm->localise('WORKSTN_BACKUP_DESC');
+-	print $fm->localise('WORKSTN_BACKUP_ENABLED'), 
+-            $q->b(' '.$fm->localise(uc($backupwk_status))), '.<br/>';
+-        if ($VFSType eq 'usb') {
+-	    print $fm->localise('WORKSTN_BACKUP_USB'), '<br/>';
+-	    }
+-	else {
+-    	    print $fm->localise('WORKSTN_BACKUP_HOST'), ' ', $backupwkStation;
+-    	    print ' ', $fm->localise('WORKSTN_BACKUP_VFSTYPE'), ' ', $VFSType, '<br/>';
+-	    }
+-	print $fm->localise('WORKSTN_BACKUP_SHARE'), ' ', $backupwkFolder, '<br/>';
+-	if ($VFSType eq 'cifs') {
+-    	    print $fm->localise('LOGIN'), ' ', $backupwkLogin, '<br/>';
+-    	    print $fm->localise('PASSWORD'), ' ********<br/>';
+-	    }
+-	print $fm->localise('WORKSTN_BACKUP_SETSNUM'), ' ', $setsNumber, '<br/>';
+-	print $fm->localise('WORKSTN_BACKUP_DAYSINSET'), ' ', $filesinset, '<br/>';
+-	print $fm->localise('WORKSTN_BACKUP_COMPRESSION'), ' ', $compression, '<br/>';
+-	print $fm->localise('WORKSTN_BACKUP_TOD'), ' ', $backupwkTime, '<br/>';
+-        print $fm->localise('WORKSTN_BACKUP_TIMEOUT'), ' ', $backupwkTimeout, ' ', $fm->localise('HOURS');
+-	if ( $backupwkIncOnlyTimeout eq 'yes' ) {print $fm->localise('WORKSTN_BACKUP_INCONLY_TIMEOUT')}
+-	print '<br/>';
+-	if ( $dof eq '7' ) {
+-	    print $fm->localise('WORKSTN_FULL_BACKUP_EVERYDAY', '<br/>');
+-	    }
+-	else {
+-	    print $fm->localise('WORKSTN_FULL_BACKUP_DAY'), ' ', $dlabels[$dof], '<br/>';
+-	    }
+-	}
+-    else { print $fm->localise('WORKSTN_BACKUP_NOT_CONFIGURED'), '<br/>' }
+-
+-    print $q->startform(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $q->start_table ({-class => "sme-noborders"});
+-
+-    print $q->Tr($q->td($q->h3 ($fm->localise('WORKSTATION_BACKUP_SETCONF'))));
+-
+-
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('SELECT_VFS_TYPE')
+-			),
+-
+-	esmith::cgi::genCell ($q, $q->popup_menu (-name => 'VFSType',
+-						-values => [ @VFST ],
+-						-labels => \%VFST,
+-						-default => $VFSType)));
+-
+-    print "</table>\n";
+-
+-    print $q->start_table ({width => "100%", -class => "sme-noborders"});
+-    print $q->Tr($q->th({-class => "sme-layout"},
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('NEXT')
+-		    )
+-		)
+-	);
+-
+-    print $q->hidden(
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'workstn-configure'
+-	);
+-    print '</table>';
+-
+-    print $q->endform;
+-
+-    esmith::cgi::genFooter ($q);
+-    return;
+-}
+-
+-sub WorkstnBackupConfig1
+-{
+-    my ($q) = @_;
+-    my $enabledChk = "";
+-    my $enabledIncOnlyTimeout = "";
+-    my $backupwkAMPM = 'AM';
+-    my $backupwkMin;
+-    my $backupwkHour;
+-    my $backupwkLogin = 'backup';
+-    my $backupwkPassword = 'backup';
+-    my $backupwkStation = 'host';
+-    my $backupwkFolder = 'share';
+-    my $setsNumber;
+-    my $filesinset;
+-    my $backupwkTimeout;
+-    my $backupwkIncOnlyTimeout;
+-    my $compression;
+-    my $VFSType = $q->param ('VFSType');
+-    my $dof;
+-    my @usbdisks;
+-    my %dlabels = ();
+-    my @dlabels = split(' ', $fm->localise('DOW'));
+-    my $i = 0;
+-    foreach (@dlabels) {
+-	$dlabels{$i} = $_;
+-	$i++;
+-	}
+-        
+-    # Obtain backup informations from configuration
+-    my $rec = $conf->get('backupwk');
+-    my $backupwkTime = '2:00';
+-    if ($rec)
+-    {
+-	$backupwkTime = $rec->prop('BackupTime') || '2:00';
+-	$backupwkLogin = $rec->prop('Login') || 'backup';
+-	$backupwkPassword = $rec->prop('Password') || 'backup';
+-	$backupwkStation = $rec->prop('SmbHost') || 'host';
+-	$backupwkFolder = $rec->prop('SmbShare') || 'share';
+-	$setsNumber = $rec->prop('SetsMax') || '1';
+-	$filesinset = $rec->prop('DaysInSet') || '1';
+-	$backupwkTimeout = $rec->prop('Timeout') || '12';
+-	$backupwkIncOnlyTimeout = $rec->prop('IncOnlyTimeout') || 'yes';
+-	$compression = $rec->prop('Compression') || '0';
+-	$dof = (defined $rec->prop('FullDay')) ? $rec->prop('FullDay') : '7';
+-    }
+-
+-    ($backupwkHour, $backupwkMin) = split (':', $backupwkTime, -1);
+-
+-    if ($backupwkHour > 12)
+-    {
+-	$backupwkHour -= 12;
+-	$backupwkAMPM = 'PM';
+-    }
+-
+-    my $backupwk_status;
+-    if ($rec)
+-    {
+-	$backupwk_status = $rec->prop('status');
+-    }
+-
+-    if (defined $backupwk_status && $backupwk_status eq 'enabled')
+-    {
+-	$enabledChk = 'checked';
+-    }
+-
+-    if (defined $backupwkIncOnlyTimeout && $backupwkIncOnlyTimeout eq 'yes')
+-    {
+-	$enabledIncOnlyTimeout = 'checked';
+-    }
+-
+-    esmith::cgi::genHeaderNonCacheable(
+-	$q, undef, $fm->localise('CONFIGURE_WORKSTN_BACKUP'));
+-
+-    if ( $VFSType eq 'usb' ) {
+-        foreach my $udi (qx(hal-find-by-property --key volume.fsusage --string filesystem)) {
+-        $udi =~ m/^(\S+)/;
+-        my $vollbl = qx(hal-get-property --udi $1 --key volume.label);
+-        $vollbl =~ m/^(\S+)/;
+-        if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
+-        push @usbdisks, lc($vollbl);
+-        }
+-
+-        unless ($usbdisks[0]){
+-	    esmith::cgi::genResult(
+-		    $fm->{cgi}, $fm->localise('ERR_NO_USB_DISK'));
+-	    return
+-	    }
+-	}	
+-
+-    print $q->startform(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $fm->localise('CONFIGURE_WORKSTN_BACKUP_DESC');
+-
+-    print $q->start_table ({-class => "sme-noborders"});
+-
+-    print $q->Tr(
+-	    $q->td(
+-		    $fm->localise('ENABLE_WORKSTN_BACKUP')
+-		    . " <input type=\"checkbox\""
+-		    . " name=\"workstnbackup\""
+-		    . " $enabledChk"
+-		    . " value=\"on\">"
+-		)
+-	);
+-
+-    print $q->Tr($q->td($q->h3 ($fm->localise('WORKSTATION_BACKUP_DEST'))));
+-
+-    if ( $VFSType eq 'usb' ) {
+-        print $q->Tr(
+-	    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('WORKSTN_NAME')
+-			),
+-
+-	    esmith::cgi::genCell ($q, 'localhost'),
+-	    );
+-	}
+-    else {
+-        print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('WORKSTN_NAME')
+-			),
+-
+-	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkStation',
+-						-override => 1,
+-						-default => $backupwkStation,
+-						-size => 20)),
+-	    );
+-	}
+-
+-    if ( $VFSType eq 'usb' ) {
+-        print $q->Tr(
+-	    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('SHARED_FOLDER_NAME')
+-		),
+-    
+-            esmith::cgi::genCell ($q, $q->popup_menu (-name  => 'backupwkFolder',
+-						-values => [ @usbdisks ],
+-						-default => $backupwkFolder,)),
+-    		);
+-        }
+-    else {
+-        print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('SHARED_FOLDER_NAME')
+-			),
+-
+-	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkFolder',
+-						-override => 1,
+-						-default => $backupwkFolder,
+-						-size => 20)),
+-    	    );
+-	}
+-
+-    if ( $VFSType eq 'cifs' ) {
+-	print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('WORKSTN_LOGIN')
+-			),
+-
+-	    esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkLogin',
+-						-override => 1,
+-						-default => $backupwkLogin,
+-						-size => 12)),
+-	    );
+-
+-	print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('PASSWORD')
+-			),
+-
+-	    esmith::cgi::genCell ($q, $q->password_field (-name  => 'backupwkPassword',
+-						-override => 1,
+-						-default => $backupwkPassword,
+-						-size => 20)),
+-	    );
+-	}
+-
+-    print '</table>';
+-
+-    print $q->table ({border => 0, cellspacing => 1, cellpadding => 4});
+-
+-    print $q->Tr($q->td({-colspan=>4},$q->h3 ($fm->localise('WORKSTN_BACKUP_SETTINGS'))));
+-
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('NUMBER_OF_SETS')
+-			),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'setsNumber',
+-						-override => 1,
+-						-default => $setsNumber,
+-						-size => 3)),
+-
+-	esmith::cgi::genCell ($q, $fm->localise('NUMBER_OF_FILES_IN_SET')),
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'filesinset',
+-						-override => 1,
+-						-default => $filesinset,
+-						-size => 3))
+-	);
+-
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('WORKSTN_BACKUP_TIME')
+-			),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkHour',
+-						-override => 1,
+-						-default => $backupwkHour,
+-						-size => 2)),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkMin',
+-						-override => 1,
+-						-default => $backupwkMin,
+-						-size => 2)),
+-
+-	esmith::cgi::genCell ($q, $q->popup_menu (-name => 'backupwkAMPM',
+-						-values => ['AM', 'PM'],
+-						-default => $backupwkAMPM)));
+-
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('WORKSTN_TIMEOUT')
+-			),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'backupwkTimeout',
+-						-override => 1,
+-						-default => $backupwkTimeout,
+-						-size => 2)),
+-
+-        esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('INC_ONLY_TIMEOUT')
+-			),
+-
+-	esmith::cgi::genCell (
+-		    $q,
+-		    " <input type=\"checkbox\""
+-		    . " name=\"incOnlyTimeout\""
+-		    . " $enabledIncOnlyTimeout"
+-		    . " value=\"on\">"
+-	    ),
+-	);
+-
+-    print $q->Tr(
+-		    esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('COMPRESSION_LEVEL')
+-			),
+-
+-	esmith::cgi::genCell ($q, $q->textfield (-name  => 'compression',
+-						-override => 1,
+-						-default => $compression,
+-						-size => 1)),
+-
+-        esmith::cgi::genCell(
+-			    $q,
+-			    $fm->localise('FULL_ONLY_ON')
+-			),
+-
+-	esmith::cgi::genCell (
+-		    $q,
+-	        $q->popup_menu (
+-		    -name => 'dof',
+-		    -values => [ '7', '0', '1', '2', '3', '4', '5', '6' ],
+-		    -labels => \%dlabels,
+-		    -default => $dof))
+-	);
+-
+-    print "</table>\n";
+-
+-    print $q->start_table ({width => "100%", -class => "sme-noborders"});
+-    print $q->Tr($q->th({-class => "sme-layout"},
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('UPDATE_CONF')
+-		    )
+-		)
+-	);
+-
+-    print $q->hidden(
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'workstn-configure1'
+-	);
+-    print $q->hidden(
+-	    -name => 'VFSType',
+-	    -override => 1,
+-	    -default => $VFSType
+-	);
+-    print '</table>';
+-
+-    print $q->endform;
+-
+-    esmith::cgi::genFooter ($q);
+-    return;
+-}
+-
+-sub updateWorkstnBackupConfig
+-{
+-    my ($q) = @_;
+-
+-    my $status = $q->param ('workstnbackup');
+-    my $inconly = $q->param ('incOnlyTimeout');
+-    my $dof = $q->param('dof');
+-    my $ampm;
+-    my $incOnlyTimeout;
+-
+-    esmith::cgi::genHeaderNonCacheable(
+-	    $q,
+-	    undef, $fm->localise('UPDATING_WORKSTN_CONF')
+-	);
+-
+-    	#--------------------------------------------------
+-    	# Untaint parameters and check for validity
+-    	#--------------------------------------------------
+-
+-    my $VFSType = $q->param ('VFSType');
+-	
+-    my $backupwkStation = $q->param ('backupwkStation');
+-    if ( $VFSType eq 'usb') { $backupwkStation = 'localhost' }
+-    if ($backupwkStation =~ /^(.*)$/) {
+-	$backupwkStation = $1;
+-    } else {
+-        $backupwkStation = "";
+-    }
+-    if ( $backupwkStation eq "" )
+-    {
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_INVALID_WORKSTN')
+-	);
+-    return;
+-    }
+-
+-    my $backupwkFolder = $q->param ('backupwkFolder');
+-    if ( $VFSType eq 'usb' ) {
+-	$backupwkFolder = 'media/' . $backupwkFolder;
+-	}
+-    if ($backupwkFolder =~ /^(.*)$/) {
+-        $backupwkFolder = $1;
+-	$backupwkFolder =~ s/^\//; # remove leading /
+-    } else {
+-        $backupwkFolder = "";
+-    }
+-    if ( $backupwkFolder eq "" )
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_FOLDER')
+-    	);
+-        return;
+-    }
+-
+-    my $backupwkLogin = $q->param ('backupwkLogin') || '';
+-    if ($backupwkLogin =~ /^(.*)$/) {
+-        $backupwkLogin = $1;
+-    } else {
+-        $backupwkLogin = "";
+-    }
+-    if ( ( $backupwkLogin eq "" ) && ( $VFSType eq 'cifs' ) )
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_LOGIN')
+-    	);
+-        return;
+-    }
+-
+-    my $backupwkPassword = $q->param ('backupwkPassword') || '';
+-    if ($backupwkPassword =~ /^(.*)$/) {
+-        $backupwkPassword = $1;
+-    } else {
+-        $backupwkPassword = "";
+-    }
+-    if ( ( $backupwkPassword eq "" ) && ( $VFSType eq 'cifs' ) )
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_PASSWORD')
+-    	);
+-        return;
+-    }
+-
+-    my $setsNumber = $q->param ('setsNumber');
+-    unless ( $setsNumber > 0 )
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_SETS_NUMBER')
+-    	);
+-        return;
+-    }
+-
+-    my $filesinset = $q->param ('filesinset');
+-    unless ( $filesinset > 0 )
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_FILES_IN_SET_NUMBER')
+-    	);
+-        return;
+-    }
+-
+-    my $timeout = $q->param ('backupwkTimeout');
+-    if (( $timeout eq '') || ( $timeout == 0 )) {$timeout = 24 }
+-    if  (( $timeout < 1 ) || ( $timeout > 24 ))
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_TIMEOUT')
+-    	);
+-        return;
+-    }
+-
+-    if (defined $inconly && $inconly eq 'on')
+-    {
+-	$incOnlyTimeout = 'yes';
+-    }
+-    else
+-    {
+-	$incOnlyTimeout = 'no';
+-    }
+-
+-    my $compression = $q->param ('compression');
+-    if  (( $compression < 0 ) || ( $compression > 9 ))
+-    {
+-        esmith::cgi::genResult(
+-    	    $q, $fm->localise('ERR_INVALID_COMPRESSION')
+-    	);
+-        return;
+-    }
+-
+-    my $rec = $conf->get('backupwk');
+-    unless (defined $rec)
+-    {
+-        $rec = $conf->new_record('backupwk', {type=>'service'});
+-    }
+-
+-    $rec->set_prop('SmbHost', $backupwkStation);
+-    $rec->set_prop('SmbShare', $backupwkFolder);
+-    $rec->set_prop('Login', $backupwkLogin);
+-    $rec->set_prop('Password', $backupwkPassword);
+-    $rec->set_prop('SetsMax', $setsNumber);
+-    $rec->set_prop('DaysInSet', $filesinset);
+-    $rec->set_prop('Timeout', $timeout);
+-    $rec->set_prop('IncOnlyTimeout', $incOnlyTimeout);
+-    $rec->set_prop('Compression', $compression);
+-    $rec->set_prop('FullDay', $dof);
+-    $rec->set_prop('VFSType', $VFSType);
+-    
+-    my $module = $rec->prop('Program');
+-
+-    # The default workstation backup program is dar.
+-
+-    unless (defined $module)
+-    {
+-        $module = 'dar';
+-    }
+-    elsif ($module eq '')
+-    {
+-        $module = 'dar';
+-    }
+-
+-    $rec->set_prop('Program', $module);
+-		
+-    if (defined $status && $status eq 'on')
+-    {
+-
+-	my $backupwkHour = $q->param ('backupwkHour');
+-	if ($backupwkHour =~ /^(.*)$/) {
+-	    $backupwkHour = $1;
+-	} else {
+-	    $backupwkHour = '12';
+-	}
+-	if (($backupwkHour < 0) || ($backupwkHour > 12))
+-	{
+-	    esmith::cgi::genResult(
+-		    $q, $fm->localise('ERR_INVALID_HOUR').$backupwkHour.
+-			$fm->localise('BETWEEN_0_AND_12')
+-		);
+-
+-	    return;
+-	}
+-
+-	my $backupwkMin = $q->param ('backupwkMin');
+-    	if ($backupwkMin =~ /^(.*)$/) {
+-	    $backupwkMin = $1;
+-    	} else {
+-	    $backupwkMin = '0';
+-    	}
+-	if (($backupwkMin < 0) || ($backupwkMin > 59))
+-    	{
+-	    esmith::cgi::genResult(
+-		    $q, $fm->localise('ERR_INVALID_MINUTE').$backupwkMin.
+-			$fm->localise('BETWEEN_0_AND_59')
+-		);
+-
+-	    return;
+-    	}
+-
+-	$backupwkMin = sprintf("%02d", $backupwkMin);
+-
+-	$ampm = $q->param ('backupwkAMPM');
+-	if ($ampm =~ /^(.*)$/) {
+-	    $ampm = $1;
+-    	} else {
+-	    $ampm = 'AM';
+-    	}
+-
+-    	# convert to 24 hour time
+-
+-    	$backupwkHour = $backupwkHour % 12;
+-    	if ($ampm eq 'PM')
+-    	{
+-	    $backupwkHour = $backupwkHour + 12;
+-    	}
+-
+-
+-	# variables passed validity checks, set configuration database values
+-	my $old = $conf->get('UnsavedChanges')->value;
+-
+-	$rec->set_prop('status', 'enabled');
+-
+-	$rec->set_prop('BackupTime', "$backupwkHour:$backupwkMin");
+-
+-	$conf->get('UnsavedChanges')->set_value($old);
+-
+-	system("/sbin/e-smith/signal-event", "conf-backup") == 0
+-	    or die($fm->localise('ERR_CONF_BACKUP'),"\n");
+-
+-	esmith::cgi::genResult(
+-		$q, $fm->localise('SUCCESSFULLY_ENABLED_WORKSTN').$q->br().
+-		$fm->localise('WITH_BACKUP_TIME')."$backupwkHour:$backupwkMin");
+-    }
+-    else
+-    {
+-	# set service to disabled
+-	my $old = $conf->get('UnsavedChanges')->value;
+-
+-	$rec->set_prop('status', 'disabled');
+-	$conf->get('UnsavedChanges')->set_value($old);
+-
+-	system("/sbin/e-smith/signal-event", "conf-backup") == 0
+-	    or die($fm->localise('ERR_CONF_BACKUP')."\n");
+-
+-	esmith::cgi::genResult(
+-		$q, $fm->localise('SUCCESSFULLY_DISABLED_WORKSTN')
+-	    );
+-    }
+-
+-    return;
+-}
+-
+-sub workstnVerify ()
+-{
+-
+-    my $rec = $conf->get('backupwk');
+-    
+-    esmith::cgi::genHeaderNonCacheable ($q, undef,
+-	$fm->localise('VERIFY_WORKSTN_BACKUP_FILE'));
+-
+-    unless ($rec)
+-    {
+-	esmith::cgi::genResult(
+-	    $q, $fm->localise('CONFIGURATION_TO_BE_DONE'));
+-	return;
+-    }
+-
+-    my %backupfiles = ();
+-    my $mntdir = $rec->prop('MountDir') || '/mnt/smb';
+-    my $mntbkdir;
+-    my $mounted;
+-    my $key;
+-    my $id = $rec->prop('Id') || $conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my $smbhost = $rec->prop('SmbHost');
+-    my $smbshare = $rec->prop('SmbShare');
+-    my $VFSType = $rec->prop('VFSType') || 'cifs';
+-    my $err;
+-    
+-    my $setbackuplist = sub {
+-	if ( $_ =~ /\.dar/ ) {
+-	    my $dir = $File::Find::dir;
+-	    my $backupref;
+-	    $dir =~ s/$mntbkdir\///;
+-            $_ =~ s/\..*\.dar//;
+-	    $backupref = $_;
+-	    $_ =~ s/.*-//;
+-    	    @{$backupfiles{$_}}[0] = $dir;
+-    	    @{$backupfiles{$_}}[1] =  $backupref;	
+-	}
+-    };
+-    
+-    # Mounting backup shared folder
+-    
+-    unless (-d $mntdir)
+-    {
+-    mkdir -p $mntdir;
+-    }
+-    
+-    my $login = $rec->prop('Login') || 'backup';
+-    my $password = $rec->prop('Password') || 'backup';
+-
+-    if ( $err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType) ) 
+-	{ 
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err
+-		);
+-	return;
+-	}
+-    else  {$mounted = 1}
+-    
+-    # Test if backup subdirectory for our server
+-    
+-    $mntbkdir = $mntdir . '/' . $id;
+-    unless ( -d $mntbkdir) 
+-	{ 
+-	if ($mounted) {
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	    }	
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_NO_HOST_DIR'), $id
+-		);
+-	return;
+-	}
+-
+-    # Finding existing backups
+-    
+-    find { wanted => \&$setbackuplist, untaint => 1 }, $mntbkdir ;
+-
+-    my %blabels = ();
+-    my @blabels;
+-    my $backups = 0;
+-    
+-    foreach $key (sort keys %backupfiles) {
+-	my $labkey = $mntbkdir . '/' . $backupfiles{$key}[0] . '/' . $backupfiles{$key}[1];
+-	$blabels{$labkey} = $backupfiles{$key}[1] . " (" . $backupfiles{$key}[0] . ")";
+-	$backups = push @blabels, $labkey;
+-	}
+-
+-    if ($mounted) {
+-	system("/bin/umount", "$mntdir") == 0
+-    	    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-
+-    # Stops here if no backups 
+-    
+-    if ( $backups == 0 ) {
+-	esmith::cgi::genResult(
+-	    $q, $fm->localise('NO_BACKUPS_TO_RESTORE'));
+-	return;
+-    }
+-
+-    print $q->p ($fm->localise('VERIFY_WORKSTN_BACKUP_DESC') . ' ' . "$smbhost/$smbshare/$id");
+-    print $q->p;
+-    
+-    print $q->start_multipart_form(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $q->table ({border => 0, cellspacing => 0, cellpadding => 4},
+-
+-	esmith::cgi::genWidgetRow(
+-		$q,
+-	        $fm->localise('SELECT_BACKUP_FILE'),
+-	        $q->popup_menu (
+-		    -name => 'backupset',
+-		    -values => [ @blabels ],
+-		    -labels => \%blabels
+-		)
+-	)
+-    );
+-
+-    print $q->table ({border => 0, cellspacing => 0, cellpadding => 4},
+-
+-        esmith::cgi::genWidgetRow(
+-	    $q,
+-	    $fm->localise('CHECK_TO_VERIFY_FULL_RESTORE'),
+-	    $q->checkbox (
+-		-name => 'verifyall',
+-		-checked=>0,
+-		-label=>''
+-	    )
+-	), 
+-	$q->Tr(
+-            esmith::cgi::genTextRow(
+-		    $q, 
+-    	        $fm->localise('CHECK_INTEGRITY_WARNING') 
+-    	    )
+-    	)
+-    ),"\n";
+-    
+-    print $q->table ({width => "100%", -class => "sme-noborders"},
+-	    esmith::cgi::genButtonRow(
+-		    $q,
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('VERIFY')
+-			)
+-		)
+-	),"\n";
+-    
+-    print $q->hidden(
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'workstn-verify'
+-	);
+-
+-    print $q->endform;
+-
+-    esmith::cgi::genFooter ($q);
+-}
+-
+-sub performWorkstnVerify
+-{
+-    my ($q) = @_;
+-
+-    my $backupwkrec = $conf->get('backupwk');
+-    my $smbhost = $backupwkrec->prop('SmbHost');
+-    my $smbshare = $backupwkrec->prop('SmbShare');
+-    my $login = $backupwkrec->prop('Login');
+-    my $password = $backupwkrec->prop('Password');
+-    my $mntdir = $backupwkrec->prop('MountDir') || '/mnt/smb';
+-    my $mounted;
+-    my $key;
+-    my $id = $backupwkrec->prop('Id') ||
+-	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my $err;
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+-    my $verifyref = $q->param ('backupset');
+-    
+-    # Mounting backup shared folder
+-    
+-    if ($err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType)) 
+-    { 
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err
+-		);
+-	return;
+-    }
+-    else  {$mounted = 1}
+-
+-    # Test if backup subdirectory for our server
+-    
+-    my $mntbkdir = $mntdir . "/$id";
+-    unless (-d $mntbkdir) 
+-    { 
+-	if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-        esmith::cgi::genResult($q, $fm->localise('ERR_NO_HOST_DIR'), $id);
+-	return;
+-    }
+-
+-    my $fullverify = $q->param('verifyall');
+-
+-    if ( $fullverify eq "on" ) 
+-    {
+-	# Test all backups needed to full restore
+-    
+-        my %backupsetfiles = ();
+-	my @restorefiles;
+-        my $set = $verifyref;
+-        $set =~ s/\/[^\/]*$//;
+-        my $backupsetlist = sub {
+-		if ( $_ =~ /\.dar/ )
+-	    {
+-		my $backupref = $File::Find::name;
+-        	$backupref =~ s/\.[0-9]+\.dar//;
+-        	$_ =~ s/\..*\.dar//;
+-		$_ =~ s/.*-//;
+-    		$backupsetfiles{$_} = $backupref;
+-	    }
+-	};
+-
+-	# find list of available backups and verify
+-	# it contains all backups needed for full restore
+-
+-	find { wanted => \&$backupsetlist, untaint => 1 }, $set ;
+-    
+-	my $key;
+-	my $num = 0;
+-	foreach $key (sort keys %backupsetfiles)
+-	{
+-	    push @restorefiles, $backupsetfiles{$key};
+-	    if ( $num == 0 )
+-	    {
+-		unless ( $backupsetfiles{$key} =~ /\/full-/ ) 
+-		{
+-		    esmith::cgi::genHeaderNonCacheable(
+-			$q,
+-			undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE')
+-		    );
+-	    	    esmith::cgi::genResult(
+-			$q, $fm->localise('ERR_NO_FULL_BACKUP')
+-			);
+-		    return;
+-		}
+-	    }
+-	    else
+-	    {
+-		my $numf = sprintf("%03d", $num);
+-		unless ( $backupsetfiles{$key} =~ /\/inc-$numf-/ )
+-		{
+-	    	    esmith::cgi::genHeaderNonCacheable(
+-		 	$q,
+-			undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE')
+-		    );
+-
+-		    esmith::cgi::genResult(
+-			$q, $fm->localise('ERR_NO_INC_BACKUP') . " " . $numf
+-		    );
+-		    return;
+-		}
+-
+-	    }
+-	    $num++;	
+-	    last if ( $backupsetfiles{$key} eq $verifyref );
+-	}
+-	
+-	# and test them 
+-	
+-        $| = 1;
+-
+-	if (open(RD, "-|"))
+-	{
+-	    esmith::cgi::genHeaderNonCacheable ($q, undef, 
+-		$fm->localise('VERIFY_WORKSTN_BACKUP_FILE'));
+-
+-	    print $q->p (
+-		$q->b ($fm->localise('TESTING_NEEDED_BACKUPS_FOR_RESTORE') )
+-		);
+-	    print '<UL>';
+-	    
+-	    while (<RD>)
+-	    {
+-		print "<li>$_</li>\n";
+-	    }
+-
+-	    print '</UL>';
+-	    my $message;
+-	    if (!close RD)
+-	    {
+-		print $q->p ($q->b ( $fm->localise('RESTORE_VERIFY_FAILED') ));
+-	    }
+-	    else
+-	    {
+-		print $q->p ($q->b ( $fm->localise('VERIFY_COMPLETE') ));
+-	    }
+-
+-	    esmith::cgi::genFooter ($q);
+-	}
+-	else
+-	{
+-	    select(STDOUT);
+-	    $| = 1;
+-	
+-	    my $file;
+-	    foreach $file (@restorefiles)
+-	    {
+-		if ($file =~ /^(.*)$/)
+-		{
+-		    $file = $1;
+-		}
+-		else
+-		{
+-		    if ($mounted)
+-	 	    {
+-			system("/bin/umount", "$mntdir") == 0
+-			    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-		    }
+-		    die('Unsecure data : ' . $file);
+-		}
+-		print $q->p($fm->localise('TESTED_BACKUP') . "  " . $file);
+-		system ("/usr/bin/dar", "-Q", "--test", "$file", "--noconf");
+-	    }
+-
+-	    if ($mounted)
+-	    {
+-		system("/bin/umount", "$mntdir") == 0
+-		    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	    }
+-
+-	    exit(0);
+-	}
+-	return;
+-
+-    }
+-    else 
+-    {
+-	# verify selected backup only
+-	# and display files saved in the backup
+-	
+-	my $backupkey = $verifyref;
+-        if ($backupkey =~ /^(.*)$/)
+-	{
+-	    $backupkey = $1;
+-	}
+-	else
+-	{
+-	    if ($mounted)
+-	    { 
+-		system("/bin/umount", "$mntdir") == 0
+-		    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	    }
+-	    die('Unsecure data : ' . $backupkey);
+-	}
+-
+-	if (open(RD, "-|"))
+-	{
+-	    esmith::cgi::genHeaderNonCacheable ($q,
+-		undef, $fm->localise('VERIFY_WORKSTN_BACKUP_FILE'));
+-	    print $q->p($fm->localise('FILES_IN_BACKUP'));
+-	    
+-	    print '<UL>';
+-
+-	    my $complete = 0;
+-	    while (<RD>)
+-	    {
+-		$complete++ if /etc\/smbpasswd$/;
+-		$complete++ if /etc\/samba\/smbpasswd$/; # >6.0 base
+-		print "<li>$_</li>\n";
+-	    }
+-
+-	    print '</UL>';
+-	    my $status = close RD ?
+-			($complete ?
+-			    $fm->localise('VERIFY_COMPLETE') :
+-			    $fm->localise('BACKUP_FILE_INCOMPLETE'))
+-			: ($fm->localise('ERROR_READING_FILE').' : '.$backupkey);
+-	    print $q->p ($q->b ($status));
+-
+-	    esmith::cgi::genFooter ($q);
+-
+-	}
+-	else
+-	{
+-	    select(STDOUT);
+-	    $| = 1;
+-
+-	    system ("/usr/bin/dar", "-Q", "--list", "$backupkey", "--noconf") == 0
+-		or die ($fm->localise('ERR_EXTRACT')." : ".$!);
+-
+-	    if ($mounted) {
+-		system("/bin/umount", "$mntdir") == 0
+-		    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-		}
+-	    exit(0);
+-	}
+-    }
+-
+-    return;
+-}
+-
+-sub workstnRestore ()
+-{
+-
+-    my $rec = $conf->get('backupwk');
+-
+-    esmith::cgi::genHeaderNonCacheable(
+-	$q, undef, $fm->localise('RESTORE_CONF_FROM_WORKSTN'));
+-
+-    unless ($rec)
+-    {
+-	esmith::cgi::genResult(
+-	    $q, $fm->localise('CONFIGURATION_TO_BE_DONE'));
+-	return;
+-    }
+-
+-    my $mntdir = $rec->prop('MountDir') || '/mnt/smb';
+-    my $mntbkdir;
+-    my $mounted;
+-    my %backupfiles = ();
+-    my $key;
+-    my $id = $rec->prop('Id') ||
+-	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my $VFSType = $rec->prop('VFSType') || 'cifs';
+-    my $smbhost = $rec->prop('SmbHost');
+-    my $smbshare = $rec->prop('SmbShare');
+-    my $err;
+-        
+-    my $setbackupflist = sub {
+-	if ( $_ =~ /\.dar/ )
+-	{
+-	    my $dir = $File::Find::dir;
+-	    my $backupref;
+-	    $dir =~ s/$mntbkdir\///;
+-            $_ =~ s/\..*\.dar//;
+-	    $backupref = $_;
+-	    $_ =~ s/.*-//;
+-    	    @{$backupfiles{$_}}[0] = $dir;
+-    	    @{$backupfiles{$_}}[1] =  $backupref;	
+- 	}
+-    };
+-    
+-    # Mounting backup shared folder
+-    unless (-d $mntdir)
+-    {
+-	mkdir -p $mntdir;
+-    }
+-    
+-    my $login = $rec->prop('Login') || 'backup';
+-    my $password = $rec->prop('Password') || 'backup';
+-
+-    if ($err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType)) 
+-    { 
+-        esmith::cgi::genResult($q,
+-	    $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err);
+-	return;
+-    }
+-    else  {$mounted = 1}
+-
+-    # Test if backup subdirectory for our server
+-    
+-    $mntbkdir = $mntdir . "/$id";
+-    unless ( -d $mntbkdir) 
+-    { 
+-	if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-        esmith::cgi::genResult($q, $fm->localise('ERR_NO_HOST_DIR'), $id);
+-	return;
+-    }
+-
+-    # Finding existing backups
+-    
+-    find { wanted => \&$setbackupflist, untaint => 1 }, $mntbkdir ;
+-
+-    my %blabels = ();
+-    my @blabels;
+-    my $backups = 0;
+-    
+-    foreach $key (sort keys %backupfiles)
+-    {
+-	my $labkey = $mntbkdir . '/' . $backupfiles{$key}[0] . '/' . $backupfiles{$key}[1];
+-	$blabels{$labkey} = $backupfiles{$key}[1] . ' (' . $backupfiles{$key}[0] . ')';
+-	$backups = push @blabels, $labkey;
+-    }
+-
+-    if ($mounted)
+-    {
+-	system("/bin/umount", "$mntdir") == 0
+-    	    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-    }
+-
+-    if ( $backups == 0 )
+-    {
+-	esmith::cgi::genResult(
+-	    $q, $fm->localise('NO_BACKUPS_TO_RESTORE'));
+-	return;
+-    }
+-
+-    print $q->p ($fm->localise('RESTORE_CONF_FROM_WORKSTN_DESC') . ' ' . "$smbhost/$smbshare/$id");
+-    print $q->p;
+-    
+-    print $q->start_multipart_form(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $q->table ( {border => 0, cellspacing => 0, cellpadding => 4},
+-
+-	    esmith::cgi::genWidgetRow(
+-		    $q,
+-		    $fm->localise('SELECT_BACKUP_FILE'),
+-		    $q->popup_menu (
+-			    -name => 'backuptorestore',
+-			    -values => [ @blabels ],
+-			    -labels => \%blabels
+-			)
+-		)
+-	);
+-
+-    print $q->table ( {width => "100%", -class => "sme-noborders"},
+-	    esmith::cgi::genButtonRow(
+-		    $q,
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('RESTORE_FROM_WORKSTN')
+-			)
+-		)
+-	);
+-
+-    print $q->hidden(
+-    	-name => 'state',
+-	-override => 1,
+-	-default => 'workstn-restore'
+-    );
+-
+-    print $q->endform;
+-
+-    esmith::cgi::genFooter ($q);
+-}
+-
+-sub performWorkstnRestore
+-{
+-    my ($q) = @_;
+-    my $restoreref = $q->param ('backuptorestore');
+-    my $set = $restoreref;
+-    $set =~ s/\/[^\/]*$//;
+-    my %backupsetfiles = ();
+-    my @restorefiles;
+-    
+-    my $backupsetlist = sub {
+-	if ( $_ =~ /\.dar/ )
+-	{
+-	    my $backupref = $File::Find::name;
+-            $backupref =~ s/\.[0-9]+\.dar//;
+-            $_ =~ s/\..*\.dar//;
+-	    $_ =~ s/.*-//;
+-    	    $backupsetfiles{$_} = $backupref;
+-	}
+-    };
+-    
+-
+-    my $lock_file = "/var/lock/subsys/e-smith-restore";
+-    my $file_handle = &esmith::lockfile::LockFileOrReturn($lock_file);
+-
+-    unless ($file_handle)
+-    {
+-	esmith::cgi::genHeaderNonCacheable(
+-		$q,
+-		undef, $fm->localise('RESTORE_CANNOT_PROCEED')
+-	    );
+-
+-	print $q->p (
+-	    $q->b ($fm->localise('ANOTHER_RESTORE_IN_PROGRESS')
+-		)
+-	    );
+-
+-	esmith::cgi::genFooter ($q);
+-	return;
+-    }
+-
+-    # mounting backup shared folder
+-
+-    my $backupwkrec = $conf->get('backupwk');
+-    my $login = $backupwkrec->prop('Login');
+-    my $password = $backupwkrec->prop('Password');
+-    my $id = $backupwkrec->prop('Id')
+-	|| $conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my $mntdir = $backupwkrec->prop('MountDir') || '/mnt/smb';
+-    my $mounted;
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+-    my $smbhost = $backupwkrec->prop('SmbHost');
+-    my $smbshare = $backupwkrec->prop('SmbShare');
+-    my $err;
+-        
+-    if ($err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType)) 
+-    { 
+-	esmith::cgi::genHeaderNonCacheable(
+-		$q,
+-		undef, $fm->localise('RESTORE_CANNOT_PROCEED')
+-	    );
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err
+-		);
+-	return;
+-    }
+-    else  {$mounted = 1}
+-
+-    # Test if backup subdirectory for our server
+-    
+-    my $mntbkdir = $mntdir . "/$id";
+-    unless ( -d $mntbkdir) 
+-    { 
+-	if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-	esmith::cgi::genHeaderNonCacheable(
+-		$q,
+-		undef, $fm->localise('RESTORE_CANNOT_PROCEED')
+-	    );
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_NO_HOST_DIR') . $id
+-		);
+-	return;
+-    }
+-
+-     # finding list of available backups
+-    # and verifying all needed backup files are available
+-    
+-    find { wanted => \&$backupsetlist, untaint => 1 }, $set ;
+-    
+-    my $key;
+-    my $num = 0;
+-    foreach $key (sort keys %backupsetfiles)
+-    {
+-	push @restorefiles, $backupsetfiles{$key};
+-	if ( $num == 0 )
+-	{
+-	    unless ( $backupsetfiles{$key} =~ /\/full-/ ) 
+-	    {
+-		esmith::cgi::genHeaderNonCacheable(
+-			$q,
+-			undef, $fm->localise('RESTORE_CANNOT_PROCEED')
+-		);
+-	        esmith::cgi::genResult(
+-		    $q, $fm->localise('ERR_NO_FULL_BACKUP')
+-		    );
+-		return;
+-	    }
+-	}
+-	else
+-	{
+-	    my $numf = sprintf("%03d", $num);
+-	    unless ( $backupsetfiles{$key} =~ /\/inc-$numf-/ )
+-	    {
+-	    	esmith::cgi::genHeaderNonCacheable(
+-		 	$q,
+-		    undef, $fm->localise('RESTORE_CANNOT_PROCEED')
+-		);
+-
+-		esmith::cgi::genResult(
+-		    $q, $fm->localise('ERR_NO_INC_BACKUP') . $numf
+-		);
+-		return;
+-	    }
+-
+-	}
+-	$num++;	
+-	last if ( $backupsetfiles{$key} eq $restoreref );
+-    }
+-
+-    # backup is online, restoring now
+-
+-    my $rec = $restore->get('restore');
+-    $rec->set_prop('state','running');
+-    $rec->set_prop('start', time);
+-    $conf->get('bootstrap-console')->set_prop('Run', 'yes');
+-
+-    unless (system("/sbin/e-smith/signal-event", "pre-restore") == 0)
+-    {
+-	esmith::cgi::genHeaderNonCacheable(
+-	    $fm->{cgi},
+-	    undef, $fm->localise('OPERATION_STATUS_REPORT'));
+-	esmith::cgi::genResult(
+-	    $fm->{cgi}, $fm->localise('ERR_PRE_RESTORE'));
+-	return;
+-    }
+-
+-    $| = 1;
+-
+-    if (open(RD, "-|"))
+-    {
+-
+-	#-----------------------------------------------------
+-	# restore system from uploaded workstation backup file
+-	#-----------------------------------------------------
+-
+-	esmith::cgi::genHeaderNonCacheable ($q, undef, 
+-	    $fm->localise('RESTORE_IN_PROGRESS'));
+-
+-	print $q->p (
+-	    $q->b ($fm->localise('RESTORE_IN_PROGRESS_DESC')
+-		)
+-	    );
+-
+-	print $q->p($fm->localise('FILES_HAVE_BEEN_RESTORED'));
+-
+-	print '<UL>';
+-	my $complete = 0;
+-	while (<RD>)
+-	{
+-	    $complete++ if /etc\/smbpasswd$/;
+-	    $complete++ if /etc\/samba\/smbpassword$/;
+-	    print "<li>$_</li>\n";
+-	}
+-
+-	print '</UL>';
+-	my $message;
+-	if (!close RD)
+-	{
+-	    $message = $fm->localise('RESTORE_FAILED_MSG');
+-	}
+-	else
+-	{
+-	    #-----------------------------------------------------
+-	    # if restore completed, regenerate configuration files
+-	    #-----------------------------------------------------
+-	    if ($complete)
+-	    {
+-
+-		$message = $fm->localise('RESTORE_COMPLETE');
+-		system("/usr/sbin/groupmod", "-g", "$www_gid", "www") == 0
+-		    or warn ($fm->localise('ERR_RESTORING_GID')."\n");
+-		system("/usr/sbin/usermod", "-g", "$www_gid", "www") == 0
+-		    or warn ($fm->localise('ERR_RESTORING_INITIAL_GRP')."\n");
+-		system("/sbin/e-smith/signal-event", "post-upgrade") == 0
+-		    or die ($fm->localise('ERROR_UPDATING_CONFIGURATION')."\n");
+-	    }
+-	    else
+-	    {
+-		$message = $fm->localise('RESTORE_FAILED');
+-	    }
+-	}
+-
+-	$rec->set_prop('state', 'complete');
+-	$rec->set_prop('finish', time);
+-
+-	&esmith::lockfile::UnlockFile($file_handle);
+-
+-	print $q->p ($q->b ($message));
+-
+-        print $q->startform(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-        print $q->p($q->b ($fm->localise('YOU_MUST_REBOOT'))),"\n";
+-        print $q->start_table ({width => "100%", -class => "sme-noborders"}),"\n";
+-        print esmith::cgi::genButtonRow(
+-                $q,
+-                $q->submit (-name => 'action', -value =>
+-                $fm->localise('REBOOT'))
+-        );
+-        # Put in a hidden widget to store the reboot value.
+-        print $q->hidden(
+-                        -name => 'function',
+-                        -value => 'reboot'
+-                        ),"\n";
+-        print $q->hidden (
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'perform'
+-	),"\n";
+-        print $q->end_table,"\n";
+-	print $q->endform;
+-
+-	esmith::cgi::genFooter ($q);
+-    }
+-    else
+-    {
+-	select(STDOUT);
+-	$| = 1;
+-	
+-	my $file;
+-	foreach $file (@restorefiles)
+-	{
+-	    if ($file =~ /^(.*)$/)
+-	    {
+-		$file = $1;
+-	    }
+-	    else
+-	    {
+-		if ($mounted)
+-	 	{
+-		    system("/bin/umount", "$mntdir") == 0
+-			or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-		}
+-		die('Unsecure data : ' . $file);
+-	    }
+-	    system ("/usr/bin/dar", "-Q", "-x", "$file", "-v", "-N", "-R", "/", "-wa");
+-	}
+-
+-	if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-
+-	exit(0);
+-    }
+-    return;
+-}
+-
+-sub workstnSelRestore()
+-{
+-    my $rec = $conf->get('backupwk');
+-
+-    esmith::cgi::genHeaderNonCacheable ($q, undef,
+-	$fm->localise('WORKSTN_SELECTIVE_RESTORE'));
+-
+-    unless ($rec)
+-    {
+-	esmith::cgi::genResult(
+-	    $q, $fm->localise('CONFIGURATION_TO_BE_DONE'));
+-	return;
+-    }
+-
+-    my %backupfiles = ();
+-    my $mntdir = $rec->prop('MountDir') || '/mnt/smb';
+-    my $mntbkdir;
+-    my $mounted;
+-    my $key;
+-    my $id = $rec->prop('Id') ||
+-	$conf->get('SystemName')->value . '.' . $conf->get('DomainName')->value;
+-    my %blabels = ();
+-    my @blabels;
+-    my $backups = 0;
+-    my $filterexp;
+-    my $VFSType = $rec->prop('VFSType') || 'cifs';
+-    my $smbhost = $rec->prop('SmbHost');
+-    my $smbshare = $rec->prop('SmbShare');
+-    my $err;
+-
+-    my $setbackuplist = sub {
+-	if ( $_ =~ /\.dar/ )
+-	{
+-	    my $dir = $File::Find::dir;
+-	    my $backupref;
+-	    $dir =~ s/$mntbkdir\///;
+-            $_ =~ s/\..*\.dar//;
+-	    $backupref = $_;
+-	    $_ =~ s/.*-//;
+-    	    @{$backupfiles{$_}}[0] = $dir;
+-    	    @{$backupfiles{$_}}[1] =  $backupref;	
+-	}
+-    };
+-    
+-    # Mounting backups smb shared folder
+-    
+-    unless (-d $mntdir)
+-    {
+-	mkdir -p $mntdir;
+-    }
+-    
+-    my $login = $rec->prop('Login') || 'backup';
+-    my $password = $rec->prop('Password') || 'backup';
+-
+-    if ($err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType)) 
+-    { 
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err
+-		);
+-	return;
+-    }
+-    else  {$mounted = 1}
+-
+-    # Test if backup subdirectory for our server
+-    
+-    $mntbkdir = $mntdir . '/' . $id;
+-    unless ( -d $mntbkdir) 
+-    { 
+-	if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_NO_HOST_DIR'), $id
+-		);
+-	return;
+-    }
+-
+-    my $catalog = "$mntbkdir/dar-catalog";
+-    unless ( -e $catalog) 
+-    { 
+-	system("/usr/bin/dar_manager", "-C", "$catalog") == 0
+-	    or die($fm->localise('ERR_DAR_CATALOG'),"\n");
+-    }
+-
+-    # find available backups for the server
+-    
+-    find { wanted => \&$setbackuplist, untaint => 1 }, $mntbkdir ;
+-
+-    # find backups in current catalog    
+-    
+-    my $i = 0;
+-    my @bknum;
+-    my @setd;
+-    my @bkname;
+-    open(DAR_LIST, "/usr/bin/dar_manager -B $catalog -l |");
+-    while (<DAR_LIST>)
+-    {
+-	next unless ($_ =~ /set/);
+-	chomp;
+-	($bknum[$i], $setd[$i], $bkname[$i]) = split(' ', $_, 3);
+-	$i++;
+-    }
+-    close (DAR_LIST);
+-
+-    # delete from catalog old removed backups
+-    
+-    my $j = $i;
+-    while ($j)
+-    {
+-	unless (-e "$setd[$j-1]/$bkname[$j-1]\.1\.dar")
+-	{
+-	    my $del = $bknum[$j-1];
+-	    if ($del =~ /^(.*)$/)
+-	    {
+-		$del = $1;
+-	    }
+-	    system("/usr/bin/dar_manager", "-B", "$catalog", "-D", "$del") == 0
+-		or die($fm->localise('ERR_DAR_CATALOG'),"\n");
+-	}
+-	$j--;
+-    }
+-	
+-    # add to catalog new backups
+-    
+-    foreach $key (sort keys %backupfiles)
+-    {
+-	my $exists = 0;
+-	my $rf;
+-	foreach $rf (@bkname)
+-	{
+-	    $exists = 1 if ($rf eq $backupfiles{$key}[1]);
+-	    last if $exists;
+-	}
+-        do
+-	{
+-	    my $add = "$mntbkdir/$backupfiles{$key}[0]/$backupfiles{$key}[1]";
+-	    if ($add =~ /^(.*)$/)
+-	    {
+-		$add = $1;
+-	    }
+-	    system("/usr/bin/dar_manager", "-B", "$catalog", "-A", "$add") == 0
+-		or die($fm->localise('ERR_DAR_CATALOG'),"\n"); 
+-	} unless $exists;
+-    }
+-        
+-    # update backups list from current catalog    
+-    
+-    open(DAR_LIST, "/usr/bin/dar_manager -B $catalog -l |") ;
+-
+-    $i = 0;
+-    while (<DAR_LIST>)
+-    {
+-	next unless m/set/;
+-	chomp;
+-	($bknum[$i], $setd[$i], $bkname[$i]) = split(' ', $_, 3);
+-	$i++;
+-    }
+-    close (DAR_LIST);
+-
+-    # set drop down list of backups
+-    
+-    push @blabels, "0";
+-    $blabels{"0"} = $fm->localise('ALL_BACKUPS');
+-    $j = 0;
+-    while ($j < $i)
+-    {
+-	push @blabels, $bknum[$j];
+-	$blabels{$bknum[$j]} = $bkname[$j];
+-	$j++
+-    }  
+-
+-    print $q->p ($fm->localise('WORKSTN_SEL_REST_DESC') . " $smbhost/$smbshare/$id");
+-
+-    print $q->h2 ($fm->localise('BACKUP_CHOICE'));
+-    
+-    print $q->start_multipart_form(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-
+-    print $q->table ({border => 0, cellspacing => 0, cellpadding => 4},
+-
+-	esmith::cgi::genWidgetRow(
+-		$q,
+-	        $q->b($fm->localise('SELECT_BACKUP_FILE')),
+-	        $q->popup_menu (
+-		    -name => 'backupset',
+-		    -values => [ @blabels ],
+-		    -labels => \%blabels)
+-		),
+-
+-	esmith::cgi::genNameValueRow(
+-		$q,
+-		$fm->localise('FILTER_EXPRESSION'),
+-		'filterexp',
+-		$filterexp
+-		)
+-	);
+-
+-
+-    print $q->table ({width => "100%", -class => "sme-noborders"},
+-	    esmith::cgi::genButtonRow(
+-		    $q,
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('PERFORM')
+-			)
+-		)
+-	),"\n";
+-
+-    print $q->hidden(
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'workstn-sel-restore'
+-	);
+-
+-    print $q->endform;
+-
+-
+-    esmith::cgi::genFooter ($q);
+-
+-    if ($mounted)
+-    {
+-	system("/bin/umount", "$mntdir") == 0
+-    	    or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-    }
+-}
+-
+-sub performWorkstnSelRestore
+-{
+-    my ($q) = @_;
+-
+-    my $rgfilter;
+-    my $filterexp = $q->param ('filterexp');
+-    if ($filterexp =~ /^(.*)$/)
+-    {
+-	$filterexp = $1;
+-	$rgfilter = qr/$filterexp/;
+-    }
+-    else
+-    {
+-        $filterexp = "";
+-    }
+-    my $seldatebf;
+-
+-    esmith::cgi::genHeaderNonCacheable ($q,
+-        undef, $fm->localise('WORKSTN_SELECTIVE_RESTORE'));
+-	
+-    my $backupwkrec = $conf->get('backupwk');
+-    my $smbhost = $backupwkrec->prop('SmbHost');
+-    my $smbshare = $backupwkrec->prop('SmbShare');
+-    my $login = $backupwkrec->prop('Login');
+-    my $password = $backupwkrec->prop('Password');
+-    my $mntdir = $backupwkrec->prop('MountDir') || '/mnt/smb';
+-    my $mntbkdir;
+-    my $mounted;
+-    my $key;
+-    my $id = $backupwkrec->prop('Id') ||
+-	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my @flabels;
+-    my %flabels = ();
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+-    my $err;
+-    
+-    my $backupkey = $q->param ('backupset');
+-    if ($backupkey =~ /^(.*)$/)
+-    {
+-	$backupkey = $1;
+-    }
+-    else
+-    {
+-	die('Unsecure data : ' . $backupkey);
+-    }
+-
+-    # Mounting backup shared folder
+-    
+-    if ($err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType)) 
+-    { 
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err
+-		);
+-	return;
+-    }
+-    else  {$mounted = 1}
+-
+-    # Test if backup subdirectory for our server
+-    
+-    $mntbkdir = $mntdir . "/$id";
+-    unless (-d $mntbkdir) 
+-    { 
+-        if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_NO_HOST_DIR'), $id
+-		);
+-	return;
+-    }
+-	
+-    # Read wanted file list from selected backup
+-
+-    if (open(RD, "-|"))
+-    {
+-	my $regex = qr/\[.*\] */;
+-	while (<RD>)
+-	{
+-	    $_ =~ s/$regex//;
+-	    if ($filterexp) {next unless m/$rgfilter/};
+-	    push @flabels, $_;
+-	}
+-
+-	my $status = close RD ?
+-			$fm->localise('READ_COMPLETE')
+-			: ($fm->localise('ERROR_READING_FILE').' : '.$backupkey);
+-	print $q->p ($status);
+-
+-    }
+-    else
+-    {
+-	select(STDOUT);
+-	$| = 1;
+-
+-        system ("/usr/bin/dar_manager", "-B", "$mntbkdir/dar-catalog", "-u", "$backupkey") == 0
+-		or die ($fm->localise('ERR_EXTRACT')." : ".$!);
+-
+-        if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-	exit(0);
+-    }
+-
+-    print $q->start_multipart_form(
+-	    -method => 'POST',
+-	    -action => $q->url (-absolute => 1)
+-	);
+-
+-    print $q->table ({border => 0, cellspacing => 0, cellpadding => 4},
+-
+-	esmith::cgi::genWidgetRow(
+-		$q,
+-	        $q->b($fm->localise('SELECT_FILES_TO_RESTORE')),
+-	        $q->scrolling_list (
+-		    -name => 'restorefiles',
+-		    -values => [ @flabels ],
+-		    -size => 15,
+-		    -multiple => 'true')
+-		),
+-
+-	esmith::cgi::genNameValueRow(
+-		$q,
+-		$fm->localise('SELECT_DATE_BEFORE'),
+-		'seldatebefore',
+-		$seldatebf
+-		)
+-	);
+-
+-    print $q->table ({width => "100%", -class => "sme-noborders"},
+-	    esmith::cgi::genButtonRow(
+-		    $q,
+-		    $q->submit(
+-			    -name => 'action',
+-			    -value => $fm->localise('PERFORM')
+-			)
+-		)
+-	),"\n";
+-
+-    print $q->hidden(
+-	    -name => 'state',
+-	    -override => 1,
+-	    -default => 'workstn-sel-restore2'
+-	);
+-
+-    print $q->hidden(
+-	    -name => 'when',
+-	    -override => 1,
+-	    -value => $seldatebf
+-	);
+-
+-    print $q->endform;
+-
+-    esmith::cgi::genFooter ($q);
+-
+-}
+-
+-sub performWorkstnSelRestore2
+-{
+-    my ($q) = @_;
+-
+-    esmith::cgi::genHeaderNonCacheable ($q, undef, 
+-        $fm->localise('RESTORE_IN_PROGRESS'));
+-
+-    my @restorelist;
+-    my $when = $q->param ('seldatebefore');
+-    if ($when =~ /^(.*)$/)
+-    {
+-	$when = $1;
+-    }
+-    else
+-    {
+-	die('Unsecure data : ' . $when);
+-    }
+-    my $tymd =
+-	qr/((19|20)\d\d\/(?=\d\d\/\d\d-))?((0?[1-9]|1[0-2])\/(?=\d\d-))?((31|[123]0|[012]?[1-9])-)?/;
+-    my $thms =
+-	qr/([01]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?/;
+-
+-    unless (($when =~ m/^$tymd$thms$/) || ($when eq ""))
+-    {
+-        esmith::cgi::genResult(
+-	    $q, "$when : " . $fm->localise('ERR_INVALID_SELDATE')
+-    	    );
+-    	return;
+-    }
+-
+-    my $f;
+-    foreach $f ($q->param ('restorefiles'))
+-    {
+-        if ($f =~ /^(.*)$/)
+-	{
+-	    push @restorelist, "\"".$1."\"";
+-	}
+-    }
+-	
+-    # mounting backup shared folder
+-
+-    my $backupwkrec = $conf->get('backupwk');
+-    my $login = $backupwkrec->prop('Login');
+-    my $password = $backupwkrec->prop('Password');
+-    my $id = $backupwkrec->prop('Id') ||
+-	$conf->get('SystemName')->value . "." . $conf->get('DomainName')->value;
+-    my $mntdir = $backupwkrec->prop('MountDir') || '/mnt/smb';
+-    my $mounted;
+-    my $VFSType = $backupwkrec->prop('VFSType') || 'cifs';
+-    my $smbhost = $backupwkrec->prop('SmbHost');
+-    my $smbshare = $backupwkrec->prop('SmbShare');
+-    my $err;
+-        
+-    if ($err = dmount($smbhost,$smbshare,$mntdir,$login,$password,$VFSType)) 
+-    { 
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_MOUNTING_SMBSHARE') . "\n" . $err
+-		);
+-	return;
+-    }
+-    else  {$mounted = 1}
+-
+-    # Test if backup subdirectory for our server
+-    
+-    my $mntbkdir = $mntdir . "/$id";
+-    unless (-d $mntbkdir) 
+-    { 
+-        if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-        esmith::cgi::genResult(
+-	    $q, $fm->localise('ERR_NO_HOST_DIR'), $id
+-		);
+-	return;
+-    }
+-
+-    # backup is online, restoring now
+-
+-    $| = 1;
+-    my $restorerr;
+-
+-    if (open(RD, "-|"))
+-    {
+-
+-	#-----------------------------------------------------
+-	# restore system from uploaded workstation backup file
+-	#-----------------------------------------------------
+-
+-	print $q->p($fm->localise('FILES_HAVE_BEEN_RESTORED'));
+-
+-	print '<UL>';
+-	while (<RD>)
+-	{
+-	    print "<li>$_</li>\n";
+-	}
+-
+-	print '</UL>';
+-	my $message;
+-	if (!close RD)
+-	{
+-	    $message = $fm->localise('RESTORE_FAILED_MSG');
+-	}
+-	else
+-	{
+-	    if ($restorerr)
+-	    {
+-		$message = $fm->localise('RESTORE_FAILED');
+-	    }
+-	    else
+-	    {
+-		$message = $fm->localise('RESTORE_COMPLETE');
+-	    }
+-	}
+-
+-	print $q->p ($q->b ($message));
+-
+-	esmith::cgi::genFooter ($q);
+-    }
+-    else
+-    {
+-	select(STDOUT);
+-	$| = 1;
+-	
+-	if ($when) 
+-	{
+-	    $restorerr = system ("/usr/bin/dar_manager -B $mntbkdir/dar-catalog -w $when -e '-N -R / -w' -r @restorelist");
+-	}
+-	else 
+-	{
+-	    $restorerr = system ("/usr/bin/dar_manager -B $mntbkdir/dar-catalog -e '-N -R / -w' -r @restorelist");
+-	}
+-	    
+-        if ($mounted)
+-	{
+-	    system("/bin/umount", "$mntdir") == 0
+-		or die($fm->localise('ERR_WHILE_UNMOUNTING'),"\n");
+-	}
+-
+-	exit(0);
+-    }
+-    return;
+-}
+-
+-sub performReboot ()
+-{
+-    esmith::cgi::genHeaderNonCacheable ($q, undef,
+-	$fm->localise('SERVER_REBOOT'));
+-
+-    print $q->p (
+-	    $q->b ($fm->localise('SERVER_WILL_REBOOT'))
+-	);
+-
+-    esmith::cgi::genFooter($fm);
+-
+-    esmith::util::backgroundCommand(
+-	    5,
+-	    "/sbin/e-smith/signal-event",
+-	    "reboot"
+-	);
+-}
+-
+-sub CalculateSizes ()
+-{
+-    #------------------------------------------------------------
+-    # figure out the size of the tar file.
+-    #------------------------------------------------------------
+-
+-    my $tarsize = 0;
+-
+-    # It takes way too much time to do a du on /home/e-smith. So we'll
+-    # estimate the current size.
+-    # We do this by checking the quota used by each user on the system.
+-
+-    use Quota;
+-    use esmith::AccountsDB;
+-    my $accounts = esmith::AccountsDB->open;
+-
+-    # Get a $dev value appropriate for use in Quota::query call.
+-    my $dev = Quota::getqcarg("/home/e-smith/files");
+-
+-    foreach my $user ($accounts->users())
+-    {
+-	my $name = $user->key;
+-	my $uid = getpwnam($name);
+-	unless ($uid)
+-	{
+-	    warn ($fm->localise('NO_UID_FOR_NAME').$name."\n");
+-	    # We shouldn't ever get here. If we do, we can't get
+-	    # the quota value for this user, so we just skip to
+-	    # the next one.
+-	    next;
+-	}
+-
+-	# Get current quota settings.
+-	my ($blocks) = Quota::query($dev, $uid, 0);
+-	$tarsize += $blocks;
+-    }
+-
+-    # We add to this the size of root owned firectories, estimated using du.
+-    # If this takes too long, then the admin only has his or
+-    # herself to blame!
+-
+-    # Remove /home/e-smith from backup list, and make paths absolute
+-    my @list = map { "/$_" } grep { !/home\/e-smith/ } @directories;
+-    open(DU, "-|")
+-	or exec '/usr/bin/du', '-s', @list;
+-
+-    while (<DU>)
+-    {
+-	my ($du) = split(/\s+/);
+-	$tarsize += $du;
+-    }
+-    close DU;
+-
+-    $tarsize = &showSize($tarsize);
+-
+-    #------------------------------------------------------------
+-    # figure out the size of the dump files
+-    #------------------------------------------------------------
+-
+-    my $dumpsize = 0;
+-
+-    open(DF, "-|")
+-	or exec '/bin/df', '-P', '-t', 'ext3';
+-
+-    while (<DF>)
+-    {
+-	next unless (/^\//);
+-
+-	(undef, undef, my $s, undef) = split(/\s+/, $_);
+-
+-	$dumpsize += $s;
+-    }
+-
+-    # increase size by 10% to cope with dump overhead.
+-
+-    $dumpsize *= 1.1;
+-
+-    close DF;
+-
+-    $dumpsize = &showSize($dumpsize);
+-
+-    #------------------------------------------------------------
+-    # how much free space is in /tmp
+-    #------------------------------------------------------------
+-
+-    my $tmpfree = 0;
+-    my $halffree = 0;
+-
+-    open(DF, "-|")
+-	or exec '/bin/df', '-P', '-t', 'ext3', '/tmp';
+-
+-    while (<DF>)
+-    {
+-	next unless (/^\//);
+-
+-	(undef, undef, undef, my $s) = split(/\s+/, $_);
+-
+-	$tmpfree += $s;
+-    }
+-
+-    close DF;
+-
+-    $halffree = $tmpfree / 2;
+-
+-    $tmpfree = &showSize($tmpfree);
+-    $halffree = &showSize($halffree);
+-
+-    return ($tarsize, $dumpsize, $tmpfree, $halffree);
+-}
+-
+-sub showSize
+-{
+-    # convert size to Mb or Gb or Tb :) Remember, df reports in kb.
+-
+-    my $size = shift;
+-
+-    my $Mb = 1024;
+-    my $Gb = $Mb * $Mb;
+-    my $Tb = $Mb * $Mb * $Mb;
+-
+-    if ($size >= $Tb)
+-    {
+-	$size /= $Tb;
+-	$size = int($size) . "Tb";
+-    }
+-    elsif ($size >= $Gb)
+-    {
+-	$size /= $Gb;
+-	$size = int($size) . "Gb";
+-    }
+-    elsif ($size >= $Mb)
+-    {
+-	$size /= $Mb;
+-	$size = int($size) . "Mb";
+-    }
+-    else
+-    {
+-	$size .= "kb";
+-    }
+-
+-    return $size;
+-}
+-
+-sub dmount()
+-{
+-    # mount dar unit according to dar-workstation configuration
+-    # return nothing if mount successfull
+-
+-    my ($host,$share,$mountdir,$login,$password,$VFSType) = @_;
+-    
+-    if ($VFSType eq 'cifs')
+-    {
+-	return ( qx(/bin/mount -t cifs "$host:$share" $mountdir -o credentials=/etc/dar/CIFScredentials,nounix) );
+-    }
+-    elsif ($VFSType eq 'nfs')
+-    {
+-	return ( qx(/bin/mount -t nfs -o nolock "$host:/$share" $mountdir 2>&1) );
+-    }
+-    elsif ($VFSType eq 'usb')
+-    {
+-	$_[2] = "/" . $share;
+-        my $device = "";
+-        my $blkdev = "";
+-        my $vollbl = "";
+-        foreach my $udi (qx(hal-find-by-property --key volume.fsusage --string filesystem)) {
+-          $udi =~ m/^(\S+)/;
+-          my $is_mounted = qx(hal-get-property --udi $1 --key volume.is_mounted);
+-
+-          if ($is_mounted eq "false\n") {
+-              $blkdev = qx(hal-get-property --udi $1 --key block.device);
+-              if ($blkdev =~ m/^(\S+)/) {$blkdev = $1;}
+-          }
+-          if ($is_mounted eq "false\n") {
+-              $vollbl = qx(hal-get-property --udi $1 --key volume.label);
+-              $vollbl =~ m/^(\S+)/;
+-              if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
+-          }
+-
+-          chomp $vollbl;
+-          chomp $blkdev;
+-          $vollbl = lc("media/$vollbl");
+-          if  ($vollbl eq $share) {
+-            $device = $blkdev;
+-          } 
+-        }
+-        return ( qx(/bin/mount $device "/$share" 2>&1) );
+-    }
+-    else
+-    {
+-	return ("Error while mounting $host/$share : $VFSType not supported.\n");
+-    }
+-}   
+-
+-__DATA__
+-<form>
+-</form>
