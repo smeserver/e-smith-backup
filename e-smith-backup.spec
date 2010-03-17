@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.62 2010/03/17 18:43:55 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.63 2010/03/17 18:53:06 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 31
+%define release 32
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -57,6 +57,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Wed Mar 17 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-32.sme
+- Partly revert previous patch due to undesired side effects to smbpasswd [SME: 5857]
+
 * Wed Mar 17 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-31.sme
 - Adjust backup routines for relocation of samba secrets.tdb file [SME: 5857]
 
