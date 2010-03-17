@@ -1,0 +1,53 @@
+diff -up e-smith-backup-2.2.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm.adjust-for-samba-tdb-locations e-smith-backup-2.2.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm
+--- e-smith-backup-2.2.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm.adjust-for-samba-tdb-locations	2007-09-05 21:45:52.000000000 +0200
++++ e-smith-backup-2.2.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm	2010-03-17 19:04:01.000000000 +0100
+@@ -81,7 +81,7 @@ sub restore_list
+         'etc/shadow',
+         'etc/group',
+         'etc/gshadow',
+-        'etc/samba/secrets.tdb',
++        'var/lib/samba/private/secrets.tdb',
+         'etc/samba/smbpasswd',
+         'etc/smbpasswd',
+     );
+@@ -327,30 +327,30 @@ sub relocate_samba_file
+ {
+     my ($self, $filename) = @_;
+ 
+-    return if ( -l "/etc/$filename" and -f "/etc/samba/$filename" );
++    return if ( -l "/etc/$filename" and -f "/var/cache/samba/$filename" );
+ 
+-    unlink  "/etc/samba/$filename" if ( -l "/etc/samba/$filename");
++    unlink  "/etc/samba/$filename" if ( -l "/var/cache/samba/$filename");
+ 
+-    if ( -f "/etc/$filename" and -f "/etc/samba/$filename" )
++    if ( -f "/etc/$filename" and -f "/var/cache/samba/$filename" )
+     {
+-	warn "/etc/$filename and /etc/samba/$filename exist - preserving /etc/samba/$filename.$$\n";
++	warn "/etc/$filename and /var/cache/samba/$filename exist - preserving /var/cache/samba/$filename.$$\n";
+ 
+-	move "/etc/samba/$filename", "/etc/samba/$filename.$$" or
+-	    warn "Couldn't move /etc/samba/$filename to /etc/samba/$filename.$$\n";
++	move "/var/cache/samba/$filename", "/var/cache/samba/$filename.$$" or
++	    warn "Couldn't move /var/cache/samba/$filename to /var/cache/samba/$filename.$$\n";
+     }
+ 
+     if ( -f "/etc/$filename" )
+     {
+-	unlink "/etc/samba/$filename" if ( -l "/etc/samba/$filename" );
++	unlink "/var/cache/samba/$filename" if ( -l "/var/cache/samba/$filename" );
+ 
+-	move "/etc/$filename", "/etc/samba/$filename" or
+-	    warn "Couldn't move /etc/$filename to /etc/samba/$filename\n";
++	move "/etc/$filename", "/var/cache/samba/$filename" or
++	    warn "Couldn't move /etc/$filename to /var/cache/samba/$filename\n";
+ 
+     }
+ 
+     unless ( -l "/etc/$filename" )
+     {
+-	symlink "/etc/samba/$filename", "/etc/$filename";
++	symlink "/var/cache/samba/$filename", "/etc/$filename";
+     }
+ }
+ 
