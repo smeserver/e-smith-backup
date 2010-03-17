@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.61 2010/03/17 18:38:25 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.62 2010/03/17 18:43:55 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -58,7 +58,7 @@ Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
 * Wed Mar 17 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-31.sme
-- Adjust backup routines for relocation of samba .tdb files [SME: 5857]
+- Adjust backup routines for relocation of samba secrets.tdb file [SME: 5857]
 
 * Mon Feb 15 2010 Stephen Noble <support@dungog.net> 2.2.0-30.sme
 - Improved upgrade compatibility, remove .orig [SME: 4809]
