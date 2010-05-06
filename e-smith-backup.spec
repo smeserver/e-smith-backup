@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.63 2010/03/17 18:53:06 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.64 2010/05/06 17:00:15 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 32
+%define release 33
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -39,6 +39,7 @@ Patch26: e-smith-backup-2.2.0-smbpasswd_not_last.patch
 Patch27: e-smith-backup-2.2.0-create_mount.patch2
 Patch28: e-smith-backup-2.2.0-nolowercase.patch
 Patch29: e-smith-backup-2.2.0-adjust-for-samba-tdb-locations.patch
+Patch30: e-smith-backup-2.2.0-workstation-To-field.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -57,6 +58,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu May 6 2010 Ian Wells <esmith@wellsi.com> 2.2.0-33.sme
+- To: field missing from header in Workstation Backups email [SME: 5924]
+
 * Wed Mar 17 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-32.sme
 - Partly revert previous patch due to undesired side effects to smbpasswd [SME: 5857]
 
@@ -1189,6 +1193,7 @@ e-smith server central backup administration panel
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
