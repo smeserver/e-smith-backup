@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.52 2009/11/25 18:51:38 bytegw Exp $
+# $Id: e-smith-backup.spec,v 1.53 2010/05/06 16:52:02 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 24
+%define release 25
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -32,6 +32,7 @@ Patch19: e-smith-backup-2.0.0-many_daily_dar.patch
 Patch20: e-smith-backup-2.0.0-CIFScredentials.patch
 Patch21: e-smith-backup-2.0.0-CIFScredentials2.patch
 Patch22: e-smith-backup-2.0.0-FullSunday.patch
+Patch23: e-smith-backup-2.0.0-workstation-To-field.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -50,6 +51,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu May 6 2010 Ian Wells <esmith@wellsi.com> 2.0.0-25.sme
+- To: field missing from header in Workstation Backups email [SME: 5872]
+
 * Wed Nov 25 2009 Gavin Weight <gweight@gmail.com> 2.0.0-24.sme
 - Fix full backup on Sunday displayed as Everyday. [SME: 5624]
 
@@ -1149,6 +1153,7 @@ e-smith server central backup administration panel
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
