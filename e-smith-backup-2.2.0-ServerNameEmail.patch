@@ -1,0 +1,17 @@
+diff -ruN e-smith-backup-2.2.0.old/root/etc/e-smith/events/actions/workstation-backup-dar e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.2.0.old/root/etc/e-smith/events/actions/workstation-backup-dar	2010-05-09 08:42:03.000000000 +0100
++++ e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar	2010-05-09 08:45:21.000000000 +0100
+@@ -80,11 +80,11 @@
+ 
+ $report .= "From: admin-backup\n";
+ $report .= "To: admin\n";
+-$report .= "Subject: Daily Backup Report\n\n";
++$report .= "Subject: Daily Backup Report: ".$id."\n\n";
+ $report .= "================================== \n";
+ $report .= "DAILY BACKUP TO WORKSTATION REPORT \n";
+ $report .= "================================== \n";
+-$report .= "Backup started at " .$tim . "\n";
++$report .= "Backup of ".$id." started at " .$tim . "\n";
+ $report .= "Backup of mysql databases has been done\n";
+ 
+ # mounting backup directory

@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.64 2010/05/06 17:00:15 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.65 2010/05/09 07:58:31 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 33
+%define release 34
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -40,6 +40,7 @@ Patch27: e-smith-backup-2.2.0-create_mount.patch2
 Patch28: e-smith-backup-2.2.0-nolowercase.patch
 Patch29: e-smith-backup-2.2.0-adjust-for-samba-tdb-locations.patch
 Patch30: e-smith-backup-2.2.0-workstation-To-field.patch
+Patch31: e-smith-backup-2.2.0-ServerNameEmail.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -58,6 +59,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu May 9 2010 Ian Wells <esmith@wellsi.com> 2.2.0-34.sme
+- Add system name in Workstation Backups email [SME: 5706]
+
 * Thu May 6 2010 Ian Wells <esmith@wellsi.com> 2.2.0-33.sme
 - To: field missing from header in Workstation Backups email [SME: 5924]
 
@@ -1194,6 +1198,7 @@ e-smith server central backup administration panel
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+%patch31 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
