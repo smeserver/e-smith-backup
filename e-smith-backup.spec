@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.65 2010/05/09 07:58:31 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.66 2010/05/11 11:52:24 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 34
+%define release 35
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -41,6 +41,7 @@ Patch28: e-smith-backup-2.2.0-nolowercase.patch
 Patch29: e-smith-backup-2.2.0-adjust-for-samba-tdb-locations.patch
 Patch30: e-smith-backup-2.2.0-workstation-To-field.patch
 Patch31: e-smith-backup-2.2.0-ServerNameEmail.patch
+Patch32: e-smith-backup-2.2.0-fix-leading-slash-removal.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -59,6 +60,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue May 11 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-35.sme
+- Fix removal of leading slash in storage location [SME: 5928]
+
 * Thu May 9 2010 Ian Wells <esmith@wellsi.com> 2.2.0-34.sme
 - Add system name in Workstation Backups email [SME: 5706]
 
@@ -1199,6 +1203,7 @@ e-smith server central backup administration panel
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
