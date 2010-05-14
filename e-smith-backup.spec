@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.66 2010/05/11 11:52:24 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.67 2010/05/14 11:19:46 filippocarletti Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 35
+%define release 36
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -42,6 +42,7 @@ Patch29: e-smith-backup-2.2.0-adjust-for-samba-tdb-locations.patch
 Patch30: e-smith-backup-2.2.0-workstation-To-field.patch
 Patch31: e-smith-backup-2.2.0-ServerNameEmail.patch
 Patch32: e-smith-backup-2.2.0-fix-leading-slash-removal.patch
+Patch33: e-smith-backup-2.2.0-secrets_tdb.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -60,6 +61,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu May 13 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-36.sme
+- Revert patch from 2.2.0-31: secrets.tdb still in /etc/samba [SME: 5857]
+
 * Tue May 11 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-35.sme
 - Fix removal of leading slash in storage location [SME: 5928]
 
@@ -1204,6 +1208,7 @@ e-smith server central backup administration panel
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
