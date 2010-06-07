@@ -1,0 +1,25 @@
+diff -Naur e-smith-backup-2.2.0-orig/root/etc/e-smith/web/functions/backup e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.2.0-orig/root/etc/e-smith/web/functions/backup	2010-06-07 16:19:19.056134825 +0200
++++ e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup	2010-06-07 16:19:45.212888963 +0200
+@@ -1217,11 +1217,16 @@
+ 
+     if ( $VFSType eq 'usb' ) {
+         foreach my $udi (qx(hal-find-by-property --key volume.fsusage --string filesystem)) {
+-        $udi =~ m/^(\S+)/;
+-        my $vollbl = qx(hal-get-property --udi $1 --key volume.label);
+-        $vollbl =~ m/^(\S+)/;
+-        if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
+-        push @usbdisks, $vollbl;
++            $udi =~ m/^(\S+)/;
++
++            my $is_mounted = qx(hal-get-property --udi $1 --key volume.is_mounted);
++
++            if ($is_mounted eq "false\n") {
++                my $vollbl = qx(hal-get-property --udi $1 --key volume.label);
++                $vollbl =~ m/^(\S+)/;
++                if ($vollbl =~ /^\s/) {$vollbl = 'nolabel';}
++                push @usbdisks, $vollbl;
++            }
+         }
+ 
+         unless ($usbdisks[0]){

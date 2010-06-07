@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.67 2010/05/14 11:19:46 filippocarletti Exp $
+# $Id: e-smith-backup.spec,v 1.68 2010/06/07 14:34:17 filippocarletti Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 36
+%define release 37
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -43,6 +43,7 @@ Patch30: e-smith-backup-2.2.0-workstation-To-field.patch
 Patch31: e-smith-backup-2.2.0-ServerNameEmail.patch
 Patch32: e-smith-backup-2.2.0-fix-leading-slash-removal.patch
 Patch33: e-smith-backup-2.2.0-secrets_tdb.patch
+Patch34: e-smith-backup-2.2.0-local_USB.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -61,6 +62,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Jun  7 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-37.sme
+- Check if local USB disk is mounted in backup panel [SME: 6033]
+
 * Thu May 13 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-36.sme
 - Revert patch from 2.2.0-31: secrets.tdb still in /etc/samba [SME: 5857]
 
@@ -1209,6 +1213,7 @@ e-smith server central backup administration panel
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
