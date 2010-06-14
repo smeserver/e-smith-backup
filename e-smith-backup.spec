@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.68 2010/06/07 14:34:17 filippocarletti Exp $
+# $Id: e-smith-backup.spec,v 1.69 2010/06/14 08:10:53 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 37
+%define release 38
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -44,6 +44,7 @@ Patch31: e-smith-backup-2.2.0-ServerNameEmail.patch
 Patch32: e-smith-backup-2.2.0-fix-leading-slash-removal.patch
 Patch33: e-smith-backup-2.2.0-secrets_tdb.patch
 Patch34: e-smith-backup-2.2.0-local_USB.patch
+Patch35: e-smith-backup-2.2.0-smbpassword2smbpasswd.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -62,6 +63,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Jun 14 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-38.sme
+- Fix error causing restore to report failed where it was complete [SME: 6054]
+
 * Mon Jun  7 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-37.sme
 - Check if local USB disk is mounted in backup panel [SME: 6033]
 
@@ -1214,6 +1218,7 @@ e-smith server central backup administration panel
 %patch32 -p1
 %patch33 -p1
 %patch34 -p1
+%patch35 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
