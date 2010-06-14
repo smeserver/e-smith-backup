@@ -1,0 +1,12 @@
+diff -ruN e-smith-backup-2.2.0.old/root/etc/e-smith/web/functions/backup e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.2.0.old/root/etc/e-smith/web/functions/backup	2010-06-14 21:58:33.000000000 +0100
++++ e-smith-backup-2.2.0/root/etc/e-smith/web/functions/backup	2010-06-14 22:01:34.000000000 +0100
+@@ -1479,7 +1479,7 @@
+ 	
+     my $backupwkStation = $q->param ('backupwkStation');
+     if ( $VFSType eq 'usb') { $backupwkStation = 'localhost' }
+-    if ($backupwkStation =~ /^(.*)$/) {
++    if ($backupwkStation =~ /^\s*(\S+)\s*$/) {
+ 	$backupwkStation = $1;
+     } else {
+         $backupwkStation = "";

@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.69 2010/06/14 08:10:53 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.70 2010/06/14 21:15:04 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 38
+%define release 39
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -45,6 +45,7 @@ Patch32: e-smith-backup-2.2.0-fix-leading-slash-removal.patch
 Patch33: e-smith-backup-2.2.0-secrets_tdb.patch
 Patch34: e-smith-backup-2.2.0-local_USB.patch
 Patch35: e-smith-backup-2.2.0-smbpassword2smbpasswd.patch
+Patch36: e-smith-backup-2.2.0-stripSpaces.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -63,6 +64,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Jun 14 2010 Ian Wells <esmith@wellsi.com> 2.2.0-39.sme
+- Strip spaces from Workstation Backup hostname [SME: 6060]
+
 * Mon Jun 14 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-38.sme
 - Fix error causing restore to report failed where it was complete [SME: 6054]
 
@@ -1219,6 +1223,7 @@ e-smith server central backup administration panel
 %patch33 -p1
 %patch34 -p1
 %patch35 -p1
+%patch36 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
