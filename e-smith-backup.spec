@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.55 2010/06/15 12:08:08 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.56 2010/06/15 12:09:02 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -53,7 +53,7 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
-* Tue Jun 15 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-27.sme
+* Tue Jun 15 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-27.sme
 - Fix error causing restore to report failed where it was complete [SME: 6054]
 
 * Mon Jun 14 2010 Ian Wells <esmith@wellsi.com> 2.0.0-26.sme
