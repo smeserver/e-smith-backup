@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.56 2010/06/15 12:09:02 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.57 2010/06/15 12:17:13 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 27
+%define release 28
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -53,6 +53,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat Jun 15 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-28.sme
+- Fix patch to not create .orig file [SME: 6054]
+
 * Tue Jun 15 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.0.0-27.sme
 - Fix error causing restore to report failed where it was complete [SME: 6054]
 
