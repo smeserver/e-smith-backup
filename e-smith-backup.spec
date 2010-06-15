@@ -1,4 +1,4 @@
-# $Id: e-smith-backup.spec,v 1.70 2010/06/14 21:15:04 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.71 2010/06/15 12:06:30 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
@@ -68,7 +68,7 @@ Requires: e-smith-formmagick >= 1.4.0-12
 - Strip spaces from Workstation Backup hostname [SME: 6060]
 
 * Mon Jun 14 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-38.sme
-- Fix error causing restore to report failed where it was complete [SME: 6054]
+- Fix error causing restore to report failed where it was complete [SME: 6062]
 
 * Mon Jun  7 2010 Filippo Carletti <filippo.carletti@gmail.com> 2.2.0-37.sme
 - Check if local USB disk is mounted in backup panel [SME: 6033]
