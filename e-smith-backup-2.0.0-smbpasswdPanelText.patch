@@ -1,0 +1,12 @@
+diff -urN e-smith-backup-2.0.0.old/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.0.0.old/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2010-06-14 20:40:27.000000000 +0100
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2010-06-21 13:53:32.000000000 +0100
+@@ -240,7 +240,7 @@
+    <base>RESTORE_IN_PROGRESS_DESC</base>
+    <trans>
+     After the restore completes you must reboot the server. Your restore is
+-    complete when /etc/smbpasswd has been restored and the words "Restore
++    complete when the words "Restore
+     complete" appear at the bottom of your screen.
+    </trans>
+   </entry>

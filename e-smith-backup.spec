@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.57 2010/06/15 12:17:13 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.58 2010/06/21 21:21:21 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 28
+%define release 29
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -35,6 +35,7 @@ Patch22: e-smith-backup-2.0.0-FullSunday.patch
 Patch23: e-smith-backup-2.0.0-workstation-To-field.patch
 Patch24: e-smith-backup-2.0.0-stripSpaces.patch
 Patch25: e-smith-backup-2.0.0-smbpassword2smbpasswd.patch
+Patch26: e-smith-backup-2.0.0-smbpasswdPanelText.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -53,6 +54,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Jun 21 2010 Ian Wells <esmith@wellsi.com> 2.0.0-29.sme
+- /etc/smbpasswd should not be mentioned in the panels [SME: 6070]
+
 * Sat Jun 15 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-28.sme
 - Fix patch to not create .orig file [SME: 6054]
 
@@ -1167,6 +1171,7 @@ e-smith server central backup administration panel
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
