@@ -1,0 +1,16 @@
+diff -urN e-smith-backup-2.0.0.old/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup
+--- e-smith-backup-2.0.0.old/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2010-06-21 13:53:32.000000000 +0100
++++ e-smith-backup-2.0.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/backup	2010-06-21 23:07:11.000000000 +0100
+@@ -43,9 +43,9 @@
+      data files, and downloads it to your local desktop via your web browser.
+      Currently your configuration and data files total approximately
+      <b>$tarsize</b>. The backup file will be somewhat less than this,
+-     depending on how compressible the data are. The \"Verify desktop backup
+-     file\" option can be used to check the integrity of a desktop backup
+-     file.</P>
++     depending on how compressible the data are. This file can be used to restore
++     the server from the console if you copy it to removable storage media 
++     such as a local USB disk.</P>
+ 
+      <P>The tape backup method uses a software package called <I>$module</I>
+      to back up your entire hard disk to tape every night. This requires a
