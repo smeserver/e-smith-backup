@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.71 2010/06/15 12:06:30 snetram Exp $
+# $Id: e-smith-backup.spec,v 1.72 2010/06/22 16:43:30 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 39
+%define release 40
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -46,6 +46,7 @@ Patch33: e-smith-backup-2.2.0-secrets_tdb.patch
 Patch34: e-smith-backup-2.2.0-local_USB.patch
 Patch35: e-smith-backup-2.2.0-smbpassword2smbpasswd.patch
 Patch36: e-smith-backup-2.2.0-stripSpaces.patch
+Patch37: e-smith-backup-2.2.0-DesktopBackupTextUpdate.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -64,6 +65,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Tue Jun 22 2010 Ian Wells <esmith@wellsi.com> 2.2.0-40.sme
+- Update backup instructions in server-manager [SME: 6078]
+
 * Mon Jun 14 2010 Ian Wells <esmith@wellsi.com> 2.2.0-39.sme
 - Strip spaces from Workstation Backup hostname [SME: 6060]
 
@@ -1224,6 +1228,7 @@ e-smith server central backup administration panel
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
+%patch37 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
