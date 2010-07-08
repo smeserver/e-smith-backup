@@ -1,0 +1,11 @@
+diff -ruN e-smith-backup-2.2.0.old/root/usr/lib/perl5/site_perl/esmith/Backup.pm e-smith-backup-2.2.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm
+--- e-smith-backup-2.2.0.old/root/usr/lib/perl5/site_perl/esmith/Backup.pm	2010-07-08 08:53:27.000000000 +0100
++++ e-smith-backup-2.2.0/root/usr/lib/perl5/site_perl/esmith/Backup.pm	2010-07-08 08:50:15.000000000 +0100
+@@ -83,7 +83,6 @@
+         'etc/gshadow',
+         'etc/samba/secrets.tdb',
+         'etc/samba/smbpasswd',
+-        'etc/smbpasswd',
+     );
+ }
+ 

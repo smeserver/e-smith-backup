@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.72 2010/06/22 16:43:30 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.73 2010/07/08 21:27:13 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 40
+%define release 41
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -47,6 +47,7 @@ Patch34: e-smith-backup-2.2.0-local_USB.patch
 Patch35: e-smith-backup-2.2.0-smbpassword2smbpasswd.patch
 Patch36: e-smith-backup-2.2.0-stripSpaces.patch
 Patch37: e-smith-backup-2.2.0-DesktopBackupTextUpdate.patch
+Patch38: e-smith-backup-2.2.0-restore_list_smbpasswd.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -65,6 +66,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Thu Jul 8 2010 Ian Wells <esmith@wellsi.com> 2.2.0-41.sme
+- Remove /etc/smbpasswd from restore_list [SME: 6071]
+
 * Tue Jun 22 2010 Ian Wells <esmith@wellsi.com> 2.2.0-40.sme
 - Update backup instructions in server-manager [SME: 6078]
 
@@ -1229,6 +1233,7 @@ e-smith server central backup administration panel
 %patch35 -p1
 %patch36 -p1
 %patch37 -p1
+%patch38 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
