@@ -1,0 +1,12 @@
+diff -ruN e-smith-backup-2.2.0.old/root/etc/e-smith/events/actions/workstation-backup-dar e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.2.0.old/root/etc/e-smith/events/actions/workstation-backup-dar	2010-07-09 18:59:35.000000000 +0100
++++ e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar	2010-07-09 20:29:40.000000000 +0100
+@@ -76,7 +76,7 @@
+ my $fullday = $backupwk->prop('FullDay') || 7;
+ my $mail = $backupwk->prop('MailNotify') || 'yes';
+ my $mntdir = $backupwk->prop('Mount') || '/mnt/smb';
+-my $tmpdir = $mntdir . "/tmp_dir";
++my $tmpdir;
+ 
+ $report .= "From: admin-backup\n";
+ $report .= "To: admin\n";

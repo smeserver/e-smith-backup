@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.74 2010/07/09 17:43:14 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.75 2010/07/09 19:49:31 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 42
+%define release 43
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -49,6 +49,7 @@ Patch36: e-smith-backup-2.2.0-stripSpaces.patch
 Patch37: e-smith-backup-2.2.0-DesktopBackupTextUpdate.patch
 Patch38: e-smith-backup-2.2.0-restore_list_smbpasswd.patch
 Patch39: e-smith-backup-2.2.0-remove-relocate_samba_file.patch
+Patch40: e-smith-backup-2.2.0-workstation_tmpdir.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -67,8 +68,11 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Fri Jul 9 2010 Ian Wells <esmith@wellsi.com> 2.2.0-43.sme
+- Only define Workstation Backup temporary directory once [SME: 5930]
+
 * Fri Jul 9 2010 Ian Wells <esmith@wellsi.com> 2.2.0-42.sme
-- remove relocate_samba_file and all references to /etc/smbpasswd [SME: 6073]
+- Remove relocate_samba_file and all references to /etc/smbpasswd [SME: 6073]
 
 * Thu Jul 8 2010 Ian Wells <esmith@wellsi.com> 2.2.0-41.sme
 - Remove /etc/smbpasswd from restore_list [SME: 6071]
@@ -1239,6 +1243,7 @@ e-smith server central backup administration panel
 %patch37 -p1
 %patch38 -p1
 %patch39 -p1
+%patch40 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
