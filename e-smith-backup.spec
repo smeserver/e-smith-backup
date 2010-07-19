@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.75 2010/07/09 19:49:31 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.76 2010/07/19 21:22:31 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 43
+%define release 44
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -50,6 +50,7 @@ Patch37: e-smith-backup-2.2.0-DesktopBackupTextUpdate.patch
 Patch38: e-smith-backup-2.2.0-restore_list_smbpasswd.patch
 Patch39: e-smith-backup-2.2.0-remove-relocate_samba_file.patch
 Patch40: e-smith-backup-2.2.0-workstation_tmpdir.patch
+Patch41: e-smith-backup-2.2.0-workstation_failure.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -68,6 +69,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Mon Jul 19 2010 Ian Wells <esmith@wellsi.com> 2.2.0-44.sme
+- Indicate failure in Subject line of Workstation Backup [SME: 6121]
+
 * Fri Jul 9 2010 Ian Wells <esmith@wellsi.com> 2.2.0-43.sme
 - Only define Workstation Backup temporary directory once [SME: 5930]
 
@@ -1244,6 +1248,7 @@ e-smith server central backup administration panel
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+%patch41 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

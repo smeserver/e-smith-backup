@@ -1,0 +1,11 @@
+diff -ruN e-smith-backup-2.2.0.old/root/etc/e-smith/events/actions/workstation-backup-dar e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar
+--- e-smith-backup-2.2.0.old/root/etc/e-smith/events/actions/workstation-backup-dar	2010-07-19 22:12:22.000000000 +0100
++++ e-smith-backup-2.2.0/root/etc/e-smith/events/actions/workstation-backup-dar	2010-07-19 22:14:28.000000000 +0100
+@@ -336,6 +336,7 @@
+ sub ldie 
+ {
+     my $errmsg = shift;
++    $report =~ s/Report:/Failed:/;
+     $report .= "*** No backup allowed or error during backup ***\n";
+     $report .= $errmsg;
+     if (($mail eq 'yes') || ($mail eq 'error'))
