@@ -1,0 +1,22 @@
+diff -ruN e-smith-backup-2.0.0.old/root/sbin/e-smith/do_backup e-smith-backup-2.0.0/root/sbin/e-smith/do_backup
+--- e-smith-backup-2.0.0.old/root/sbin/e-smith/do_backup	2007-09-05 20:45:52.000000000 +0100
++++ e-smith-backup-2.0.0/root/sbin/e-smith/do_backup	2010-08-07 14:24:48.000000000 +0100
+@@ -41,6 +41,7 @@
+ my $backups = esmith::BackupHistoryDB->open
+     || die("Could not open backup history db\n");
+ my $now = time();
++die "backup not allowed twice at the same date/time, delayed to next day\n" if $backups->get($now);
+ my $backup_rec = $backups->new_record($now, { type => 'backup_record' });
+ $backup_rec->set_prop('StartEpochTime', "$now");
+ $backup_rec->set_prop('BackupType', $backupType);
+diff -ruN e-smith-backup-2.0.0.old/root/sbin/e-smith/do_backupwk e-smith-backup-2.0.0/root/sbin/e-smith/do_backupwk
+--- e-smith-backup-2.0.0.old/root/sbin/e-smith/do_backupwk	2008-10-07 18:34:31.000000000 +0100
++++ e-smith-backup-2.0.0/root/sbin/e-smith/do_backupwk	2010-08-07 14:24:48.000000000 +0100
+@@ -38,6 +38,7 @@
+ my $backups = esmith::BackupHistoryDB->open
+     || die("Could not open backup history db\n");
+ my $now = time();
++die "backup not allowed twice at the same date/time, delayed to next day\n" if $backups->get($now);
+ my $backup_rec = $backups->new_record($now, { type => 'backup_record' });
+ $backup_rec->set_prop('StartEpochTime', "$now");
+ $backup_rec->set_prop('BackupType', "workstation");

@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.59 2010/06/21 22:27:27 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.60 2010/08/07 13:59:48 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.0.0
-%define release 30
+%define release 31
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -37,6 +37,7 @@ Patch24: e-smith-backup-2.0.0-stripSpaces.patch
 Patch25: e-smith-backup-2.0.0-smbpassword2smbpasswd.patch
 Patch26: e-smith-backup-2.0.0-smbpasswdPanelText.patch
 Patch27: e-smith-backup-2.0.0-DesktopBackupTextUpdate.patch
+Patch28: e-smith-backup-2.0.0-once_a_day.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -55,6 +56,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat Aug 7 2010 Ian Wells <esmith@wellsi.com> 2.0.0-31.sme
+- Don't backup more than once per day, by Filippo Carletti [SME: 5444]
+
 * Mon Jun 21 2010 Ian Wells <esmith@wellsi.com> 2.0.0-30.sme
 - Update backup instructions in server-manager [SME: 5222]
 
@@ -1177,6 +1181,7 @@ e-smith server central backup administration panel
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
