@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.76 2010/07/19 21:22:31 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.77 2010/10/10 13:57:09 wellsi Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 44
+%define release 45
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -51,6 +51,7 @@ Patch38: e-smith-backup-2.2.0-restore_list_smbpasswd.patch
 Patch39: e-smith-backup-2.2.0-remove-relocate_samba_file.patch
 Patch40: e-smith-backup-2.2.0-workstation_tmpdir.patch
 Patch41: e-smith-backup-2.2.0-workstation_failure.patch
+Patch42: e-smith-backup-2.2.0-diskusage.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -69,6 +70,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sat Oct 10 2010 Ian Wells <esmith@wellsi.com> 2.2.0-45.sme
+- Include disk usage in Workstation Backup email [SME: 6143]
+
 * Mon Jul 19 2010 Ian Wells <esmith@wellsi.com> 2.2.0-44.sme
 - Indicate failure in Subject line of Workstation Backup [SME: 6121]
 
@@ -1249,6 +1253,7 @@ e-smith server central backup administration panel
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup
