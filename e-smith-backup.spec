@@ -1,10 +1,10 @@
-# $Id: e-smith-backup.spec,v 1.77 2010/10/10 13:57:09 wellsi Exp $
+# $Id: e-smith-backup.spec,v 1.78 2010/11/21 12:15:12 snetram Exp $
 
 Summary: e-smith module to provide the backup panel
 %define name e-smith-backup
 Name: %{name}
 %define version 2.2.0
-%define release 45
+%define release 46
 Version: %{version}
 Release: %{release}%{?dist}
 License: Artistic
@@ -52,6 +52,7 @@ Patch39: e-smith-backup-2.2.0-remove-relocate_samba_file.patch
 Patch40: e-smith-backup-2.2.0-workstation_tmpdir.patch
 Patch41: e-smith-backup-2.2.0-workstation_failure.patch
 Patch42: e-smith-backup-2.2.0-diskusage.patch
+Patch43: e-smith-backup-2.2.0-removeCaseConversion.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildRequires: e-smith-devtools >= 1.11.0-03
 BuildRequires: gettext
@@ -70,6 +71,9 @@ Requires: dar
 Requires: e-smith-formmagick >= 1.4.0-12
 
 %changelog
+* Sun Nov 21 2010 Jonathan Martens <smeserver-contribs@snetram.nl> 2.2.0-46
+- Do not convert case of SmbShare on database migration [SME: 6387]
+
 * Sat Oct 10 2010 Ian Wells <esmith@wellsi.com> 2.2.0-45.sme
 - Include disk usage in Workstation Backup email [SME: 6143]
 
@@ -1254,6 +1258,7 @@ e-smith server central backup administration panel
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
+%patch43 -p1
 
 %build
 /sbin/e-smith/buildtests 10e-smith-backup

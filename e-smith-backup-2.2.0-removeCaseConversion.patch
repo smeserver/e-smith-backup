@@ -1,0 +1,11 @@
+diff -up e-smith-backup-2.2.0/root/etc/e-smith/db/configuration/migrate/30lcSmbShare.removeCaseConversion e-smith-backup-2.2.0/root/etc/e-smith/db/configuration/migrate/30lcSmbShare
+--- e-smith-backup-2.2.0/root/etc/e-smith/db/configuration/migrate/30lcSmbShare	2010-11-21 13:01:03.000000000 +0100
++++ /dev/null 	2010-11-21 13:02:06.000000000 
++0100
+@@ -1,6 +0,0 @@
+-{
+-    my $SmbShare = $DB->get_prop('backupwk', 'SmbShare');
+-    return unless defined $SmbShare;
+-    $SmbShare = lc("$SmbShare");
+-    $DB->set_prop('backupwk', 'SmbShare', $SmbShare)
+-}
